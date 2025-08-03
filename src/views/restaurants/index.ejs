@@ -1,0 +1,247 @@
+<%- include('../layout', {body: `
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <h2><i class="fas fa-store me-2"></i>Browse Restaurants</h2>
+            <p class="text-muted">Discover restaurants looking for food influencer collaborations</p>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filters</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="location-filter" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="location-filter" 
+                               placeholder="Enter location...">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="cuisine-filter" class="form-label">Cuisine Type</label>
+                        <select class="form-select" id="cuisine-filter">
+                            <option value="">All Cuisines</option>
+                            <option value="malay">Malay</option>
+                            <option value="chinese">Chinese</option>
+                            <option value="indian">Indian</option>
+                            <option value="western">Western</option>
+                            <option value="japanese">Japanese</option>
+                            <option value="korean">Korean</option>
+                            <option value="thai">Thai</option>
+                            <option value="italian">Italian</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn btn-primary w-100" onclick="applyFilters()">
+                        <i class="fas fa-search me-2"></i>Apply Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-8">
+            <div id="restaurants-container">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading restaurants...</p>
+                </div>
+            </div>
+            
+            <div id="pagination-container" class="mt-4"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentPage = 1;
+let currentFilters = {};
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadRestaurants();
+    
+    // Add enter key listener for location filter
+    document.getElementById('location-filter').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            applyFilters();
+        }
+    });
+});
+
+async function loadRestaurants(page = 1, filters = {}) {
+    const container = document.getElementById('restaurants-container');
+    
+    if (page === 1) {
+        container.innerHTML = \`
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Loading restaurants...</p>
+            </div>
+        \`;
+    }
+    
+    try {
+        const params = new URLSearchParams({
+            page: page,
+            ...filters
+        });
+        
+        const response = await apiGet('/api/restaurants?' + params);
+        const data = await response.json();
+        
+        if (page === 1) {
+            displayRestaurants(data.restaurants);
+        } else {
+            appendRestaurants(data.restaurants);
+        }
+        
+        updatePagination(data.pagination);
+        currentPage = page;
+        currentFilters = filters;
+        
+    } catch (error) {
+        console.error('Failed to load restaurants:', error);
+        container.innerHTML = 
+            '<div class="alert alert-danger">Failed to load restaurants. Please try again.</div>';
+    }
+}
+
+function displayRestaurants(restaurants) {
+    const container = document.getElementById('restaurants-container');
+    
+    if (restaurants.length === 0) {
+        container.innerHTML = 
+            '<div class="alert alert-info">No restaurants found matching your criteria.</div>';
+        return;
+    }
+    
+    container.innerHTML = restaurants.map(restaurant => \`
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 text-center">
+                        <img src="\${restaurant.profile_picture || '/images/default-restaurant.png'}" 
+                             alt="\${restaurant.name}" 
+                             class="img-fluid rounded" style="max-height: 150px; object-fit: cover;">
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="card-title">\${restaurant.name}</h5>
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-map-marker-alt me-1"></i>\${restaurant.location || 'Location not specified'}
+                        </p>
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-utensils me-1"></i>\${restaurant.cuisine_type || 'Cuisine not specified'}
+                        </p>
+                        <p class="card-text">\${restaurant.bio || 'No description available'}</p>
+                    </div>
+                    <div class="col-md-3 text-end">
+                        <div class="mb-2">
+                            <span class="badge bg-primary">\${restaurant.active_campaigns || 0} Active Campaigns</span>
+                        </div>
+                        <a href="/restaurants/\${restaurant.id}" class="btn btn-primary">
+                            <i class="fas fa-eye me-1"></i>View Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    \`).join('');
+}
+
+function appendRestaurants(restaurants) {
+    const container = document.getElementById('restaurants-container');
+    const newRestaurants = restaurants.map(restaurant => \`
+        <div class="card shadow-sm mb-3 fade-in">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 text-center">
+                        <img src="\${restaurant.profile_picture || '/images/default-restaurant.png'}" 
+                             alt="\${restaurant.name}" 
+                             class="img-fluid rounded" style="max-height: 150px; object-fit: cover;">
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="card-title">\${restaurant.name}</h5>
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-map-marker-alt me-1"></i>\${restaurant.location || 'Location not specified'}
+                        </p>
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-utensils me-1"></i>\${restaurant.cuisine_type || 'Cuisine not specified'}
+                        </p>
+                        <p class="card-text">\${restaurant.bio || 'No description available'}</p>
+                    </div>
+                    <div class="col-md-3 text-end">
+                        <div class="mb-2">
+                            <span class="badge bg-primary">\${restaurant.active_campaigns || 0} Active Campaigns</span>
+                        </div>
+                        <a href="/restaurants/\${restaurant.id}" class="btn btn-primary">
+                            <i class="fas fa-eye me-1"></i>View Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    \`).join('');
+    
+    container.insertAdjacentHTML('beforeend', newRestaurants);
+}
+
+function updatePagination(pagination) {
+    const container = document.getElementById('pagination-container');
+    
+    if (pagination.totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+    }
+    
+    let paginationHTML = '<nav><ul class="pagination justify-content-center">';
+    
+    // Previous button
+    if (pagination.currentPage > 1) {
+        paginationHTML += \`
+            <li class="page-item">
+                <a class="page-link" href="#" onclick="loadRestaurants(\${pagination.currentPage - 1}, currentFilters)">Previous</a>
+            </li>
+        \`;
+    }
+    
+    // Page numbers
+    for (let i = Math.max(1, pagination.currentPage - 2); i <= Math.min(pagination.totalPages, pagination.currentPage + 2); i++) {
+        paginationHTML += \`
+            <li class="page-item \${i === pagination.currentPage ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="loadRestaurants(\${i}, currentFilters)">\${i}</a>
+            </li>
+        \`;
+    }
+    
+    // Next button
+    if (pagination.currentPage < pagination.totalPages) {
+        paginationHTML += \`
+            <li class="page-item">
+                <a class="page-link" href="#" onclick="loadRestaurants(\${pagination.currentPage + 1}, currentFilters)">Next</a>
+            </li>
+        \`;
+    }
+    
+    paginationHTML += '</ul></nav>';
+    container.innerHTML = paginationHTML;
+}
+
+function applyFilters() {
+    const filters = {};
+    
+    const location = document.getElementById('location-filter').value.trim();
+    if (location) filters.location = location;
+    
+    const cuisine = document.getElementById('cuisine-filter').value;
+    if (cuisine) filters.cuisine_type = cuisine;
+    
+    loadRestaurants(1, filters);
+}
+</script>
+`}) %>

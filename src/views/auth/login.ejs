@@ -1,0 +1,263 @@
+<%- include('../layout', {body: `
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
+            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                <div class="card-header text-center bg-primary text-white">
+                    <h3 class="fw-light my-4">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login to FoodConnect Malaysia
+                    </h3>
+                </div>
+                <div class="card-body p-5">
+                    <div id="alert-container"></div>
+                    
+                    <!-- Demo Login Info -->
+                    <div class="card bg-light border-0 mb-4">
+                        <div class="card-body p-3">
+                            <h6 class="text-center mb-2">Demo Accounts</h6>
+                            <div class="row">
+                                <div class="col-6">
+                                    <small><strong>Restaurant:</strong><br>
+                                    restaurant@demo.com<br>
+                                    Demo123A</small>
+                                </div>
+                                <div class="col-6">
+                                    <small><strong>Influencer:</strong><br>
+                                    influencer@demo.com<br>
+                                    Demo123A</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form id="loginForm" class="needs-validation" novalidate>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="email" name="email" type="email" placeholder="name@example.com" required>
+                            <label for="email">Email address</label>
+                            <div class="invalid-feedback">Please enter a valid email address.</div>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="password" name="password" type="password" placeholder="Password" required>
+                            <label for="password">Password</label>
+                            <div class="invalid-feedback">Please enter your password.</div>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" id="remember" name="remember" type="checkbox">
+                            <label class="form-check-label" for="remember">
+                                Remember me
+                            </label>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary btn-lg" type="submit" id="loginBtn">
+                                <span class="btn-text">Login</span>
+                                <span class="btn-loading d-none">
+                                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                    Logging in...
+                                </span>
+                            </button>
+                            
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <button type="button" class="btn btn-outline-primary w-100" onclick="quickLogin('restaurant')">
+                                        <i class="fas fa-store me-1"></i>Demo Restaurant
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button type="button" class="btn btn-outline-success w-100" onclick="quickLogin('influencer')">
+                                        <i class="fas fa-camera me-1"></i>Demo Influencer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-3">
+                            <a href="#" class="small" onclick="showForgotPassword()">Forgot Password?</a>
+                        </div>
+                    </form>
+                    
+                    <!-- Forgot Password Form (Hidden by default) -->
+                    <form id="forgotPasswordForm" class="d-none mt-4">
+                        <h5 class="text-center mb-3">Reset Password</h5>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="resetEmail" name="resetEmail" type="email" placeholder="name@example.com" required>
+                            <label for="resetEmail">Email address</label>
+                            <div class="invalid-feedback">Please enter a valid email address.</div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-secondary flex-fill" type="button" onclick="showLoginForm()">
+                                Back to Login
+                            </button>
+                            <button class="btn btn-primary flex-fill" type="submit">
+                                Send Reset Link
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center py-3">
+                    <div class="small">
+                        <a href="/register">Need an account? Sign up!</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('loginForm');
+    const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+    const loginBtn = document.getElementById('loginBtn');
+    const btnText = loginBtn.querySelector('.btn-text');
+    const btnLoading = loginBtn.querySelector('.btn-loading');
+    
+    // Check if user is already logged in
+    if (authManager.isAuthenticated()) {
+        window.location.href = '/dashboard';
+        return;
+    }
+    
+    // Login form submission
+    loginForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        if (!loginForm.checkValidity()) {
+            e.stopPropagation();
+            loginForm.classList.add('was-validated');
+            return;
+        }
+        
+        await performLogin();
+    });
+    
+    // Forgot password form submission
+    forgotPasswordForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        if (!forgotPasswordForm.checkValidity()) {
+            e.stopPropagation();
+            forgotPasswordForm.classList.add('was-validated');
+            return;
+        }
+        
+        try {
+            const formData = new FormData(forgotPasswordForm);
+            const data = {
+                email: formData.get('resetEmail')
+            };
+            
+            showAlert('Password reset functionality is not available in demo mode.', 'info');
+            forgotPasswordForm.reset();
+            showLoginForm();
+            
+        } catch (error) {
+            console.error('Forgot password error:', error);
+            showAlert('Network error. Please try again.', 'danger');
+        }
+    });
+});
+
+async function performLogin() {
+    const loginBtn = document.getElementById('loginBtn');
+    const btnText = loginBtn.querySelector('.btn-text');
+    const btnLoading = loginBtn.querySelector('.btn-loading');
+    const loginForm = document.getElementById('loginForm');
+    
+    // Show loading state
+    btnText.classList.add('d-none');
+    btnLoading.classList.remove('d-none');
+    loginBtn.disabled = true;
+    
+    try {
+        const formData = new FormData(loginForm);
+        const data = {
+            email: formData.get('email'),
+            password: formData.get('password')
+        };
+        
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            // Store authentication data
+            authManager.login(result.token, result.user, result.profile);
+            
+            showAlert('Login successful! Redirecting...', 'success');
+            
+            // Redirect based on user type and profile completion
+            setTimeout(() => {
+                if (result.needsProfile) {
+                    window.location.href = '/profile/create';
+                } else {
+                    window.location.href = '/dashboard';
+                }
+            }, 1000);
+            
+        } else {
+            if (response.status === 403 && result.error === 'Account pending approval') {
+                showAlert('Your account is pending approval. You will receive an email once approved.', 'warning');
+            } else {
+                showAlert(result.error || 'Login failed. Please try again.', 'danger');
+            }
+        }
+        
+    } catch (error) {
+        console.error('Login error:', error);
+        showAlert('Network error. Please check your connection and try again.', 'danger');
+    } finally {
+        // Reset button state
+        btnText.classList.remove('d-none');
+        btnLoading.classList.add('d-none');
+        loginBtn.disabled = false;
+    }
+}
+
+function quickLogin(type) {
+    const emailField = document.getElementById('email');
+    const passwordField = document.getElementById('password');
+    
+    if (type === 'restaurant') {
+        emailField.value = 'restaurant@demo.com';
+        passwordField.value = 'Demo123A';
+    } else if (type === 'influencer') {
+        emailField.value = 'influencer@demo.com';
+        passwordField.value = 'Demo123A';
+    }
+    
+    performLogin();
+}
+
+function showForgotPassword() {
+    document.getElementById('loginForm').classList.add('d-none');
+    document.getElementById('forgotPasswordForm').classList.remove('d-none');
+}
+
+function showLoginForm() {
+    document.getElementById('forgotPasswordForm').classList.add('d-none');
+    document.getElementById('loginForm').classList.remove('d-none');
+}
+
+function showAlert(message, type) {
+    const alertContainer = document.getElementById('alert-container');
+    alertContainer.innerHTML = \`
+        <div class="alert alert-\${type} alert-dismissible fade show" role="alert">
+            \${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    \`;
+    
+    // Scroll to alert
+    alertContainer.scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+`}) %>

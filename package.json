@@ -1,0 +1,48 @@
+{
+  "name": "foodconnect-malaysia",
+  "version": "1.0.0",
+  "description": "A marketplace connecting Malaysian restaurants with food influencers",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "migrate": "node src/database/migrate.js",
+    "migrate:seed": "node src/database/migrate.js --seed",
+    "build": "echo 'Build completed'",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docker:build": "docker build -t foodconnect-malaysia .",
+    "docker:run": "docker-compose up -d",
+    "docker:stop": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "production:start": "NODE_ENV=production npm start",
+    "production:pm2": "pm2 start ecosystem.config.js --env production"
+  },
+  "keywords": [
+    "food",
+    "influencer",
+    "restaurant",
+    "malaysia",
+    "marketplace"
+  ],
+  "author": "FoodConnect Malaysia",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.0.1",
+    "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.1",
+    "multer": "^2.0.2",
+    "nodemailer": "^7.0.5",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

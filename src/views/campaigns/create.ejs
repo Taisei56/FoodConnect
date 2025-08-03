@@ -1,0 +1,136 @@
+<%- include('../layout', {body: `
+<div class="container">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-plus me-2"></i>Create New Campaign</h4>
+                </div>
+                <div class="card-body">
+                    <form id="campaign-form" class="needs-validation" novalidate>
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <label for="title" class="form-label">Campaign Title *</label>
+                                <input type="text" class="form-control" id="title" name="title" required
+                                       placeholder="e.g., Food Review for New Menu Launch">
+                                <div class="invalid-feedback">Please provide a campaign title.</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="budget" class="form-label">Budget (MYR) *</label>
+                                <input type="number" class="form-control" id="budget" name="budget" 
+                                       min="0" step="0.01" required placeholder="0.00">
+                                <div class="invalid-feedback">Please provide a valid budget.</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Campaign Description *</label>
+                            <textarea class="form-control" id="description" name="description" rows="4" required
+                                      placeholder="Describe what you're looking for in this collaboration..."></textarea>
+                            <div class="invalid-feedback">Please provide a campaign description.</div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="location" class="form-label">Location *</label>
+                                <input type="text" class="form-control" id="location" name="location" required
+                                       placeholder="e.g., Kuala Lumpur, Selangor">
+                                <div class="invalid-feedback">Please specify the location.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="application_deadline" class="form-label">Application Deadline *</label>
+                                <input type="date" class="form-control" id="application_deadline" 
+                                       name="application_deadline" required>
+                                <div class="invalid-feedback">Please set an application deadline.</div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="start_date" class="form-label">Campaign Start Date</label>
+                                <input type="date" class="form-control" id="start_date" name="start_date">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="end_date" class="form-label">Campaign End Date</label>
+                                <input type="date" class="form-control" id="end_date" name="end_date">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="requirements" class="form-label">Requirements</label>
+                            <textarea class="form-control" id="requirements" name="requirements" rows="3"
+                                      placeholder="Specific requirements for influencers (follower count, content type, etc.)"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="campaign_images" class="form-label">Campaign Images</label>
+                            <input type="file" class="form-control" id="campaign_images" name="campaign_images" 
+                                   accept="image/*" multiple>
+                            <div class="form-text">You can upload multiple images to showcase your campaign.</div>
+                            <div id="campaign_images-preview" class="mt-2"></div>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary" id="create-btn">
+                                <i class="fas fa-rocket me-2"></i>Create Campaign
+                            </button>
+                            <a href="/campaigns" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (!authManager.requireRole('restaurant')) return;
+    
+    // Set minimum date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('application_deadline').min = today;
+    document.getElementById('start_date').min = today;
+    document.getElementById('end_date').min = today;
+    
+    const form = document.getElementById('campaign-form');
+    form.addEventListener('submit', handleCampaignSubmit);
+});
+
+async function handleCampaignSubmit(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    if (!form.checkValidity()) {
+        form.classList.add('was-validated');
+        return;
+    }
+    
+    const createBtn = document.getElementById('create-btn');
+    setLoading(createBtn, true);
+    
+    try {
+        const formData = new FormData(form);
+        const response = await apiPostFormData('/api/campaigns', formData);
+        
+        if (response.ok) {
+            const data = await response.json();
+            showToast('Campaign created successfully!', 'success');
+            setTimeout(() => {
+                window.location.href = '/campaigns/' + data.id;
+            }, 1000);
+        } else {
+            const errorData = await response.json();
+            showToast(errorData.error || 'Failed to create campaign', 'error');
+        }
+    } catch (error) {
+        console.error('Campaign creation error:', error);
+        showToast('An error occurred while creating the campaign', 'error');
+    } finally {
+        setLoading(createBtn, false);
+    }
+}
+</script>
+`}) %>

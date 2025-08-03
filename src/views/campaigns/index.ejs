@@ -1,0 +1,303 @@
+<%- include('../layout', {body: `
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 mb-2">Browse Food Campaigns</h1>
+                    <p class="text-muted">Discover exciting collaboration opportunities with Malaysian restaurants</p>
+                </div>
+                <div id="authActions" style="display: none;">
+                    <a href="/campaigns/create" class="btn btn-primary" id="createCampaignBtn" style="display: none;">
+                        <i class="fas fa-plus me-2"></i>Create Campaign
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label for="statusFilter" class="form-label">Status</label>
+                            <select class="form-select" id="statusFilter">
+                                <option value="active">Active Campaigns</option>
+                                <option value="all">All Campaigns</option>
+                                <option value="closed">Closed Campaigns</option>
+                                <option value="completed">Completed Campaigns</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="locationFilter" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="locationFilter" placeholder="Enter location...">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="minBudgetFilter" class="form-label">Min Budget (RM)</label>
+                            <input type="number" class="form-control" id="minBudgetFilter" placeholder="0">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="maxBudgetFilter" class="form-label">Max Budget (RM)</label>
+                            <input type="number" class="form-control" id="maxBudgetFilter" placeholder="1000">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="d-grid">
+                                <button class="btn btn-outline-primary" onclick="applyFilters()">
+                                    <i class="fas fa-filter me-2"></i>Filter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Campaigns Grid -->
+    <div class="row" id="campaignsContainer">
+        <div class="col-12 text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading campaigns...</span>
+            </div>
+            <p class="mt-3">Loading campaigns...</p>
+        </div>
+    </div>
+
+    <!-- Load More Button -->
+    <div class="row mt-4" id="loadMoreContainer" style="display: none;">
+        <div class="col-12 text-center">
+            <button class="btn btn-outline-primary btn-lg" onclick="loadMoreCampaigns()">
+                <i class="fas fa-plus me-2"></i>Load More Campaigns
+            </button>
+        </div>
+    </div>
+
+    <!-- No Results -->
+    <div class="row" id="noResultsContainer" style="display: none;">
+        <div class="col-12 text-center py-5">
+            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+            <h4>No campaigns found</h4>
+            <p class="text-muted">Try adjusting your filters or check back later for new campaigns.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentPage = 1;
+let hasMoreCampaigns = true;
+let currentFilters = {};
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if user is restaurant owner to show create button
+    if (authManager.isAuthenticated() && authManager.isRestaurant()) {
+        document.getElementById('authActions').style.display = 'block';
+        document.getElementById('createCampaignBtn').style.display = 'inline-block';
+    }
+    
+    // Load initial campaigns
+    loadCampaigns();
+    
+    // Set up filter event listeners
+    setupFilterListeners();
+});
+
+function setupFilterListeners() {
+    const filters = ['statusFilter', 'locationFilter', 'minBudgetFilter', 'maxBudgetFilter'];
+    
+    filters.forEach(filterId => {
+        const element = document.getElementById(filterId);
+        if (element.type === 'text' || element.type === 'number') {
+            element.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    applyFilters();
+                }
+            });
+        }
+    });
+}
+
+async function loadCampaigns(append = false) {
+    try {
+        if (!append) {
+            document.getElementById('campaignsContainer').innerHTML = \`
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading campaigns...</span>
+                    </div>
+                    <p class="mt-3">Loading campaigns...</p>
+                </div>
+            \`;
+        }
+        
+        // Build query parameters
+        const params = new URLSearchParams();
+        
+        Object.keys(currentFilters).forEach(key => {
+            if (currentFilters[key]) {
+                params.append(key, currentFilters[key]);
+            }
+        });
+        
+        if (append) {
+            params.append('page', currentPage);
+        }
+        
+        const response = await fetch(\`/api/campaigns?\${params.toString()}\`);
+        const data = await response.json();
+        
+        if (response.ok) {
+            displayCampaigns(data.campaigns, append);
+            
+            // Handle pagination
+            hasMoreCampaigns = data.campaigns.length === 10; // Assuming 10 per page
+            document.getElementById('loadMoreContainer').style.display = 
+                hasMoreCampaigns ? 'block' : 'none';
+            
+            // Show no results if needed
+            if (!append && data.campaigns.length === 0) {
+                document.getElementById('noResultsContainer').style.display = 'block';
+                document.getElementById('loadMoreContainer').style.display = 'none';
+            } else {
+                document.getElementById('noResultsContainer').style.display = 'none';
+            }
+            
+        } else {
+            throw new Error(data.error || 'Failed to load campaigns');
+        }
+        
+    } catch (error) {
+        console.error('Error loading campaigns:', error);
+        document.getElementById('campaignsContainer').innerHTML = \`
+            <div class="col-12">
+                <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Error loading campaigns. Please try again later.
+                </div>
+            </div>
+        \`;
+    }
+}
+
+function displayCampaigns(campaigns, append = false) {
+    const container = document.getElementById('campaignsContainer');
+    
+    if (!append) {
+        container.innerHTML = '';
+    }
+    
+    campaigns.forEach(campaign => {
+        const campaignCard = createCampaignCard(campaign);
+        container.appendChild(campaignCard);
+    });
+}
+
+function createCampaignCard(campaign) {
+    const col = document.createElement('div');
+    col.className = 'col-lg-4 col-md-6 mb-4';
+    
+    const isExpired = campaign.deadline && new Date(campaign.deadline) < new Date();
+    const statusClass = campaign.status === 'active' ? 'success' : 
+                       campaign.status === 'closed' ? 'danger' : 'secondary';
+    
+    col.innerHTML = \`
+        <div class="card campaign-card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h5 class="card-title mb-0">\${campaign.title}</h5>
+                    <span class="badge bg-\${statusClass}">\${campaign.status.toUpperCase()}</span>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-store text-muted me-2"></i>
+                        <small class="text-muted">\${campaign.business_name}</small>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-map-marker-alt text-muted me-2"></i>
+                        <small class="campaign-location">\${campaign.location}</small>
+                    </div>
+                    \${campaign.deadline ? \`
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-calendar text-muted me-2"></i>
+                            <small class="campaign-deadline \${isExpired ? 'expired' : ''}">
+                                Deadline: \${formatDate(campaign.deadline)}
+                            </small>
+                        </div>
+                    \` : ''}
+                </div>
+                
+                <p class="card-text text-truncate-3">\${campaign.description}</p>
+                
+                <div class="campaign-budget mb-3">
+                    RM \${campaign.budget_per_influencer.toFixed(2)}
+                    \${campaign.meal_value > 0 ? \` + RM \${campaign.meal_value.toFixed(2)} meal value\` : ''}
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">
+                        \${campaign.application_count} application\${campaign.application_count !== 1 ? 's' : ''}
+                    </small>
+                    <div class="btn-group">
+                        <a href="/campaigns/\${campaign.id}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-eye me-1"></i>View
+                        </a>
+                        \${authManager.isAuthenticated() && authManager.isInfluencer() && campaign.status === 'active' && !isExpired ? \`
+                            <button class="btn btn-primary btn-sm" onclick="applyToCampaign(\${campaign.id})">
+                                <i class="fas fa-paper-plane me-1"></i>Apply
+                            </button>
+                        \` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>
+    \`;
+    
+    return col;
+}
+
+function applyFilters() {
+    currentFilters = {
+        status: document.getElementById('statusFilter').value,
+        location: document.getElementById('locationFilter').value,
+        min_budget: document.getElementById('minBudgetFilter').value,
+        max_budget: document.getElementById('maxBudgetFilter').value
+    };
+    
+    // Remove empty filters
+    Object.keys(currentFilters).forEach(key => {
+        if (!currentFilters[key]) {
+            delete currentFilters[key];
+        }
+    });
+    
+    currentPage = 1;
+    loadCampaigns();
+}
+
+function loadMoreCampaigns() {
+    if (hasMoreCampaigns) {
+        currentPage++;
+        loadCampaigns(true);
+    }
+}
+
+async function applyToCampaign(campaignId) {
+    if (!authManager.isAuthenticated()) {
+        window.location.href = '/login';
+        return;
+    }
+    
+    if (!authManager.isInfluencer()) {
+        showToast('Only influencers can apply to campaigns', 'warning');
+        return;
+    }
+    
+    // Redirect to campaign detail page for application
+    window.location.href = \`/campaigns/\${campaignId}?apply=true\`;
+}
+</script>
+`}) %>

@@ -1,0 +1,187 @@
+<%- include('../layout', {body: `
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h1 class="mb-4">Contact Us</h1>
+                    <p class="lead mb-4">Have questions or need support? We're here to help you succeed on FoodConnect Malaysia.</p>
+                    
+                    <div class="row mb-5">
+                        <div class="col-md-4 mb-4">
+                            <div class="card border-0 bg-light h-100 text-center">
+                                <div class="card-body">
+                                    <i class="fas fa-envelope fa-2x text-primary mb-3"></i>
+                                    <h5>Email Support</h5>
+                                    <p class="mb-2">support@foodconnect.my</p>
+                                    <small class="text-muted">Response within 24 hours</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card border-0 bg-light h-100 text-center">
+                                <div class="card-body">
+                                    <i class="fas fa-phone fa-2x text-success mb-3"></i>
+                                    <h5>Phone Support</h5>
+                                    <p class="mb-2">+60 3-XXXX XXXX</p>
+                                    <small class="text-muted">Mon-Fri, 9AM-6PM</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card border-0 bg-light h-100 text-center">
+                                <div class="card-body">
+                                    <i class="fas fa-map-marker-alt fa-2x text-info mb-3"></i>
+                                    <h5>Office</h5>
+                                    <p class="mb-2">Kuala Lumpur, Malaysia</p>
+                                    <small class="text-muted">By appointment only</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card bg-light border-0">
+                        <div class="card-body">
+                            <h3 class="mb-4">Send us a Message</h3>
+                            <form id="contact-form" class="needs-validation" novalidate>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="name" class="form-label">Full Name *</label>
+                                        <input type="text" class="form-control" id="name" name="name" required>
+                                        <div class="invalid-feedback">Please provide your name.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="email" class="form-label">Email Address *</label>
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                        <div class="invalid-feedback">Please provide a valid email.</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="user_type" class="form-label">I am a *</label>
+                                        <select class="form-select" id="user_type" name="user_type" required>
+                                            <option value="">Select...</option>
+                                            <option value="restaurant">Restaurant Owner</option>
+                                            <option value="influencer">Food Influencer</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                        <div class="invalid-feedback">Please select your user type.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="subject" class="form-label">Subject *</label>
+                                        <select class="form-select" id="subject" name="subject" required>
+                                            <option value="">Select Subject...</option>
+                                            <option value="account">Account Issues</option>
+                                            <option value="payment">Payment Support</option>
+                                            <option value="technical">Technical Problems</option>
+                                            <option value="partnership">Partnership Inquiries</option>
+                                            <option value="feedback">Feedback</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                        <div class="invalid-feedback">Please select a subject.</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="message" class="form-label">Message *</label>
+                                    <textarea class="form-control" id="message" name="message" rows="5" required
+                                              placeholder="Please describe your question or issue in detail..."></textarea>
+                                    <div class="invalid-feedback">Please provide your message.</div>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary" id="submit-btn">
+                                    <i class="fas fa-paper-plane me-2"></i>Send Message
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-5">
+                        <h3>Frequently Asked Questions</h3>
+                        <div class="accordion" id="faqAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                        How do I get started as a restaurant?
+                                    </button>
+                                </h2>
+                                <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Simply register for a restaurant account, complete your profile, and start posting campaigns to connect with food influencers in your area.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                        How do payments work?
+                                    </button>
+                                </h2>
+                                <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Restaurants set campaign budgets upfront. Once a collaboration is completed and approved, influencers receive their commission through our secure payment system.
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                        Is my information secure?
+                                    </button>
+                                </h2>
+                                <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body">
+                                        Yes! We use industry-standard security measures to protect your personal information and payment details. Your privacy is our priority.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('contact-form');
+    form.addEventListener('submit', handleContactSubmit);
+});
+
+async function handleContactSubmit(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    if (!form.checkValidity()) {
+        form.classList.add('was-validated');
+        return;
+    }
+    
+    const submitBtn = document.getElementById('submit-btn');
+    setLoading(submitBtn, true);
+    
+    try {
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+        
+        // This would typically send to a contact API endpoint
+        // For now, we'll simulate success
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        showToast('Message sent successfully! We will get back to you within 24 hours.', 'success');
+        form.reset();
+        form.classList.remove('was-validated');
+        
+    } catch (error) {
+        console.error('Contact form error:', error);
+        showToast('Failed to send message. Please try again or contact us directly.', 'error');
+    } finally {
+        setLoading(submitBtn, false);
+    }
+}
+</script>
+`}) %>

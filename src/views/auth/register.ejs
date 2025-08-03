@@ -1,0 +1,280 @@
+<%- include('../layout', {body: `
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                <div class="card-header text-center bg-primary text-white">
+                    <h3 class="fw-light my-4">
+                        <i class="fas fa-user-plus me-2"></i>Join FoodConnect Malaysia
+                    </h3>
+                </div>
+                <div class="card-body p-5">
+                    <div id="alert-container"></div>
+                    
+                    <!-- User Type Selection -->
+                    <div class="mb-4">
+                        <h5 class="mb-3">I want to join as:</h5>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="card user-type-card" data-type="restaurant">
+                                    <div class="card-body text-center p-4">
+                                        <i class="fas fa-store fa-3x text-primary mb-3"></i>
+                                        <h5>Restaurant Owner</h5>
+                                        <p class="small text-muted">Post campaigns and find influencers</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card user-type-card" data-type="influencer">
+                                    <div class="card-body text-center p-4">
+                                        <i class="fas fa-camera fa-3x text-success mb-3"></i>
+                                        <h5>Food Influencer</h5>
+                                        <p class="small text-muted">Apply to campaigns and create content</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form id="registerForm" class="needs-validation" novalidate style="display: none;">
+                        <input type="hidden" id="user_type" name="user_type" value="">
+                        
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="email" name="email" type="email" placeholder="name@example.com" required>
+                            <label for="email">Email address</label>
+                            <div class="invalid-feedback">Please enter a valid email address.</div>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="password" name="password" type="password" placeholder="Password" required minlength="8">
+                            <label for="password">Password</label>
+                            <div class="invalid-feedback">Password must be at least 8 characters long with uppercase, lowercase, and number.</div>
+                            <div class="form-text">Must contain uppercase, lowercase, and number</div>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="confirmPassword" name="confirmPassword" type="password" placeholder="Confirm Password" required>
+                            <label for="confirmPassword">Confirm Password</label>
+                            <div class="invalid-feedback">Passwords do not match.</div>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" id="terms" type="checkbox" required>
+                            <label class="form-check-label" for="terms">
+                                I agree to the <a href="/terms" target="_blank">Terms of Service</a> and <a href="/privacy" target="_blank">Privacy Policy</a>
+                            </label>
+                            <div class="invalid-feedback">You must agree to the terms to continue.</div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary btn-lg" type="submit" id="registerBtn">
+                                <span class="btn-text">Create Account</span>
+                                <span class="btn-loading d-none">
+                                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                    Creating Account...
+                                </span>
+                            </button>
+                            <button class="btn btn-outline-secondary" type="button" id="backBtn">
+                                <i class="fas fa-arrow-left me-2"></i>Back to User Type
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center py-3">
+                    <div class="small">
+                        <a href="/login">Have an account? Go to login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.user-type-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.user-type-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.user-type-card.selected {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.user-type-card.selected[data-type="influencer"] {
+    border-color: #198754;
+    background-color: rgba(25, 135, 84, 0.05);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const userTypeCards = document.querySelectorAll('.user-type-card');
+    const registerForm = document.getElementById('registerForm');
+    const userTypeInput = document.getElementById('user_type');
+    const registerBtn = document.getElementById('registerBtn');
+    const backBtn = document.getElementById('backBtn');
+    const btnText = registerBtn.querySelector('.btn-text');
+    const btnLoading = registerBtn.querySelector('.btn-loading');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    
+    // Check if user is already logged in
+    if (authManager.isAuthenticated()) {
+        window.location.href = '/dashboard';
+        return;
+    }
+    
+    // Check URL parameters for user type
+    const urlParams = new URLSearchParams(window.location.search);
+    const preselectedType = urlParams.get('type');
+    if (preselectedType && ['restaurant', 'influencer'].includes(preselectedType)) {
+        selectUserType(preselectedType);
+    }
+    
+    // User type selection
+    userTypeCards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            e.preventDefault();
+            const type = this.dataset.type;
+            console.log('Card clicked, type:', type); // Debug log
+            selectUserType(type);
+        });
+    });
+    
+    function selectUserType(type) {
+        console.log('selectUserType called with:', type); // Debug log
+        userTypeCards.forEach(card => card.classList.remove('selected'));
+        const selectedCard = document.querySelector(\`[data-type="\${type}"]\`);
+        if (selectedCard) {
+            selectedCard.classList.add('selected');
+        } else {
+            console.error('Could not find card with type:', type);
+        }
+        userTypeInput.value = type;
+        console.log('Form display before:', registerForm.style.display); // Debug log
+        registerForm.style.display = 'block';
+        console.log('Form display after:', registerForm.style.display); // Debug log
+        registerForm.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Back button
+    backBtn.addEventListener('click', function() {
+        registerForm.style.display = 'none';
+        userTypeCards.forEach(card => card.classList.remove('selected'));
+        userTypeInput.value = '';
+    });
+    
+    // Password validation
+    passwordInput.addEventListener('input', validatePassword);
+    confirmPasswordInput.addEventListener('input', validatePasswordMatch);
+    
+    function validatePassword() {
+        const password = passwordInput.value;
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$/;
+        
+        if (password && !regex.test(password)) {
+            passwordInput.setCustomValidity('Password must contain at least one uppercase letter, one lowercase letter, and one number');
+        } else {
+            passwordInput.setCustomValidity('');
+        }
+        
+        validatePasswordMatch();
+    }
+    
+    function validatePasswordMatch() {
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+        
+        if (confirmPassword && password !== confirmPassword) {
+            confirmPasswordInput.setCustomValidity('Passwords do not match');
+        } else {
+            confirmPasswordInput.setCustomValidity('');
+        }
+    }
+    
+    // Form submission
+    registerForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        if (!registerForm.checkValidity()) {
+            e.stopPropagation();
+            registerForm.classList.add('was-validated');
+            return;
+        }
+        
+        // Show loading state
+        btnText.classList.add('d-none');
+        btnLoading.classList.remove('d-none');
+        registerBtn.disabled = true;
+        
+        try {
+            const formData = new FormData(registerForm);
+            const data = {
+                email: formData.get('email'),
+                password: formData.get('password'),
+                user_type: formData.get('user_type')
+            };
+            
+            const response = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                showAlert(\`Registration successful! Please check your email for account approval. You will be notified once your \${data.user_type} account is approved.\`, 'success');
+                
+                // Reset form after short delay
+                setTimeout(() => {
+                    registerForm.reset();
+                    registerForm.classList.remove('was-validated');
+                    registerForm.style.display = 'none';
+                    userTypeCards.forEach(card => card.classList.remove('selected'));
+                    
+                    // Redirect to login
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                }, 3000);
+                
+            } else {
+                showAlert(result.error || 'Registration failed. Please try again.', 'danger');
+            }
+            
+        } catch (error) {
+            console.error('Registration error:', error);
+            showAlert('Network error. Please check your connection and try again.', 'danger');
+        } finally {
+            // Reset button state
+            btnText.classList.remove('d-none');
+            btnLoading.classList.add('d-none');
+            registerBtn.disabled = false;
+        }
+    });
+    
+    function showAlert(message, type) {
+        const alertContainer = document.getElementById('alert-container');
+        alertContainer.innerHTML = \`
+            <div class="alert alert-\${type} alert-dismissible fade show" role="alert">
+                \${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        \`;
+        
+        // Scroll to alert
+        alertContainer.scrollIntoView({ behavior: 'smooth' });
+    }
+});
+</script>
+`}) %>

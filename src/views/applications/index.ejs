@@ -1,0 +1,342 @@
+<%- include('../layout', {body: `
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <h2><i class="fas fa-paper-plane me-2"></i>My Applications</h2>
+            <p class="text-muted">Track your campaign applications and collaboration status</p>
+            
+            <!-- Payment Instructions for Restaurants -->
+            <div id="restaurant-payment-info" style="display: none;" class="alert alert-success">
+                <h6><i class="fas fa-handshake me-2"></i>Commission Payment Process</h6>
+                <p class="mb-2"><strong>When a collaboration is completed:</strong></p>
+                <ol class="mb-2">
+                    <li>Mark the application as "Completed" ✅</li>
+                    <li>Commission automatically calculated (default: 15%) 💰</li>
+                    <li>Contact influencer directly for payment details 📞</li>
+                    <li>Send payment via bank transfer/preferred method 💳</li>
+                    <li>Mark commission as "Paid" in system ✓</li>
+                </ol>
+                <small><i class="fas fa-info-circle me-1"></i>Direct payments mean zero platform fees for both parties!</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-lg-3">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filters</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="status-filter" class="form-label">Status</label>
+                        <select class="form-select" id="status-filter">
+                            <option value="">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="accepted">Accepted</option>
+                            <option value="rejected">Rejected</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="date-filter" class="form-label">Applied Date</label>
+                        <select class="form-select" id="date-filter">
+                            <option value="">All Time</option>
+                            <option value="7">Last 7 days</option>
+                            <option value="30">Last 30 days</option>
+                            <option value="90">Last 3 months</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn btn-primary w-100" onclick="applyFilters()">
+                        <i class="fas fa-search me-2"></i>Apply Filters
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <div id="stats-container">
+                        <div class="text-center">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-9">
+            <div id="applications-container">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading applications...</p>
+                </div>
+            </div>
+            
+            <div id="pagination-container" class="mt-4"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentPage = 1;
+let currentFilters = {};
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (!authManager.requireAuth()) return;
+    
+    // Show payment instructions for restaurant users
+    if (authManager.getCurrentUser()?.user_type === 'restaurant') {
+        document.getElementById('restaurant-payment-info').style.display = 'block';
+    }
+    
+    loadApplications();
+    loadApplicationStats();
+});
+
+async function loadApplications(page = 1, filters = {}) {
+    const container = document.getElementById('applications-container');
+    
+    if (page === 1) {
+        container.innerHTML = \`
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Loading applications...</p>
+            </div>
+        \`;
+    }
+    
+    try {
+        const params = new URLSearchParams({
+            page: page,
+            ...filters
+        });
+        
+        const response = await apiGet('/api/applications?' + params);
+        const data = await response.json();
+        
+        displayApplications(data.applications || []);
+        updatePagination(data.pagination);
+        currentPage = page;
+        currentFilters = filters;
+        
+    } catch (error) {
+        console.error('Failed to load applications:', error);
+        container.innerHTML = 
+            '<div class="alert alert-danger">Failed to load applications. Please try again.</div>';
+    }
+}
+
+async function loadApplicationStats() {
+    try {
+        const response = await apiGet('/api/applications/stats');
+        const stats = await response.json();
+        
+        displayStats(stats);
+    } catch (error) {
+        console.error('Failed to load stats:', error);
+        document.getElementById('stats-container').innerHTML = 
+            '<div class="text-danger small">Failed to load stats</div>';
+    }
+}
+
+function displayStats(stats) {
+    const container = document.getElementById('stats-container');
+    
+    container.innerHTML = \`
+        <div class="row text-center">
+            <div class="col-6 mb-3">
+                <div class="stat-number text-primary">\${stats.total || 0}</div>
+                <small class="text-muted">Total</small>
+            </div>
+            <div class="col-6 mb-3">
+                <div class="stat-number text-warning">\${stats.pending || 0}</div>
+                <small class="text-muted">Pending</small>
+            </div>
+            <div class="col-6 mb-3">
+                <div class="stat-number text-success">\${stats.accepted || 0}</div>
+                <small class="text-muted">Accepted</small>
+            </div>
+            <div class="col-6 mb-3">
+                <div class="stat-number text-danger">\${stats.rejected || 0}</div>
+                <small class="text-muted">Rejected</small>
+            </div>
+        </div>
+    \`;
+}
+
+function displayApplications(applications) {
+    const container = document.getElementById('applications-container');
+    
+    if (applications.length === 0) {
+        container.innerHTML = \`
+            <div class="text-center py-5">
+                <i class="fas fa-paper-plane fa-3x text-muted mb-3"></i>
+                <h5>No Applications Found</h5>
+                <p class="text-muted">You haven't applied to any campaigns yet.</p>
+                <a href="/campaigns" class="btn btn-primary">
+                    <i class="fas fa-search me-2"></i>Browse Campaigns
+                </a>
+            </div>
+        \`;
+        return;
+    }
+    
+    container.innerHTML = applications.map(application => \`
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-0">
+                                <a href="/campaigns/\${application.campaign_id}" class="text-decoration-none">
+                                    \${application.campaign_title}
+                                </a>
+                            </h5>
+                            <span class="status-badge status-\${application.status}">
+                                \${application.status.charAt(0).toUpperCase() + application.status.slice(1)}
+                            </span>
+                        </div>
+                        
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-store me-1"></i>\${application.restaurant_name}
+                        </p>
+                        
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-map-marker-alt me-1"></i>\${application.campaign_location}
+                        </p>
+                        
+                        <p class="card-text text-truncate-2">\${application.campaign_description}</p>
+                        
+                        \${application.message ? \`
+                            <div class="application-message mt-3">
+                                <strong>Your Message:</strong><br>
+                                \${application.message}
+                            </div>
+                        \` : ''}
+                    </div>
+                    
+                    <div class="col-md-4 text-end">
+                        <div class="mb-2">
+                            <div class="campaign-budget">\${formatCurrency(application.campaign_budget)}</div>
+                            <small class="text-muted">Budget</small>
+                        </div>
+                        
+                        <div class="mb-2">
+                            <small class="text-muted">
+                                Applied: \${formatDate(application.applied_date)}
+                            </small>
+                        </div>
+                        
+                        <div class="d-flex flex-column gap-2">
+                            <a href="/campaigns/\${application.campaign_id}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye me-1"></i>View Campaign
+                            </a>
+                            
+                            \${application.status === 'accepted' ? \`
+                                <button class="btn btn-sm btn-success" onclick="viewCollaboration('\${application.id}')">
+                                    <i class="fas fa-handshake me-1"></i>View Collaboration
+                                </button>
+                            \` : ''}
+                            
+                            \${application.status === 'pending' ? \`
+                                <button class="btn btn-sm btn-outline-danger" onclick="withdrawApplication('\${application.id}')">
+                                    <i class="fas fa-times me-1"></i>Withdraw
+                                </button>
+                            \` : ''}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    \`).join('');
+}
+
+function updatePagination(pagination) {
+    const container = document.getElementById('pagination-container');
+    
+    if (!pagination || pagination.totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+    }
+    
+    let paginationHTML = '<nav><ul class="pagination justify-content-center">';
+    
+    // Previous button
+    if (pagination.currentPage > 1) {
+        paginationHTML += \`
+            <li class="page-item">
+                <a class="page-link" href="#" onclick="loadApplications(\${pagination.currentPage - 1}, currentFilters)">Previous</a>
+            </li>
+        \`;
+    }
+    
+    // Page numbers
+    for (let i = Math.max(1, pagination.currentPage - 2); i <= Math.min(pagination.totalPages, pagination.currentPage + 2); i++) {
+        paginationHTML += \`
+            <li class="page-item \${i === pagination.currentPage ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="loadApplications(\${i}, currentFilters)">\${i}</a>
+            </li>
+        \`;
+    }
+    
+    // Next button
+    if (pagination.currentPage < pagination.totalPages) {
+        paginationHTML += \`
+            <li class="page-item">
+                <a class="page-link" href="#" onclick="loadApplications(\${pagination.currentPage + 1}, currentFilters)">Next</a>
+            </li>
+        \`;
+    }
+    
+    paginationHTML += '</ul></nav>';
+    container.innerHTML = paginationHTML;
+}
+
+function applyFilters() {
+    const filters = {};
+    
+    const status = document.getElementById('status-filter').value;
+    if (status) filters.status = status;
+    
+    const dateRange = document.getElementById('date-filter').value;
+    if (dateRange) filters.days = dateRange;
+    
+    loadApplications(1, filters);
+}
+
+async function withdrawApplication(applicationId) {
+    if (!confirm('Are you sure you want to withdraw this application?')) return;
+    
+    try {
+        const response = await apiDelete('/api/applications/' + applicationId);
+        
+        if (response.ok) {
+            showToast('Application withdrawn successfully', 'success');
+            loadApplications(currentPage, currentFilters);
+            loadApplicationStats();
+        } else {
+            const errorData = await response.json();
+            showToast(errorData.error || 'Failed to withdraw application', 'error');
+        }
+    } catch (error) {
+        console.error('Withdraw application error:', error);
+        showToast('Failed to withdraw application', 'error');
+    }
+}
+
+function viewCollaboration(applicationId) {
+    window.location.href = '/commissions?application=' + applicationId;
+}
+</script>
+`}) %>

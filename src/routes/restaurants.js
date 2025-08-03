@@ -1,0 +1,40 @@
+const express = require('express');
+const RestaurantController = require('../controllers/restaurantController');
+const { authenticateToken, requireRole, optionalAuth } = require('../middleware/auth');
+const { uploadSingle } = require('../middleware/upload');
+const { validateRestaurantProfile, validateId } = require('../middleware/validation');
+
+const router = express.Router();
+
+router.post('/profile', [
+    authenticateToken,
+    requireRole('restaurant'),
+    uploadSingle('profile_image'),
+    validateRestaurantProfile
+], RestaurantController.createProfile);
+
+router.get('/profile', [
+    authenticateToken,
+    requireRole('restaurant')
+], RestaurantController.getProfile);
+
+router.put('/profile', [
+    authenticateToken,
+    requireRole('restaurant'),
+    uploadSingle('profile_image'),
+    validateRestaurantProfile
+], RestaurantController.updateProfile);
+
+router.delete('/profile', [
+    authenticateToken,
+    requireRole('restaurant')
+], RestaurantController.deleteProfile);
+
+router.get('/', optionalAuth, RestaurantController.getAllRestaurants);
+
+router.get('/:id', [
+    validateId,
+    optionalAuth
+], RestaurantController.getRestaurantById);
+
+module.exports = router;

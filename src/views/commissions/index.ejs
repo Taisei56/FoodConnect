@@ -1,0 +1,366 @@
+<%- include('../layout', {body: `
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <h2><i class="fas fa-dollar-sign me-2"></i>Commission Tracking</h2>
+            <div class="alert alert-info">
+                <h6><i class="fas fa-info-circle me-2"></i>How Payments Work</h6>
+                <p class="mb-2"><strong>Simple 3-Step Process:</strong></p>
+                <ol class="mb-0">
+                    <li><strong>Pending:</strong> Commission earned after campaign completion</li>
+                    <li><strong>Approved:</strong> Restaurant confirms payment details with you directly</li> 
+                    <li><strong>Paid:</strong> Payment sent via bank transfer/preferred method & marked complete</li>
+                </ol>
+                <hr class="my-2">
+                <small><i class="fas fa-handshake me-1"></i>All payments are handled directly between you and the restaurant - no fees, no delays!</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-lg-3">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Earnings Overview</h5>
+                </div>
+                <div class="card-body">
+                    <div id="earnings-overview">
+                        <div class="text-center">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filters</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="status-filter" class="form-label">Payment Status</label>
+                        <select class="form-select" id="status-filter">
+                            <option value="">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="paid">Paid</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="period-filter" class="form-label">Time Period</label>
+                        <select class="form-select" id="period-filter">
+                            <option value="">All Time</option>
+                            <option value="30">Last 30 days</option>
+                            <option value="90">Last 3 months</option>
+                            <option value="365">Last year</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn btn-primary w-100" onclick="applyFilters()">
+                        <i class="fas fa-search me-2"></i>Apply Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-9">
+            <div id="commissions-container">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading commissions...</p>
+                </div>
+            </div>
+            
+            <div id="pagination-container" class="mt-4"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentPage = 1;
+let currentFilters = {};
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (!authManager.requireAuth()) return;
+    
+    loadCommissions();
+    loadEarningsOverview();
+});
+
+async function loadCommissions(page = 1, filters = {}) {
+    const container = document.getElementById('commissions-container');
+    
+    if (page === 1) {
+        container.innerHTML = \`
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Loading commissions...</p>
+            </div>
+        \`;
+    }
+    
+    try {
+        const params = new URLSearchParams({
+            page: page,
+            ...filters
+        });
+        
+        const response = await apiGet('/api/commissions?' + params);
+        const data = await response.json();
+        
+        displayCommissions(data.commissions || []);
+        updatePagination(data.pagination);
+        currentPage = page;
+        currentFilters = filters;
+        
+    } catch (error) {
+        console.error('Failed to load commissions:', error);
+        container.innerHTML = 
+            '<div class="alert alert-danger">Failed to load commissions. Please try again.</div>';
+    }
+}
+
+async function loadEarningsOverview() {
+    try {
+        const response = await apiGet('/api/commissions/overview');
+        const overview = await response.json();
+        
+        displayEarningsOverview(overview);
+    } catch (error) {
+        console.error('Failed to load earnings overview:', error);
+        document.getElementById('earnings-overview').innerHTML = 
+            '<div class="text-danger small">Failed to load overview</div>';
+    }
+}
+
+function displayEarningsOverview(overview) {
+    const container = document.getElementById('earnings-overview');
+    
+    container.innerHTML = \`
+        <div class="text-center mb-3">
+            <div class="stat-number text-success">\${formatCurrency(overview.total_earned || 0)}</div>
+            <small class="text-muted d-block">Total Earned</small>
+        </div>
+        
+        <div class="row text-center">
+            <div class="col-6 mb-2">
+                <div class="stat-number text-warning">\${formatCurrency(overview.pending || 0)}</div>
+                <small class="text-muted">Pending</small>
+            </div>
+            <div class="col-6 mb-2">
+                <div class="stat-number text-info">\${formatCurrency(overview.approved || 0)}</div>
+                <small class="text-muted">Approved</small>
+            </div>
+        </div>
+        
+        <div class="text-center mt-3">
+            <small class="text-muted">
+                <i class="fas fa-calendar me-1"></i>
+                This Month: \${formatCurrency(overview.this_month || 0)}
+            </small>
+        </div>
+    \`;
+}
+
+function displayCommissions(commissions) {
+    const container = document.getElementById('commissions-container');
+    
+    if (commissions.length === 0) {
+        container.innerHTML = \`
+            <div class="text-center py-5">
+                <i class="fas fa-dollar-sign fa-3x text-muted mb-3"></i>
+                <h5>No Commissions Found</h5>
+                <p class="text-muted">Complete collaborations to start earning commissions.</p>
+                <a href="/campaigns" class="btn btn-primary">
+                    <i class="fas fa-search me-2"></i>Browse Campaigns
+                </a>
+            </div>
+        \`;
+        return;
+    }
+    
+    container.innerHTML = commissions.map(commission => \`
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h5 class="card-title mb-2">
+                            <a href="/campaigns/\${commission.campaign_id}" class="text-decoration-none">
+                                \${commission.campaign_title}
+                            </a>
+                        </h5>
+                        
+                        <p class="text-muted mb-1">
+                            <i class="fas fa-store me-1"></i>\${commission.restaurant_name}
+                        </p>
+                        
+                        <p class="text-muted mb-1">
+                            <i class="fas fa-calendar me-1"></i>Completed: \${formatDate(commission.completion_date)}
+                        </p>
+                        
+                        \${commission.payment_date ? \`
+                            <p class="text-muted mb-1">
+                                <i class="fas fa-credit-card me-1"></i>Paid: \${formatDate(commission.payment_date)}
+                            </p>
+                        \` : ''}
+                    </div>
+                    
+                    <div class="col-md-3 text-center">
+                        <div class="commission-amount">\${formatCurrency(commission.amount)}</div>
+                        <small class="text-muted">Commission Amount</small>
+                        
+                        \${commission.bonus_amount ? \`
+                            <div class="mt-1">
+                                <small class="text-success">
+                                    +\${formatCurrency(commission.bonus_amount)} bonus
+                                </small>
+                            </div>
+                        \` : ''}
+                    </div>
+                    
+                    <div class="col-md-3 text-end">
+                        <span class="status-badge status-\${commission.status}">
+                            \${commission.status.charAt(0).toUpperCase() + commission.status.slice(1)}
+                        </span>
+                        
+                        <div class="mt-2">
+                            \${commission.status === 'pending' ? \`
+                                <small class="text-muted d-block">
+                                    <i class="fas fa-clock me-1"></i>Awaiting restaurant approval
+                                </small>
+                                <small class="text-info d-block mt-1">
+                                    Restaurant will contact you for payment details
+                                </small>
+                            \` : commission.status === 'approved' ? \`
+                                <small class="text-primary d-block">
+                                    <i class="fas fa-check me-1"></i>Payment approved!
+                                </small>
+                                <small class="text-muted d-block mt-1">
+                                    Restaurant will send payment directly
+                                </small>
+                            \` : commission.status === 'paid' ? \`
+                                <small class="text-success d-block">
+                                    <i class="fas fa-check-double me-1"></i>Payment completed
+                                </small>
+                                <button class="btn btn-sm btn-outline-success mt-1" onclick="downloadReceipt('\${commission.id}')">
+                                    <i class="fas fa-download me-1"></i>Receipt
+                                </button>
+                            \` : ''}
+                        </div>
+                        
+                        \${commission.notes ? \`
+                            <div class="mt-2">
+                                <small class="text-muted" title="\${commission.notes}">
+                                    <i class="fas fa-sticky-note me-1"></i>Notes
+                                </small>
+                            </div>
+                        \` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>
+    \`).join('');
+}
+
+function updatePagination(pagination) {
+    const container = document.getElementById('pagination-container');
+    
+    if (!pagination || pagination.totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+    }
+    
+    let paginationHTML = '<nav><ul class="pagination justify-content-center">';
+    
+    // Previous button
+    if (pagination.currentPage > 1) {
+        paginationHTML += \`
+            <li class="page-item">
+                <a class="page-link" href="#" onclick="loadCommissions(\${pagination.currentPage - 1}, currentFilters)">Previous</a>
+            </li>
+        \`;
+    }
+    
+    // Page numbers
+    for (let i = Math.max(1, pagination.currentPage - 2); i <= Math.min(pagination.totalPages, pagination.currentPage + 2); i++) {
+        paginationHTML += \`
+            <li class="page-item \${i === pagination.currentPage ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="loadCommissions(\${i}, currentFilters)">\${i}</a>
+            </li>
+        \`;
+    }
+    
+    // Next button
+    if (pagination.currentPage < pagination.totalPages) {
+        paginationHTML += \`
+            <li class="page-item">
+                <a class="page-link" href="#" onclick="loadCommissions(\${pagination.currentPage + 1}, currentFilters)">Next</a>
+            </li>
+        \`;
+    }
+    
+    paginationHTML += '</ul></nav>';
+    container.innerHTML = paginationHTML;
+}
+
+function applyFilters() {
+    const filters = {};
+    
+    const status = document.getElementById('status-filter').value;
+    if (status) filters.payment_status = status;
+    
+    const period = document.getElementById('period-filter').value;
+    if (period) filters.days = period;
+    
+    loadCommissions(1, filters);
+}
+
+async function requestPayment(commissionId) {
+    try {
+        const response = await apiPost('/api/commissions/' + commissionId + '/request-payment', {});
+        
+        if (response.ok) {
+            showToast('Payment request submitted successfully', 'success');
+            loadCommissions(currentPage, currentFilters);
+            loadEarningsOverview();
+        } else {
+            const errorData = await response.json();
+            showToast(errorData.error || 'Failed to request payment', 'error');
+        }
+    } catch (error) {
+        console.error('Request payment error:', error);
+        showToast('Failed to request payment', 'error');
+    }
+}
+
+async function downloadReceipt(commissionId) {
+    try {
+        const response = await apiGet('/api/commissions/' + commissionId + '/receipt');
+        
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = \`receipt-\${commissionId}.pdf\`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } else {
+            showToast('Failed to download receipt', 'error');
+        }
+    } catch (error) {
+        console.error('Download receipt error:', error);
+        showToast('Failed to download receipt', 'error');
+    }
+}
+</script>
+`}) %>

@@ -1,0 +1,113 @@
+<%- include('../layout', {body: `
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-user-edit me-2"></i>Edit Profile</h4>
+                </div>
+                <div class="card-body">
+                    <form id="profile-form" class="needs-validation" novalidate>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Full Name *</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                                <div class="invalid-feedback">Please provide your full name.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" name="phone">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="location" name="location" 
+                                   placeholder="e.g., Kuala Lumpur, Malaysia">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="bio" class="form-label">Bio</label>
+                            <textarea class="form-control" id="bio" name="bio" rows="4" 
+                                      placeholder="Tell us about yourself..."></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="profile_picture" class="form-label">Profile Picture</label>
+                            <input type="file" class="form-control" id="profile_picture" name="profile_picture" 
+                                   accept="image/*">
+                            <div id="profile_picture-preview" class="mt-2"></div>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary" id="save-btn">
+                                <i class="fas fa-save me-2"></i>Save Profile
+                            </button>
+                            <a href="/profile" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (!authManager.requireAuth()) return;
+    
+    loadExistingProfile();
+    
+    const form = document.getElementById('profile-form');
+    form.addEventListener('submit', handleProfileSubmit);
+});
+
+async function loadExistingProfile() {
+    try {
+        const response = await apiGet('/api/auth/me');
+        const data = await response.json();
+        
+        if (data.profile) {
+            populateForm(document.getElementById('profile-form'), data.profile);
+        }
+    } catch (error) {
+        console.error('Failed to load existing profile:', error);
+    }
+}
+
+async function handleProfileSubmit(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    if (!form.checkValidity()) {
+        form.classList.add('was-validated');
+        return;
+    }
+    
+    const saveBtn = document.getElementById('save-btn');
+    setLoading(saveBtn, true);
+    
+    try {
+        const formData = new FormData(form);
+        const response = await apiPostFormData('/api/auth/profile', formData);
+        
+        if (response.ok) {
+            showToast('Profile updated successfully!', 'success');
+            setTimeout(() => {
+                window.location.href = '/profile';
+            }, 1000);
+        } else {
+            const errorData = await response.json();
+            showToast(errorData.error || 'Failed to update profile', 'error');
+        }
+    } catch (error) {
+        console.error('Profile update error:', error);
+        showToast('An error occurred while updating your profile', 'error');
+    } finally {
+        setLoading(saveBtn, false);
+    }
+}
+</script>
+`}) %>

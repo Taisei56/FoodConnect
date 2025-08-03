@@ -1,0 +1,233 @@
+<%- include('../layout', {body: `
+<div class="container">
+    <div id="influencer-content">
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading influencer profile...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const influencerId = '<%= influencerId %>';
+    loadInfluencerDetails(influencerId);
+});
+
+async function loadInfluencerDetails(influencerId) {
+    try {
+        const response = await apiGet('/api/influencers/' + influencerId);
+        
+        if (response.ok) {
+            const influencer = await response.json();
+            displayInfluencerDetails(influencer);
+            loadInfluencerPortfolio(influencerId);
+        } else {
+            throw new Error('Influencer not found');
+        }
+    } catch (error) {
+        console.error('Failed to load influencer:', error);
+        document.getElementById('influencer-content').innerHTML = 
+            '<div class="alert alert-danger">Influencer profile not found or failed to load.</div>';
+    }
+}
+
+function displayInfluencerDetails(influencer) {
+    const content = document.getElementById('influencer-content');
+    const isRestaurant = authManager.user && authManager.user.user_type === 'restaurant';
+    
+    content.innerHTML = \`
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <img src="\${influencer.profile_picture || '/images/default-avatar.png'}" 
+                             alt="\${influencer.name}" 
+                             class="profile-image mb-3">
+                        <h4>\${influencer.name}</h4>
+                        <p class="text-muted">\${influencer.primary_platform || 'Content Creator'}</p>
+                        
+                        <div class="mb-3">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <div class="stat-number text-primary">\${formatNumber(influencer.followers_count) || '0'}</div>
+                                    <small class="text-muted">Followers</small>
+                                </div>
+                                <div class="col-4">
+                                    <div class="stat-number text-success">\${influencer.collaborations || 0}</div>
+                                    <small class="text-muted">Collabs</small>
+                                </div>
+                                <div class="col-4">
+                                    <div class="stat-number text-info">\${influencer.avg_engagement || '0'}%</div>
+                                    <small class="text-muted">Engagement</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        \${isRestaurant ? \`
+                            <button class="btn btn-primary btn-lg w-100 mb-3" onclick="contactInfluencer('\${influencer.id}')">
+                                <i class="fas fa-envelope me-2"></i>Contact for Collaboration
+                            </button>
+                        \` : ''}
+                        
+                        <div class="contact-info text-start">
+                            <p class="mb-2">
+                                <i class="fas fa-envelope text-muted me-2"></i>
+                                <a href="mailto:\${influencer.email}">\${influencer.email}</a>
+                            </p>
+                            \${influencer.phone ? \`
+                                <p class="mb-2">
+                                    <i class="fas fa-phone text-muted me-2"></i>\${influencer.phone}
+                                </p>
+                            \` : ''}
+                            \${influencer.location ? \`
+                                <p class="mb-2">
+                                    <i class="fas fa-map-marker-alt text-muted me-2"></i>\${influencer.location}
+                                </p>
+                            \` : ''}
+                        </div>
+                        
+                        \${influencer.social_links ? \`
+                            <div class="social-links mt-3">
+                                <h6>Social Media</h6>
+                                <div class="d-flex justify-content-center gap-2 flex-wrap">
+                                    \${Object.entries(JSON.parse(influencer.social_links)).map(([platform, url]) => \`
+                                        <a href="\${url}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                            <i class="fab fa-\${platform} me-1"></i>\${platform.charAt(0).toUpperCase() + platform.slice(1)}
+                                        </a>
+                                    \`).join('')}
+                                </div>
+                            </div>
+                        \` : ''}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">About \${influencer.name}</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>\${influencer.bio || 'No bio available for this influencer.'}</p>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>Primary Platform:</strong> 
+                                <span class="badge bg-primary ms-2">\${influencer.primary_platform || 'Not specified'}</span>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Content Types:</strong> 
+                                \${influencer.content_types ? 
+                                    JSON.parse(influencer.content_types).map(type => 
+                                        \`<span class="badge bg-secondary ms-1">\${type}</span>\`
+                                    ).join('') : 
+                                    '<span class="text-muted">Not specified</span>'
+                                }
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <strong>Rate per Post:</strong> 
+                                <span class="text-success fw-bold">\${influencer.rate_per_post ? formatCurrency(influencer.rate_per_post) : 'Contact for rates'}</span>
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Member Since:</strong> \${formatDate(influencer.created_date)}
+                            </div>
+                        </div>
+                        
+                        \${influencer.specialties ? \`
+                            <div class="mb-3">
+                                <strong>Specialties:</strong><br>
+                                \${JSON.parse(influencer.specialties).map(specialty => 
+                                    \`<span class="badge bg-info me-1">\${specialty}</span>\`
+                                ).join('')}
+                            </div>
+                        \` : ''}
+                    </div>
+                </div>
+                
+                <div class="card shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Portfolio</h5>
+                        <span class="badge bg-primary" id="portfolio-count">Loading...</span>
+                    </div>
+                    <div class="card-body">
+                        <div id="portfolio-container">
+                            <div class="text-center py-3">
+                                <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2 mb-0">Loading portfolio...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    \`;
+}
+
+async function loadInfluencerPortfolio(influencerId) {
+    try {
+        const response = await apiGet('/api/influencers/' + influencerId + '/portfolio');
+        const data = await response.json();
+        
+        displayPortfolio(data.portfolio || []);
+    } catch (error) {
+        console.error('Failed to load portfolio:', error);
+        document.getElementById('portfolio-container').innerHTML = 
+            '<div class="alert alert-warning">Failed to load portfolio.</div>';
+    }
+}
+
+function displayPortfolio(portfolio) {
+    const container = document.getElementById('portfolio-container');
+    const countBadge = document.getElementById('portfolio-count');
+    
+    countBadge.textContent = portfolio.length;
+    
+    if (portfolio.length === 0) {
+        container.innerHTML = 
+            '<div class="text-center text-muted py-4">No portfolio items available.</div>';
+        return;
+    }
+    
+    container.innerHTML = \`
+        <div class="portfolio-grid">
+            \${portfolio.map(item => \`
+                <div class="portfolio-item">
+                    <img src="\${item.image_url}" alt="\${item.title || 'Portfolio item'}" 
+                         onclick="viewPortfolioItem('\${item.id}')">
+                    <div class="position-absolute bottom-0 start-0 end-0 bg-dark bg-opacity-75 text-white p-2">
+                        <small>\${item.title || 'Untitled'}</small>
+                    </div>
+                </div>
+            \`).join('')}
+        </div>
+    \`;
+}
+
+function contactInfluencer(influencerId) {
+    if (!authManager.requireAuth()) return;
+    
+    // This could open a modal or redirect to a contact form
+    showToast('Feature coming soon! Please contact the influencer directly via email.', 'info');
+}
+
+function viewPortfolioItem(itemId) {
+    // This could open a modal to view the portfolio item in detail
+    console.log('View portfolio item:', itemId);
+}
+
+function formatNumber(num) {
+    if (!num) return '0';
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+    return num.toString();
+}
+</script>
+`}) %>

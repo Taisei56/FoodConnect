@@ -1,0 +1,302 @@
+<%- include('../layout', {body: `
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <h2><i class="fas fa-camera me-2"></i>Browse Influencers</h2>
+            <p class="text-muted">Discover talented food influencers for your restaurant collaborations</p>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filters</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="location-filter" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="location-filter" 
+                               placeholder="Enter location...">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="followers-filter" class="form-label">Minimum Followers</label>
+                        <select class="form-select" id="followers-filter">
+                            <option value="">Any</option>
+                            <option value="1000">1,000+</option>
+                            <option value="5000">5,000+</option>
+                            <option value="10000">10,000+</option>
+                            <option value="50000">50,000+</option>
+                            <option value="100000">100,000+</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="platform-filter" class="form-label">Primary Platform</label>
+                        <select class="form-select" id="platform-filter">
+                            <option value="">All Platforms</option>
+                            <option value="instagram">Instagram</option>
+                            <option value="tiktok">TikTok</option>
+                            <option value="youtube">YouTube</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="twitter">Twitter</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn btn-primary w-100" onclick="applyFilters()">
+                        <i class="fas fa-search me-2"></i>Apply Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-8">
+            <div id="influencers-container">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Loading influencers...</p>
+                </div>
+            </div>
+            
+            <div id="pagination-container" class="mt-4"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentPage = 1;
+let currentFilters = {};
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadInfluencers();
+    
+    // Add enter key listener for location filter
+    document.getElementById('location-filter').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            applyFilters();
+        }
+    });
+});
+
+async function loadInfluencers(page = 1, filters = {}) {
+    const container = document.getElementById('influencers-container');
+    
+    if (page === 1) {
+        container.innerHTML = \`
+            <div class="text-center py-4">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Loading influencers...</p>
+            </div>
+        \`;
+    }
+    
+    try {
+        const params = new URLSearchParams({
+            page: page,
+            ...filters
+        });
+        
+        const response = await apiGet('/api/influencers?' + params);
+        const data = await response.json();
+        
+        if (page === 1) {
+            displayInfluencers(data.influencers);
+        } else {
+            appendInfluencers(data.influencers);
+        }
+        
+        updatePagination(data.pagination);
+        currentPage = page;
+        currentFilters = filters;
+        
+    } catch (error) {
+        console.error('Failed to load influencers:', error);
+        container.innerHTML = 
+            '<div class="alert alert-danger">Failed to load influencers. Please try again.</div>';
+    }
+}
+
+function displayInfluencers(influencers) {
+    const container = document.getElementById('influencers-container');
+    
+    if (influencers.length === 0) {
+        container.innerHTML = 
+            '<div class="alert alert-info">No influencers found matching your criteria.</div>';
+        return;
+    }
+    
+    container.innerHTML = influencers.map(influencer => \`
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 text-center">
+                        <img src="\${influencer.profile_picture || '/images/default-avatar.png'}" 
+                             alt="\${influencer.name}" 
+                             class="profile-image-small mb-2">
+                        <h6>\${influencer.name}</h6>
+                        <p class="text-muted small">\${influencer.location || 'Location not specified'}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-2">
+                            <strong>Bio:</strong>
+                            <p class="mb-2">\${influencer.bio || 'No bio available'}</p>
+                        </div>
+                        
+                        <div class="mb-2">
+                            <strong>Primary Platform:</strong> 
+                            <span class="badge bg-info ms-1">\${influencer.primary_platform || 'Not specified'}</span>
+                        </div>
+                        
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="stat-number text-primary">\${formatNumber(influencer.followers_count) || '0'}</div>
+                                <small class="text-muted">Followers</small>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-number text-success">\${influencer.collaborations || 0}</div>
+                                <small class="text-muted">Collabs</small>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-number text-info">\${influencer.avg_engagement || '0'}%</div>
+                                <small class="text-muted">Engagement</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-end">
+                        <div class="mb-2">
+                            <span class="badge bg-success">Available</span>
+                        </div>
+                        <a href="/influencers/\${influencer.id}" class="btn btn-primary">
+                            <i class="fas fa-eye me-1"></i>View Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    \`).join('');
+}
+
+function appendInfluencers(influencers) {
+    const container = document.getElementById('influencers-container');
+    const newInfluencers = influencers.map(influencer => \`
+        <div class="card shadow-sm mb-3 fade-in">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 text-center">
+                        <img src="\${influencer.profile_picture || '/images/default-avatar.png'}" 
+                             alt="\${influencer.name}" 
+                             class="profile-image-small mb-2">
+                        <h6>\${influencer.name}</h6>
+                        <p class="text-muted small">\${influencer.location || 'Location not specified'}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-2">
+                            <strong>Bio:</strong>
+                            <p class="mb-2">\${influencer.bio || 'No bio available'}</p>
+                        </div>
+                        
+                        <div class="mb-2">
+                            <strong>Primary Platform:</strong> 
+                            <span class="badge bg-info ms-1">\${influencer.primary_platform || 'Not specified'}</span>
+                        </div>
+                        
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="stat-number text-primary">\${formatNumber(influencer.followers_count) || '0'}</div>
+                                <small class="text-muted">Followers</small>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-number text-success">\${influencer.collaborations || 0}</div>
+                                <small class="text-muted">Collabs</small>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-number text-info">\${influencer.avg_engagement || '0'}%</div>
+                                <small class="text-muted">Engagement</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-end">
+                        <div class="mb-2">
+                            <span class="badge bg-success">Available</span>
+                        </div>
+                        <a href="/influencers/\${influencer.id}" class="btn btn-primary">
+                            <i class="fas fa-eye me-1"></i>View Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    \`).join('');
+    
+    container.insertAdjacentHTML('beforeend', newInfluencers);
+}
+
+function updatePagination(pagination) {
+    const container = document.getElementById('pagination-container');
+    
+    if (pagination.totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+    }
+    
+    let paginationHTML = '<nav><ul class="pagination justify-content-center">';
+    
+    // Previous button
+    if (pagination.currentPage > 1) {
+        paginationHTML += \`
+            <li class="page-item">
+                <a class="page-link" href="#" onclick="loadInfluencers(\${pagination.currentPage - 1}, currentFilters)">Previous</a>
+            </li>
+        \`;
+    }
+    
+    // Page numbers
+    for (let i = Math.max(1, pagination.currentPage - 2); i <= Math.min(pagination.totalPages, pagination.currentPage + 2); i++) {
+        paginationHTML += \`
+            <li class="page-item \${i === pagination.currentPage ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="loadInfluencers(\${i}, currentFilters)">\${i}</a>
+            </li>
+        \`;
+    }
+    
+    // Next button
+    if (pagination.currentPage < pagination.totalPages) {
+        paginationHTML += \`
+            <li class="page-item">
+                <a class="page-link" href="#" onclick="loadInfluencers(\${pagination.currentPage + 1}, currentFilters)">Next</a>
+            </li>
+        \`;
+    }
+    
+    paginationHTML += '</ul></nav>';
+    container.innerHTML = paginationHTML;
+}
+
+function applyFilters() {
+    const filters = {};
+    
+    const location = document.getElementById('location-filter').value.trim();
+    if (location) filters.location = location;
+    
+    const followers = document.getElementById('followers-filter').value;
+    if (followers) filters.min_followers = followers;
+    
+    const platform = document.getElementById('platform-filter').value;
+    if (platform) filters.primary_platform = platform;
+    
+    loadInfluencers(1, filters);
+}
+
+function formatNumber(num) {
+    if (!num) return '0';
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+    return num.toString();
+}
+</script>
+`}) %>

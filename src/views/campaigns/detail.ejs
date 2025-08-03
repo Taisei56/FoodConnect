@@ -1,0 +1,155 @@
+<%- include('../layout', {body: `
+<div class="container">
+    <div id="campaign-content">
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading campaign details...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const campaignId = '<%= campaignId %>';
+    loadCampaignDetails(campaignId);
+});
+
+async function loadCampaignDetails(campaignId) {
+    try {
+        const response = await apiGet('/api/campaigns/' + campaignId);
+        
+        if (response.ok) {
+            const campaign = await response.json();
+            displayCampaignDetails(campaign);
+        } else {
+            throw new Error('Campaign not found');
+        }
+    } catch (error) {
+        console.error('Failed to load campaign:', error);
+        document.getElementById('campaign-content').innerHTML = 
+            '<div class="alert alert-danger">Campaign not found or failed to load.</div>';
+    }
+}
+
+function displayCampaignDetails(campaign) {
+    const content = document.getElementById('campaign-content');
+    const isOwner = authManager.user && authManager.user.id === campaign.restaurant_id;
+    const canApply = authManager.user && authManager.user.user_type === 'influencer' && !isOwner;
+    
+    content.innerHTML = \`
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h1 class="h3">\${campaign.title}</h1>
+                            <span class="status-badge status-\${campaign.status}">\${campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}</span>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <p class="mb-2"><i class="fas fa-map-marker-alt text-muted me-2"></i>\${campaign.location}</p>
+                                <p class="mb-2"><i class="fas fa-calendar text-muted me-2"></i>Deadline: \${formatDate(campaign.application_deadline)}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="campaign-budget mb-2">\${formatCurrency(campaign.budget)}</p>
+                                <p class="text-muted mb-0">Budget</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h5>Description</h5>
+                            <p>\${campaign.description}</p>
+                        </div>
+                        
+                        \${campaign.requirements ? \`
+                            <div class="mb-4">
+                                <h5>Requirements</h5>
+                                <p>\${campaign.requirements}</p>
+                            </div>
+                        \` : ''}
+                        
+                        \${campaign.start_date || campaign.end_date ? \`
+                            <div class="mb-4">
+                                <h5>Campaign Timeline</h5>
+                                \${campaign.start_date ? \`<p><strong>Start:</strong> \${formatDate(campaign.start_date)}</p>\` : ''}
+                                \${campaign.end_date ? \`<p><strong>End:</strong> \${formatDate(campaign.end_date)}</p>\` : ''}
+                            </div>
+                        \` : ''}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Restaurant Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Restaurant:</strong> \${campaign.restaurant_name || 'Restaurant'}</p>
+                        <p><strong>Contact:</strong> \${campaign.restaurant_email || 'N/A'}</p>
+                        <p><strong>Posted:</strong> \${formatDate(campaign.created_date)}</p>
+                    </div>
+                </div>
+                
+                \${canApply ? \`
+                    <div class="card shadow-sm">
+                        <div class="card-body text-center">
+                            <h5>Interested in this campaign?</h5>
+                            <button class="btn btn-primary btn-lg" onclick="applyCampaign('\${campaign.id}')">
+                                <i class="fas fa-paper-plane me-2"></i>Apply Now
+                            </button>
+                        </div>
+                    </div>
+                \` : ''}
+                
+                \${isOwner ? \`
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5>Manage Campaign</h5>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary" onclick="viewApplications('\${campaign.id}')">
+                                    <i class="fas fa-list me-2"></i>View Applications
+                                </button>
+                                <button class="btn btn-outline-secondary" onclick="editCampaign('\${campaign.id}')">
+                                    <i class="fas fa-edit me-2"></i>Edit Campaign
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                \` : ''}
+            </div>
+        </div>
+    \`;
+}
+
+async function applyCampaign(campaignId) {
+    if (!authManager.requireAuth()) return;
+    
+    try {
+        const response = await apiPost('/api/applications', { campaign_id: campaignId });
+        
+        if (response.ok) {
+            showToast('Application submitted successfully!', 'success');
+            setTimeout(() => location.reload(), 1000);
+        } else {
+            const errorData = await response.json();
+            showToast(errorData.error || 'Failed to apply', 'error');
+        }
+    } catch (error) {
+        console.error('Application error:', error);
+        showToast('Failed to submit application', 'error');
+    }
+}
+
+function viewApplications(campaignId) {
+    window.location.href = '/applications?campaign=' + campaignId;
+}
+
+function editCampaign(campaignId) {
+    window.location.href = '/campaigns/' + campaignId + '/edit';
+}
+</script>
+`}) %>
