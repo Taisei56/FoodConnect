@@ -310,4 +310,5 @@ For support, email support@foodconnect.my or join our Slack channel.
 
 ---
 
-**FoodConnect Malaysia** - Connecting restaurants with food influencers across Malaysia. 🇲🇾
+**FoodConnect Malaysia** - Connecting restaurants with food influencers across Malaysia. 🇲🇾#   F o o d C o n n e c t  
+ 
