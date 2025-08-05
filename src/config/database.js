@@ -1,14 +1,4 @@
-// Use simple in-memory database for easy launch
-// For production, switch back to PostgreSQL by uncommenting the code below
-
-const { pool, query } = require('./simple-db');
-
-module.exports = {
-    pool,
-    query,
-};
-
-/* PostgreSQL version (uncomment for production):
+// PostgreSQL database configuration for production
 const { Pool } = require('pg');
 
 const pool = new Pool({
@@ -35,4 +25,3 @@ module.exports = {
     pool,
     query: (text, params) => pool.query(text, params),
 };
-*/
