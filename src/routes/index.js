@@ -5,6 +5,7 @@ const influencerRoutes = require('./influencers');
 const campaignRoutes = require('./campaigns');
 const applicationRoutes = require('./applications');
 const commissionRoutes = require('./commissions');
+const debugRoutes = require('./debug');
 
 const router = express.Router();
 
@@ -14,6 +15,7 @@ router.use('/influencers', influencerRoutes);
 router.use('/campaigns', campaignRoutes);
 router.use('/applications', applicationRoutes);
 router.use('/commissions', commissionRoutes);
+router.use('/debug', debugRoutes);
 
 router.get('/health', (req, res) => {
     res.json({ 

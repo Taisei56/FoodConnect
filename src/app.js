@@ -66,6 +66,7 @@ app.use((req, res) => {
 app.listen(PORT, () => {
     console.log(`🚀 FoodConnect Malaysia server running on port ${PORT}`);
     console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`📅 Version: MVP Launch Sept 2025 - Updated ${new Date().toISOString()}`);
 });
 
 module.exports = app;
