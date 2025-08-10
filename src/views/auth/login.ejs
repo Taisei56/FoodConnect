@@ -120,6 +120,19 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
     
+    // Check if user just registered
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('registered') === 'true') {
+        showAlert(\`
+            <strong>🎉 Welcome to FoodConnect Malaysia!</strong><br>
+            Your account has been successfully created. The MVP launches <strong>September 2025</strong> with full platform access.<br><br>
+            You will receive an email notification when the platform launches. For now, you can bookmark this page and return in September to start connecting!
+        \`, 'info');
+        
+        // Remove the query parameter from URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    
     // Login form submission
     loginForm.addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -204,7 +217,14 @@ async function performLogin() {
             }, 1000);
             
         } else {
-            if (response.status === 403 && result.error === 'Account pending approval') {
+            if (response.status === 403 && result.error === 'MVP launching September 2025') {
+                showAlert(\`
+                    <strong>🚀 MVP Launching September 2025</strong><br>
+                    Thank you for registering! Your account credentials are safely stored.<br><br>
+                    Our MVP launches <strong>September 2025</strong> with full platform access. You will receive an email notification when we go live.<br><br>
+                    Please bookmark this page and return in September to start connecting!
+                \`, 'info');
+            } else if (response.status === 403 && result.error === 'Account pending approval') {
                 showAlert('Your account is pending approval. You will receive an email once approved.', 'warning');
             } else {
                 showAlert(result.error || 'Login failed. Please try again.', 'danger');

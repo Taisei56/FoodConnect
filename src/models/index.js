@@ -1,4 +1,5 @@
-const { query } = require('../config/database');
+// Use simple-db for consistent behavior across all environments
+const { query } = require('../config/simple-db');
 
 const User = {
     async create({ email, password_hash, user_type }) {

@@ -233,20 +233,27 @@ document.addEventListener('DOMContentLoaded', function() {
             const result = await response.json();
             
             if (response.ok) {
-                showAlert(\`Registration successful! Please check your email for account approval. You will be notified once your \${data.user_type} account is approved.\`, 'success');
+                const launchMessage = \`
+                    <strong>🎉 Registration Successful!</strong><br>
+                    Your \${data.user_type} account has been created and your credentials are safely stored.<br><br>
+                    <strong>📅 MVP Launch: September 2025</strong><br>
+                    Our MVP launches September 2025 with full platform access. You will receive an email notification when we go live and you can begin using all features.<br><br>
+                    Thank you for joining FoodConnect Malaysia!
+                \`;
+                showAlert(launchMessage, 'success');
                 
-                // Reset form after short delay
+                // Reset form after longer delay to let users read the message
                 setTimeout(() => {
                     registerForm.reset();
                     registerForm.classList.remove('was-validated');
                     registerForm.style.display = 'none';
                     userTypeCards.forEach(card => card.classList.remove('selected'));
                     
-                    // Redirect to login
+                    // Redirect to login page after showing the message
                     setTimeout(() => {
-                        window.location.href = '/login';
-                    }, 2000);
-                }, 3000);
+                        window.location.href = '/login?registered=true';
+                    }, 3000);
+                }, 5000);
                 
             } else {
                 showAlert(result.error || 'Registration failed. Please try again.', 'danger');
