@@ -25,4 +25,19 @@ router.get('/registrations', (req, res) => {
     });
 });
 
+// Admin endpoint to approve all pending users
+router.post('/approve-all', (req, res) => {
+    const pendingUsers = _data.users.filter(u => u.status === 'pending');
+    
+    pendingUsers.forEach(user => {
+        user.status = 'approved';
+        user.updated_at = new Date();
+    });
+    
+    res.json({
+        message: `${pendingUsers.length} users approved successfully`,
+        approved_users: pendingUsers.map(u => ({ id: u.id, email: u.email }))
+    });
+});
+
 module.exports = router;

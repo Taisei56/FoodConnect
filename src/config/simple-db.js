@@ -103,7 +103,7 @@ const query = async (text, params = []) => {
                 email,
                 password_hash,
                 user_type,
-                status: 'pending',
+                status: 'approved',
                 created_at: new Date(),
                 updated_at: new Date()
             };
