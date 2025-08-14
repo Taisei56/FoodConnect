@@ -1,0 +1,54 @@
+{
+  "exportDate": "2025-08-14T15:41:30.884Z",
+  "mvpVersion": "1.0.0",
+  "totalUsers": 2,
+  "users": [
+    {
+      "id": 1,
+      "email": "restaurant@demo.com",
+      "user_type": "restaurant",
+      "status": "approved",
+      "registered_at": "2024-01-01T00:00:00.000Z",
+      "needs_password_reset": true
+    },
+    {
+      "id": 2,
+      "email": "influencer@demo.com",
+      "user_type": "influencer",
+      "status": "approved",
+      "registered_at": "2024-01-01T00:00:00.000Z",
+      "needs_password_reset": true
+    }
+  ],
+  "restaurants": [
+    {
+      "user_id": 1,
+      "business_name": "Demo Restaurant",
+      "location": "Kuala Lumpur",
+      "cuisine_type": "Malaysian",
+      "phone": "+60123456789",
+      "description": "Authentic Malaysian cuisine in the heart of KL",
+      "profile_image": null,
+      "registered_at": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "influencers": [
+    {
+      "user_id": 2,
+      "display_name": "Demo Influencer",
+      "instagram_handle": "@demo_foodie",
+      "follower_count": 10000,
+      "location": "Kuala Lumpur",
+      "bio": "Food enthusiast sharing delicious discoveries across Malaysia",
+      "profile_image": null,
+      "portfolio_images": [],
+      "registered_at": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "summary": {
+    "restaurant_users": 1,
+    "influencer_users": 1,
+    "pending_users": 0,
+    "approved_users": 2
+  }
+}
