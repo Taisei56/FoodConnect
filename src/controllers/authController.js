@@ -3,18 +3,36 @@ const AuthService = require('../services/auth');
 class AuthController {
     static async register(req, res) {
         try {
-            const { email, password, user_type } = req.body;
+            const { 
+                email, 
+                password, 
+                user_type,
+                // Restaurant fields
+                restaurant_name,
+                google_maps,
+                // Influencer fields
+                instagram_handle,
+                tiktok_handle,
+                facebook_page,
+                xiaohongshu_handle
+            } = req.body;
             
             const user = await AuthService.register({
                 email,
                 password,
-                user_type
+                user_type,
+                restaurant_name,
+                google_maps,
+                instagram_handle,
+                tiktok_handle,
+                facebook_page,
+                xiaohongshu_handle
             });
 
             res.status(201).json({
-                message: 'Registration successful! Your account has been created and your credentials are safely stored. Our MVP will launch in September 2025 with full platform access. You will receive an email notification when we go live.',
+                message: 'Registration successful! Your account has been created and your credentials are safely stored. Our MVP will launch in October 2025 with full platform access. You will receive an email notification when we go live.',
                 user,
-                launchDate: 'September 2025'
+                launchDate: 'October 2025'
             });
         } catch (error) {
             console.error('Registration controller error:', error);
@@ -47,7 +65,7 @@ class AuthController {
                 message: 'Login successful - Welcome to FoodConnect MVP Preview',
                 ...result,
                 mvpPreview: true,
-                launchDate: 'September 2025'
+                launchDate: 'October 2025'
             });
         } catch (error) {
             console.error('Login controller error:', error);

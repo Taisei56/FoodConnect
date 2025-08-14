@@ -2,10 +2,29 @@
 const { query } = require('../config/simple-db');
 
 const User = {
-    async create({ email, password_hash, user_type }) {
+    async create({ 
+        email, 
+        password_hash, 
+        user_type, 
+        restaurant_name, 
+        google_maps, 
+        instagram_handle, 
+        tiktok_handle, 
+        facebook_page, 
+        xiaohongshu_handle 
+    }) {
+        const additional_data = {
+            restaurant_name,
+            google_maps,
+            instagram_handle,
+            tiktok_handle,
+            facebook_page,
+            xiaohongshu_handle
+        };
+        
         const result = await query(
             'INSERT INTO users (email, password_hash, user_type) VALUES ($1, $2, $3) RETURNING *',
-            [email, password_hash, user_type]
+            [email, password_hash, user_type, additional_data]
         );
         return result.rows[0];
     },

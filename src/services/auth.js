@@ -14,7 +14,17 @@ class AuthService {
         return await bcrypt.compare(password, hashedPassword);
     }
 
-    static async register({ email, password, user_type }) {
+    static async register({ 
+        email, 
+        password, 
+        user_type, 
+        restaurant_name, 
+        google_maps, 
+        instagram_handle, 
+        tiktok_handle, 
+        facebook_page, 
+        xiaohongshu_handle 
+    }) {
         try {
             const existingUser = await User.findByEmail(email);
             if (existingUser) {
@@ -26,7 +36,13 @@ class AuthService {
             const user = await User.create({
                 email,
                 password_hash: hashedPassword,
-                user_type
+                user_type,
+                restaurant_name,
+                google_maps,
+                instagram_handle,
+                tiktok_handle,
+                facebook_page,
+                xiaohongshu_handle
             });
 
             await sendWelcomeEmail(email, email.split('@')[0], user_type);

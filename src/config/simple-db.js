@@ -90,7 +90,7 @@ const query = async (text, params = []) => {
     try {
         // Handle INSERT operations
         if (lowerText.startsWith('insert into users')) {
-            const [email, password_hash, user_type] = params;
+            const [email, password_hash, user_type, additional_data = {}] = params;
             
             // Check if email already exists
             const existingUser = data.users.find(u => u.email === email);
@@ -105,7 +105,14 @@ const query = async (text, params = []) => {
                 user_type,
                 status: 'approved',
                 created_at: new Date(),
-                updated_at: new Date()
+                updated_at: new Date(),
+                // Additional profile fields
+                restaurant_name: additional_data.restaurant_name || null,
+                google_maps: additional_data.google_maps || null,
+                instagram_handle: additional_data.instagram_handle || null,
+                tiktok_handle: additional_data.tiktok_handle || null,
+                facebook_page: additional_data.facebook_page || null,
+                xiaohongshu_handle: additional_data.xiaohongshu_handle || null
             };
             data.users.push(newUser);
             console.log('✅ User created:', { id: newUser.id, email: newUser.email, user_type: newUser.user_type });

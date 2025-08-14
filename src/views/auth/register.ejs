@@ -5,7 +5,7 @@
             <div class="card shadow-lg border-0 rounded-lg mt-5">
                 <div class="card-header text-center text-white" style="background-color: #0F4C75;">
                     <h3 class="fw-light my-4">
-                        <i class="fas fa-user-plus me-2"></i>Join FoodConnect Malaysia - MVP Sept 2025
+                        <i class="fas fa-user-plus me-2"></i>Join FoodConnect Malaysia - MVP Oct 2025
                     </h3>
                 </div>
                 <div class="card-body p-5">
@@ -56,6 +56,47 @@
                             <input class="form-control" id="confirmPassword" name="confirmPassword" type="password" placeholder="Confirm Password" required>
                             <label for="confirmPassword">Confirm Password</label>
                             <div class="invalid-feedback">Passwords do not match.</div>
+                        </div>
+                        
+                        <!-- Additional Fields Based on User Type -->
+                        <div id="additional-fields" style="display: none;">
+                            <!-- Restaurant Fields -->
+                            <div id="restaurant-fields" style="display: none;">
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="restaurant_name" name="restaurant_name" type="text" placeholder="Restaurant Name">
+                                    <label for="restaurant_name">Restaurant Name *</label>
+                                    <div class="invalid-feedback">Please enter your restaurant name.</div>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="google_maps" name="google_maps" type="url" placeholder="Google Maps Link (Optional)">
+                                    <label for="google_maps">Google Maps Link (Optional)</label>
+                                    <div class="form-text">Share your Google Maps or Google My Business link</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Influencer Fields -->
+                            <div id="influencer-fields" style="display: none;">
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="instagram_handle" name="instagram_handle" type="text" placeholder="@username">
+                                    <label for="instagram_handle">Instagram Handle</label>
+                                    <div class="form-text">Enter your Instagram username (e.g., @foodlover123)</div>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="tiktok_handle" name="tiktok_handle" type="text" placeholder="@username">
+                                    <label for="tiktok_handle">TikTok Handle (Optional)</label>
+                                    <div class="form-text">Enter your TikTok username</div>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="facebook_page" name="facebook_page" type="url" placeholder="Facebook Page URL">
+                                    <label for="facebook_page">Facebook Page (Optional)</label>
+                                    <div class="form-text">Link to your Facebook page or profile</div>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="xiaohongshu_handle" name="xiaohongshu_handle" type="text" placeholder="Little Red Book ID">
+                                    <label for="xiaohongshu_handle">小红书 (Little Red Book) ID (Optional)</label>
+                                    <div class="form-text">Your Xiaohongshu/Little Red Book username</div>
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="form-check mb-3">
@@ -158,6 +199,26 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Could not find card with type:', type);
         }
         userTypeInput.value = type;
+        
+        // Show additional fields
+        const additionalFields = document.getElementById('additional-fields');
+        const restaurantFields = document.getElementById('restaurant-fields');
+        const influencerFields = document.getElementById('influencer-fields');
+        
+        additionalFields.style.display = 'block';
+        
+        if (type === 'restaurant') {
+            restaurantFields.style.display = 'block';
+            influencerFields.style.display = 'none';
+            // Make restaurant name required
+            document.getElementById('restaurant_name').required = true;
+        } else if (type === 'influencer') {
+            influencerFields.style.display = 'block';
+            restaurantFields.style.display = 'none';
+            // Make Instagram handle required for influencers
+            document.getElementById('instagram_handle').required = true;
+        }
+        
         console.log('Form display before:', registerForm.style.display); // Debug log
         registerForm.style.display = 'block';
         console.log('Form display after:', registerForm.style.display); // Debug log
@@ -169,6 +230,15 @@ document.addEventListener('DOMContentLoaded', function() {
         registerForm.style.display = 'none';
         userTypeCards.forEach(card => card.classList.remove('selected'));
         userTypeInput.value = '';
+        
+        // Hide additional fields
+        document.getElementById('additional-fields').style.display = 'none';
+        document.getElementById('restaurant-fields').style.display = 'none';
+        document.getElementById('influencer-fields').style.display = 'none';
+        
+        // Remove required attributes
+        document.getElementById('restaurant_name').required = false;
+        document.getElementById('instagram_handle').required = false;
     });
     
     // Password validation
@@ -222,6 +292,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 user_type: formData.get('user_type')
             };
             
+            // Add additional fields based on user type
+            if (data.user_type === 'restaurant') {
+                data.restaurant_name = formData.get('restaurant_name');
+                data.google_maps = formData.get('google_maps');
+            } else if (data.user_type === 'influencer') {
+                data.instagram_handle = formData.get('instagram_handle');
+                data.tiktok_handle = formData.get('tiktok_handle');
+                data.facebook_page = formData.get('facebook_page');
+                data.xiaohongshu_handle = formData.get('xiaohongshu_handle');
+            }
+            
             const response = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: {
@@ -236,8 +317,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const launchMessage = \`
                     <strong>🎉 Registration Successful!</strong><br>
                     Your \${data.user_type} account has been created and your credentials are safely stored.<br><br>
-                    <strong>📅 MVP Launch: September 2025</strong><br>
-                    Our MVP launches September 2025 with full platform access. You will receive an email notification when we go live and you can begin using all features.<br><br>
+                    <strong>📅 MVP Launch: October 2025</strong><br>
+                    Our MVP launches October 2025 with full platform access. You will receive an email notification when we go live and you can begin using all features.<br><br>
                     Thank you for joining FoodConnect Malaysia!
                 \`;
                 showAlert(launchMessage, 'success');
