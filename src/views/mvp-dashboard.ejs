@@ -1,0 +1,177 @@
+<%- include('layout', {body: `
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Welcome Header -->
+            <div class="text-center mb-5">
+                <img src="/images/foodconnect-high-resolution-logo-grayscale-transparent.png" alt="FoodConnect" class="mb-4" style="max-height: 150px;">
+                <h1 class="display-4 fw-bold text-samurai-blue">Welcome to FoodConnect!</h1>
+                <p class="lead text-muted">Your account is ready. MVP launches September 2025.</p>
+            </div>
+
+            <!-- MVP Launch Countdown -->
+            <div class="card shadow-lg border-0 mb-5">
+                <div class="card-body text-center p-5">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <div class="bg-samurai-blue text-white rounded p-4">
+                                <h3 class="fw-bold mb-0" id="months">--</h3>
+                                <small>Months</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="bg-samurai-blue text-white rounded p-4">
+                                <h3 class="fw-bold mb-0" id="days">--</h3>
+                                <small>Days</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="bg-samurai-blue text-white rounded p-4">
+                                <h3 class="fw-bold mb-0" id="hours">--</h3>
+                                <small>Hours</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="bg-samurai-blue text-white rounded p-4">
+                                <h3 class="fw-bold mb-0" id="minutes">--</h3>
+                                <small>Minutes</small>
+                            </div>
+                        </div>
+                    </div>
+                    <h2 class="mt-4 text-samurai-blue">MVP Launch: September 2025</h2>
+                    <p class="text-muted">Get ready for the full platform experience!</p>
+                </div>
+            </div>
+
+            <!-- Features Preview -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-samurai-blue text-white rounded-circle p-3 me-3">
+                                    <i class="fas fa-store"></i>
+                                </div>
+                                <h5 class="mb-0 text-samurai-blue">Restaurant Features</h5>
+                            </div>
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Create campaigns</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Find influencers</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Manage applications</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Track performance</li>
+                            </ul>
+                            <div class="text-center mt-3">
+                                <span class="badge bg-warning">Coming September 2025</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-samurai-blue text-white rounded-circle p-3 me-3">
+                                    <i class="fas fa-camera"></i>
+                                </div>
+                                <h5 class="mb-0 text-samurai-blue">Influencer Features</h5>
+                            </div>
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Browse campaigns</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Apply to partnerships</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Portfolio showcase</li>
+                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Earnings dashboard</li>
+                            </ul>
+                            <div class="text-center mt-3">
+                                <span class="badge bg-warning">Coming September 2025</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Info -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h5 class="text-samurai-blue mb-3">Your Account</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Email:</strong> <span id="user-email">Loading...</span></p>
+                            <p><strong>Account Type:</strong> <span id="user-type" class="badge bg-samurai-blue">Loading...</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Status:</strong> <span class="badge bg-success">Active & Ready</span></p>
+                            <p><strong>Member Since:</strong> <span id="member-since">Loading...</span></p>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <p class="text-muted">Your account is secured and ready for the MVP launch. You'll receive an email notification when we go live!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.text-samurai-blue {
+    color: #0F4C75 !important;
+}
+
+.bg-samurai-blue {
+    background-color: #0F4C75 !important;
+}
+
+.countdown-box {
+    background: linear-gradient(135deg, #0F4C75, #1a5d8a);
+}
+
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Load user info
+    if (authManager.isAuthenticated()) {
+        document.getElementById('user-email').textContent = authManager.user.email;
+        document.getElementById('user-type').textContent = authManager.user.user_type.charAt(0).toUpperCase() + authManager.user.user_type.slice(1);
+        
+        // Set member since date (or registration date if available)
+        const memberDate = new Date().toLocaleDateString();
+        document.getElementById('member-since').textContent = memberDate;
+    }
+
+    // Countdown to September 2025
+    function updateCountdown() {
+        const targetDate = new Date('2025-09-01T00:00:00Z');
+        const now = new Date();
+        const diff = targetDate - now;
+
+        if (diff > 0) {
+            const months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30));
+            const days = Math.floor((diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+            document.getElementById('months').textContent = months;
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours;
+            document.getElementById('minutes').textContent = minutes;
+        } else {
+            document.getElementById('months').textContent = '00';
+            document.getElementById('days').textContent = '00';
+            document.getElementById('hours').textContent = '00';
+            document.getElementById('minutes').textContent = '00';
+        }
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 60000); // Update every minute
+});
+</script>
+`}) %>

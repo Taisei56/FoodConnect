@@ -35,16 +35,7 @@ class AuthController {
             
             const result = await AuthService.login({ email, password });
 
-            // MVP Phase: Block all logins until MVP launch September 2025
-            return res.status(403).json({
-                error: 'MVP launching September 2025',
-                message: 'Thank you for registering! Our MVP launches September 2025 with full platform access. You will receive an email notification when we go live.',
-                launchDate: 'September 2025',
-                accountExists: true
-            });
-
-            // This code will be uncommented when the platform launches in September
-            /*
+            // Allow login but redirect to MVP coming soon dashboard
             if (result.user.status === 'pending') {
                 return res.status(403).json({
                     error: 'Account pending approval',
@@ -53,10 +44,11 @@ class AuthController {
             }
 
             res.json({
-                message: 'Login successful',
-                ...result
+                message: 'Login successful - Welcome to FoodConnect MVP Preview',
+                ...result,
+                mvpPreview: true,
+                launchDate: 'September 2025'
             });
-            */
         } catch (error) {
             console.error('Login controller error:', error);
             

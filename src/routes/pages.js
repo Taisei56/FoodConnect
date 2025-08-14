@@ -21,10 +21,10 @@ router.get('/register', (req, res) => {
     });
 });
 
-// Dashboard (protected route)
+// Dashboard (MVP Preview)
 router.get('/dashboard', (req, res) => {
-    res.render('dashboard/index', { 
-        title: 'Dashboard - FoodConnect Malaysia' 
+    res.render('mvp-dashboard', { 
+        title: 'MVP Preview - FoodConnect Malaysia' 
     });
 });
 
