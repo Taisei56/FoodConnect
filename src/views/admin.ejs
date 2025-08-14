@@ -1,0 +1,137 @@
+<%- include('layout', {body: `
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 mt-5">
+                <div class="card-header text-center text-white" style="background-color: #0F4C75;">
+                    <h3 class="fw-light my-4">
+                        <i class="fas fa-cog me-2"></i>Admin Panel
+                    </h3>
+                </div>
+                <div class="card-body p-5">
+                    <div id="alert-container"></div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h5>User Management</h5>
+                                    <button class="btn btn-primary me-2" onclick="loadUsers()">
+                                        <i class="fas fa-users me-1"></i>View Users
+                                    </button>
+                                    <button class="btn btn-success" onclick="approveAll()">
+                                        <i class="fas fa-check me-1"></i>Approve All
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h5>Quick Stats</h5>
+                                    <div id="stats">Loading...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="users-table" style="display: none;">
+                        <h5>Registered Users</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Email</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Registered</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-tbody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function loadUsers() {
+    try {
+        const response = await fetch('/api/admin/registrations');
+        const data = await response.json();
+        
+        document.getElementById('stats').innerHTML = \`
+            <strong>Total:</strong> \${data.total}<br>
+            <strong>Restaurants:</strong> \${data.summary.restaurants}<br>
+            <strong>Influencers:</strong> \${data.summary.influencers}<br>
+            <strong>Pending:</strong> \${data.summary.pending}<br>
+            <strong>Approved:</strong> \${data.summary.approved}
+        \`;
+        
+        const tbody = document.getElementById('users-tbody');
+        tbody.innerHTML = '';
+        
+        data.users.forEach(user => {
+            const row = document.createElement('tr');
+            const statusBadge = user.status === 'approved' ? 
+                '<span class="badge bg-success">Approved</span>' : 
+                '<span class="badge bg-warning">Pending</span>';
+            
+            row.innerHTML = \`
+                <td>\${user.id}</td>
+                <td>\${user.email}</td>
+                <td>\${user.user_type}</td>
+                <td>\${statusBadge}</td>
+                <td>\${new Date(user.registered_at).toLocaleDateString()}</td>
+            \`;
+            tbody.appendChild(row);
+        });
+        
+        document.getElementById('users-table').style.display = 'block';
+        
+    } catch (error) {
+        showAlert('Failed to load users: ' + error.message, 'danger');
+    }
+}
+
+async function approveAll() {
+    try {
+        const response = await fetch('/api/admin/approve-all', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const data = await response.json();
+        showAlert(data.message, 'success');
+        
+        // Reload users to show updated status
+        setTimeout(() => {
+            loadUsers();
+        }, 1000);
+        
+    } catch (error) {
+        showAlert('Failed to approve users: ' + error.message, 'danger');
+    }
+}
+
+function showAlert(message, type) {
+    const alertContainer = document.getElementById('alert-container');
+    alertContainer.innerHTML = \`
+        <div class="alert alert-\${type} alert-dismissible fade show" role="alert">
+            \${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    \`;
+}
+
+// Load stats on page load
+document.addEventListener('DOMContentLoaded', loadUsers);
+</script>
+`}) %>

@@ -128,4 +128,11 @@ router.get('/contact', (req, res) => {
     });
 });
 
+// Admin page
+router.get('/admin', (req, res) => {
+    res.render('admin', { 
+        title: 'Admin Panel - FoodConnect Malaysia' 
+    });
+});
+
 module.exports = router;
