@@ -71,7 +71,48 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/auth.js"></script>
+    <script>
+        // Inline AuthManager to fix Railway static file 404 issue
+        class AuthManager {
+            constructor() {
+                this.token = localStorage.getItem('token');
+                this.user = JSON.parse(localStorage.getItem('user') || 'null');
+                this.profile = JSON.parse(localStorage.getItem('profile') || 'null');
+            }
+            
+            isAuthenticated() {
+                return !!this.token && !!this.user;
+            }
+            
+            login(token, user, profile = null) {
+                this.token = token;
+                this.user = user;
+                this.profile = profile;
+                localStorage.setItem('token', token);
+                localStorage.setItem('user', JSON.stringify(user));
+                if (profile) localStorage.setItem('profile', JSON.stringify(profile));
+            }
+            
+            logout() {
+                this.token = null;
+                this.user = null;
+                this.profile = null;
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                localStorage.removeItem('profile');
+                if (window.location.pathname !== '/') {
+                    window.location.href = '/';
+                }
+            }
+        }
+        
+        const authManager = new AuthManager();
+        window.authManager = authManager;
+        
+        function logout() {
+            authManager.logout();
+        }
+    </script>
     <script src="/js/main.js"></script>
 </body>
 </html>
