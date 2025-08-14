@@ -1,0 +1,9 @@
+Railway Deployment Status Check
+Timestamp: 2025-08-14T15:45:00Z
+Latest Commit: fca6feb
+Expected Changes:
+- FC logo with chat box
+- October 2025 launch date
+- Enhanced registration forms
+- Samurai Blue branding
+- MVP launch notices on all pages
