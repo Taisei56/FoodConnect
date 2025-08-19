@@ -1,113 +1,348 @@
 <%- include('layout', {body: `
-<div class="hero-section bg-primary text-white py-5 mb-5">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <h1 class="display-4 fw-bold mb-4">Connect. Collaborate. Create.</h1>
-                <p class="lead mb-4">Malaysia's premier platform connecting restaurants with talented food influencers for authentic dining collaborations.</p>
-                <div class="d-flex gap-3 flex-wrap">
-                    <a href="/register" class="btn btn-light btn-lg">
-                        <i class="fas fa-user-plus me-2"></i>Get Started
-                    </a>
+<!-- Modern Hero Section -->
+<div class="hero-section">
+    <div class="hero-content">
+        <div class="container">
+            <div class="row align-items-center min-vh-75">
+                <div class="col-lg-6">
+                    <h1 class="hero-title">
+                        Connect. Collaborate. 
+                        <span class="gradient-text">Create.</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Malaysia's premier platform connecting restaurants with talented food influencers for authentic dining collaborations.
+                    </p>
+                    <div class="d-flex gap-4 flex-wrap">
+                        <a href="/register" class="btn btn-light btn-lg">
+                            <i class="fas fa-rocket me-2"></i>Join the Movement
+                        </a>
+                        <a href="#how-it-works" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-play-circle me-2"></i>Learn More
+                        </a>
+                    </div>
                 </div>
-            </div>
-            <div class="col-lg-6">
-                <!-- Hero image placeholder removed -->
+                <div class="col-lg-6">
+                    <div class="position-relative">
+                        <div class="hero-image-placeholder">
+                            <div class="floating-cards">
+                                <div class="floating-card restaurant-card">
+                                    <i class="fas fa-store"></i>
+                                    <span>Restaurants</span>
+                                </div>
+                                <div class="floating-card influencer-card">
+                                    <i class="fas fa-camera"></i>
+                                    <span>Influencers</span>
+                                </div>
+                                <div class="floating-card connect-card">
+                                    <i class="fas fa-handshake"></i>
+                                    <span>Connect</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="container">
-    <div class="row mb-5">
-        <div class="col-lg-12 text-center">
-            <h2 class="mb-4">How FoodConnect Malaysia Works</h2>
-            <p class="lead text-muted mb-5">Simple steps to start your food collaboration journey</p>
+<!-- How It Works Section -->
+<section id="how-it-works" class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="gradient-text mb-4">How FoodConnect Malaysia Works</h2>
+            <p class="lead text-muted">Simple steps to start your food collaboration journey</p>
         </div>
-    </div>
 
-    <div class="row g-4 mb-5">
-        <div class="col-md-4">
-            <div class="card h-100 text-center border-0 shadow-sm">
-                <div class="card-body p-4">
-                    <div class="text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px; background-color: #0F4C75;">
-                        <i class="fas fa-user-plus fa-lg"></i>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon feature-icon-primary">
+                        <i class="fas fa-user-plus"></i>
                     </div>
-                    <h4>1. Sign Up</h4>
+                    <h4 class="mb-3">Sign Up</h4>
                     <p class="text-muted">Create your account as a restaurant owner or food influencer. Complete your profile to get started.</p>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card h-100 text-center border-0 shadow-sm">
-                <div class="card-body p-4">
-                    <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                        <i class="fas fa-search fa-lg"></i>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon feature-icon-success">
+                        <i class="fas fa-search"></i>
                     </div>
-                    <h4>2. Discover & Connect</h4>
+                    <h4 class="mb-3">Discover & Connect</h4>
                     <p class="text-muted">Restaurants post campaigns, influencers browse and apply. Find the perfect match for your collaboration needs.</p>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card h-100 text-center border-0 shadow-sm">
-                <div class="card-body p-4">
-                    <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                        <i class="fas fa-handshake fa-lg"></i>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon feature-icon-warning">
+                        <i class="fas fa-handshake"></i>
                     </div>
-                    <h4>3. Collaborate</h4>
+                    <h4 class="mb-3">Collaborate</h4>
                     <p class="text-muted">Work together to create amazing content. Track progress and manage payments through our platform.</p>
                 </div>
             </div>
         </div>
     </div>
+</section>
 
-    <div class="row mb-5">
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body p-4">
-                    <h3 class="mb-3" style="color: #0F4C75;">
-                        <i class="fas fa-store me-2"></i>For Restaurants
-                    </h3>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Post collaboration campaigns</li>
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Control advertising costs</li>
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Manage applications and collaborations</li>
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Build authentic partnerships</li>
-                    </ul>
-                    <a href="/register?type=restaurant" class="btn" style="background-color: #0F4C75; border-color: #0F4C75; color: white;">Get Started as Restaurant</a>
+<!-- Features Section -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-6">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="feature-icon feature-icon-primary me-4" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                                <i class="fas fa-store"></i>
+                            </div>
+                            <h3 class="text-samurai-blue mb-0">For Restaurants</h3>
+                        </div>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-3 d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <span>Post collaboration campaigns</span>
+                            </li>
+                            <li class="mb-3 d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <span>Control advertising costs</span>
+                            </li>
+                            <li class="mb-3 d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <span>Manage applications and collaborations</span>
+                            </li>
+                            <li class="mb-3 d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <span>Build authentic partnerships</span>
+                            </li>
+                        </ul>
+                        <a href="/register?type=restaurant" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-store me-2"></i>Get Started as Restaurant
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body p-4">
-                    <h3 class="text-success mb-3">
-                        <i class="fas fa-camera me-2"></i>For Influencers
-                    </h3>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Discover exciting restaurant partnerships</li>
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Showcase your content portfolio</li>
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Apply to campaigns that match you</li>
-                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Secure fair compensation</li>
-                    </ul>
-                    <a href="/register?type=influencer" class="btn btn-success">Join as Influencer</a>
+            <div class="col-lg-6">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="feature-icon feature-icon-success me-4" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                            <h3 class="text-success mb-0">For Influencers</h3>
+                        </div>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-3 d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <span>Discover exciting restaurant partnerships</span>
+                            </li>
+                            <li class="mb-3 d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <span>Showcase your content portfolio</span>
+                            </li>
+                            <li class="mb-3 d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <span>Apply to campaigns that match you</span>
+                            </li>
+                            <li class="mb-3 d-flex align-items-center">
+                                <i class="fas fa-check-circle text-success me-3"></i>
+                                <span>Secure fair compensation</span>
+                            </li>
+                        </ul>
+                        <a href="/register?type=influencer" class="btn btn-success btn-lg w-100">
+                            <i class="fas fa-camera me-2"></i>Join as Influencer
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</section>
 
-</div>
+<!-- MVP Launch Notice -->
+<section class="py-5">
+    <div class="container">
+        <div class="mvp-notice">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h3 class="mb-2">🚀 MVP Launching October 2025</h3>
+                    <p class="mb-0 opacity-90">Join the waiting list now and be among the first to experience Malaysia's premier food collaboration platform!</p>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <a href="/register" class="btn btn-light btn-lg">
+                        <i class="fas fa-star me-2"></i>Join Waiting List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+/* Hero Section Enhancements */
+.min-vh-75 {
+    min-height: 75vh;
+}
+
+.btn-outline-light {
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    color: white;
+    background: transparent;
+}
+
+.btn-outline-light:hover {
+    background: white;
+    color: var(--primary);
+    border-color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Floating Cards Animation */
+.hero-image-placeholder {
+    position: relative;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.floating-cards {
+    position: relative;
+    width: 300px;
+    height: 300px;
+}
+
+.floating-card {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(25px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    color: white;
+    animation: float-gentle 6s ease-in-out infinite;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.floating-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+    transform: translateX(-100%) translateY(-100%);
+    transition: transform 0.6s;
+}
+
+.floating-card:hover {
+    transform: translateY(-10px) scale(1.08);
+    box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.floating-card:hover::before {
+    transform: translateX(100%) translateY(100%);
+}
+
+.floating-card i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.restaurant-card {
+    top: 20px;
+    left: 20px;
+    color: var(--primary);
+}
+
+.influencer-card {
+    top: 20px;
+    right: 20px;
+    color: var(--success);
+    animation-delay: -2s;
+}
+
+.connect-card {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--warning);
+    animation-delay: -4s;
+}
+
+@keyframes float-gentle {
+    0%, 100% {
+        transform: translateY(0px) translateX(0px);
+    }
+    33% {
+        transform: translateY(-10px) translateX(5px);
+    }
+    66% {
+        transform: translateY(5px) translateX(-5px);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .floating-cards {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .floating-card {
+        padding: 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .floating-card i {
+        font-size: 1.5rem;
+    }
+}
+</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Check for existing authentication
     const token = localStorage.getItem('token');
     if (token) {
-        // User is logged in, maybe redirect to dashboard
-        console.log('User is already logged in');
+        // User is logged in, update CTA buttons
+        const ctaButtons = document.querySelectorAll('a[href="/register"]');
+        ctaButtons.forEach(btn => {
+            btn.href = '/dashboard';
+            btn.innerHTML = '<i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard';
+        });
     }
     
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
 });
 </script>
 `}) %>

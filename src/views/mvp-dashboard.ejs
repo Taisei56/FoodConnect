@@ -1,110 +1,170 @@
 <%- include('layout', {body: `
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <!-- Welcome Header -->
-            <div class="text-center mb-5">
-                <img src="/images/foodconnect-high-resolution-logo-grayscale-transparent.png" alt="FoodConnect" class="mb-4" style="max-height: 150px;">
-                <h1 class="display-4 fw-bold text-samurai-blue">Welcome to FoodConnect!</h1>
-                <p class="lead text-muted">Your account is ready. MVP launches September 2025.</p>
-            </div>
+<!-- Dashboard Hero Section -->
+<div class="dashboard-hero">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Welcome Header -->
+                <div class="welcome-header text-center">
+                    <div class="logo-container">
+                        <img src="/images/foodconnect-high-resolution-logo-grayscale-transparent.png" alt="FoodConnect" class="logo-img">
+                    </div>
+                    <h1 class="hero-title">
+                        Welcome to <span class="gradient-text">FoodConnect</span>!
+                    </h1>
+                    <p class="hero-subtitle">
+                        Your account is ready. MVP launches <strong>October 2025</strong> with full platform access.
+                    </p>
+                </div>
 
-            <!-- MVP Launch Countdown -->
-            <div class="card shadow-lg border-0 mb-5">
-                <div class="card-body text-center p-5">
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <div class="bg-samurai-blue text-white rounded p-4">
-                                <h3 class="fw-bold mb-0" id="months">--</h3>
-                                <small>Months</small>
-                            </div>
+                <!-- MVP Launch Countdown -->
+                <div class="countdown-section">
+                    <div class="countdown-header text-center">
+                        <h2 class="gradient-text mb-4">🚀 MVP Launch Countdown</h2>
+                        <p class="lead text-muted">Get ready for the full platform experience!</p>
+                    </div>
+                    
+                    <div class="countdown-grid">
+                        <div class="countdown-box">
+                            <div class="countdown-number" id="months">--</div>
+                            <div class="countdown-label">Months</div>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="bg-samurai-blue text-white rounded p-4">
-                                <h3 class="fw-bold mb-0" id="days">--</h3>
-                                <small>Days</small>
-                            </div>
+                        <div class="countdown-box">
+                            <div class="countdown-number" id="days">--</div>
+                            <div class="countdown-label">Days</div>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="bg-samurai-blue text-white rounded p-4">
-                                <h3 class="fw-bold mb-0" id="hours">--</h3>
-                                <small>Hours</small>
-                            </div>
+                        <div class="countdown-box">
+                            <div class="countdown-number" id="hours">--</div>
+                            <div class="countdown-label">Hours</div>
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <div class="bg-samurai-blue text-white rounded p-4">
-                                <h3 class="fw-bold mb-0" id="minutes">--</h3>
-                                <small>Minutes</small>
-                            </div>
+                        <div class="countdown-box">
+                            <div class="countdown-number" id="minutes">--</div>
+                            <div class="countdown-label">Minutes</div>
                         </div>
                     </div>
-                    <h2 class="mt-4 text-samurai-blue">MVP Launch: October 2025</h2>
-                    <p class="text-muted">Get ready for the full platform experience!</p>
+                    
+                    <div class="launch-date text-center">
+                        <h3 class="gradient-text">October 2025</h3>
+                        <p class="text-muted">Mark your calendar for the full launch!</p>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Features Preview -->
-            <div class="row g-4 mb-5">
-                <div class="col-md-6">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body p-4">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="bg-samurai-blue text-white rounded-circle p-3 me-3">
+                <!-- Features Preview -->
+                <div class="features-section">
+                    <div class="text-center mb-5">
+                        <h2 class="gradient-text mb-4">🎯 What's Coming in the MVP</h2>
+                        <p class="lead text-muted">Preview the powerful features launching in October 2025</p>
+                    </div>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="feature-card">
+                                <div class="feature-icon feature-icon-primary">
                                     <i class="fas fa-store"></i>
                                 </div>
-                                <h5 class="mb-0 text-samurai-blue">Restaurant Features</h5>
-                            </div>
-                            <ul class="list-unstyled">
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Create campaigns</li>
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Find influencers</li>
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Manage applications</li>
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Track performance</li>
-                            </ul>
-                            <div class="text-center mt-3">
-                                <span class="badge bg-warning">Coming September 2025</span>
+                                <h4 class="text-samurai-blue mb-4">Restaurant Features</h4>
+                                <ul class="feature-list">
+                                    <li><i class="fas fa-rocket"></i><span>Launch campaigns with custom requirements</span></li>
+                                    <li><i class="fas fa-search"></i><span>Discover talented food influencers</span></li>
+                                    <li><i class="fas fa-tasks"></i><span>Manage applications and collaborations</span></li>
+                                    <li><i class="fas fa-chart-line"></i><span>Track campaign performance & ROI</span></li>
+                                    <li><i class="fas fa-dollar-sign"></i><span>Secure payment processing</span></li>
+                                </ul>
+                                <div class="feature-badge">
+                                    <span class="coming-soon-badge">
+                                        <i class="fas fa-calendar-alt me-2"></i>October 2025
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body p-4">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="bg-samurai-blue text-white rounded-circle p-3 me-3">
+                        <div class="col-md-6">
+                            <div class="feature-card">
+                                <div class="feature-icon feature-icon-success">
                                     <i class="fas fa-camera"></i>
                                 </div>
-                                <h5 class="mb-0 text-samurai-blue">Influencer Features</h5>
-                            </div>
-                            <ul class="list-unstyled">
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Browse campaigns</li>
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Apply to partnerships</li>
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Portfolio showcase</li>
-                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Earnings dashboard</li>
-                            </ul>
-                            <div class="text-center mt-3">
-                                <span class="badge bg-warning">Coming September 2025</span>
+                                <h4 class="text-success mb-4">Influencer Features</h4>
+                                <ul class="feature-list">
+                                    <li><i class="fas fa-compass"></i><span>Browse exciting restaurant partnerships</span></li>
+                                    <li><i class="fas fa-handshake"></i><span>Apply to campaigns that match your style</span></li>
+                                    <li><i class="fas fa-portfolio"></i><span>Showcase your content portfolio</span></li>
+                                    <li><i class="fas fa-trophy"></i><span>Build your reputation and ratings</span></li>
+                                    <li><i class="fas fa-wallet"></i><span>Secure earnings dashboard</span></li>
+                                </ul>
+                                <div class="feature-badge">
+                                    <span class="coming-soon-badge">
+                                        <i class="fas fa-calendar-alt me-2"></i>October 2025
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Account Info -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-body p-4">
-                    <h5 class="text-samurai-blue mb-3">Your Account</h5>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>Email:</strong> <span id="user-email">Loading...</span></p>
-                            <p><strong>Account Type:</strong> <span id="user-type" class="badge bg-samurai-blue">Loading...</span></p>
+                <!-- Account Info -->
+                <div class="account-section">
+                    <div class="dashboard-card">
+                        <div class="card-header-modern">
+                            <div class="d-flex align-items-center">
+                                <div class="feature-icon feature-icon-primary me-4" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <div>
+                                    <h3 class="gradient-text mb-0">Your Account</h3>
+                                    <p class="text-muted mb-0">Ready for MVP launch</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <p><strong>Status:</strong> <span class="badge bg-success">Active & Ready</span></p>
-                            <p><strong>Member Since:</strong> <span id="member-since">Loading...</span></p>
+                        
+                        <div class="account-details">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="account-item">
+                                        <div class="account-label">
+                                            <i class="fas fa-envelope text-primary"></i>
+                                            Email Address
+                                        </div>
+                                        <div class="account-value" id="user-email">Loading...</div>
+                                    </div>
+                                    <div class="account-item">
+                                        <div class="account-label">
+                                            <i class="fas fa-user-tag text-primary"></i>
+                                            Account Type
+                                        </div>
+                                        <div class="account-value">
+                                            <span id="user-type" class="account-badge">Loading...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="account-item">
+                                        <div class="account-label">
+                                            <i class="fas fa-check-circle text-success"></i>
+                                            Account Status
+                                        </div>
+                                        <div class="account-value">
+                                            <span class="status-badge">Active & Ready</span>
+                                        </div>
+                                    </div>
+                                    <div class="account-item">
+                                        <div class="account-label">
+                                            <i class="fas fa-calendar-plus text-primary"></i>
+                                            Member Since
+                                        </div>
+                                        <div class="account-value" id="member-since">Loading...</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="text-center mt-4">
-                        <p class="text-muted">Your account is secured and ready for the MVP launch. You'll receive an email notification when we go live!</p>
+                        
+                        <div class="launch-notification">
+                            <div class="notification-content">
+                                <i class="fas fa-bell"></i>
+                                <div>
+                                    <h5>Launch Notification Ready</h5>
+                                    <p>Your account is secured and ready for the MVP launch. You'll receive an email notification when we go live in October 2025!</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -113,24 +173,312 @@
 </div>
 
 <style>
-.text-samurai-blue {
-    color: #0F4C75 !important;
+/* Dashboard-specific styles using the modern design system */
+
+/* Dashboard Hero */
+.dashboard-hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: var(--space-20);
 }
 
-.bg-samurai-blue {
-    background-color: #0F4C75 !important;
+.dashboard-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%"><stop offset="0%" stop-color="%23ffffff" stop-opacity="0.03"/><stop offset="100%" stop-color="%23ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23a)"/><circle cx="800" cy="300" r="150" fill="url(%23a)"/></svg>');
+    opacity: 0.5;
+}
+
+.welcome-header {
+    position: relative;
+    z-index: 2;
+    margin-bottom: var(--space-16);
+}
+
+.logo-container {
+    margin-bottom: var(--space-6);
+}
+
+.logo-img {
+    max-height: 120px;
+    filter: brightness(0) invert(1);
+    opacity: 0.9;
+}
+
+.hero-title {
+    color: white;
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: var(--space-6);
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.hero-subtitle {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.25rem;
+    font-weight: 300;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Countdown Section */
+.countdown-section {
+    position: relative;
+    z-index: 2;
+    margin-bottom: var(--space-16);
+}
+
+.countdown-header {
+    margin-bottom: var(--space-10);
+}
+
+.countdown-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--space-6);
+    margin-bottom: var(--space-10);
 }
 
 .countdown-box {
-    background: linear-gradient(135deg, #0F4C75, #1a5d8a);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    text-align: center;
+    box-shadow: var(--shadow-xl);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all var(--transition);
+    position: relative;
+    overflow: hidden;
 }
 
-.card {
-    transition: transform 0.2s;
+.countdown-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(15, 76, 117, 0.1), transparent);
+    transition: left 0.5s;
 }
 
-.card:hover {
-    transform: translateY(-5px);
+.countdown-box:hover::before {
+    left: 100%;
+}
+
+.countdown-box:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-2xl);
+}
+
+.countdown-number {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: var(--space-2);
+    text-shadow: 0 2px 10px rgba(15, 76, 117, 0.2);
+}
+
+.countdown-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--gray-600);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.launch-date {
+    color: white;
+}
+
+/* Features Section */
+.features-section {
+    margin-bottom: var(--space-20);
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: var(--space-8);
+}
+
+.feature-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--space-4);
+    padding: var(--space-3);
+    border-radius: var(--radius);
+    transition: all var(--transition);
+}
+
+.feature-list li:hover {
+    background: var(--gray-50);
+    transform: translateX(8px);
+}
+
+.feature-list li i {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-full);
+    background: var(--primary-gradient);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    margin-right: var(--space-4);
+    flex-shrink: 0;
+}
+
+.feature-list li span {
+    font-weight: 500;
+    color: var(--gray-700);
+}
+
+.feature-badge {
+    text-align: center;
+    margin-top: var(--space-6);
+}
+
+.coming-soon-badge {
+    background: linear-gradient(135deg, var(--warning) 0%, #e67e22 100%);
+    color: white;
+    padding: var(--space-3) var(--space-6);
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    box-shadow: var(--shadow-md);
+    animation: pulse-badge 2s infinite;
+}
+
+@keyframes pulse-badge {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Account Section */
+.account-section {
+    margin-bottom: var(--space-12);
+}
+
+.card-header-modern {
+    padding: var(--space-8);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.account-details {
+    padding: var(--space-8);
+}
+
+.account-item {
+    margin-bottom: var(--space-6);
+}
+
+.account-label {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    color: var(--gray-600);
+    font-size: 0.9rem;
+    margin-bottom: var(--space-2);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.account-label i {
+    margin-right: var(--space-2);
+}
+
+.account-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+.account-badge {
+    background: var(--primary-gradient);
+    color: white;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.status-badge {
+    background: linear-gradient(135deg, var(--success) 0%, #2ecc71 100%);
+    color: white;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.launch-notification {
+    background: linear-gradient(135deg, var(--gray-50) 0%, rgba(15, 76, 117, 0.05) 100%);
+    border-radius: var(--radius-lg);
+    padding: var(--space-8);
+    margin-top: var(--space-8);
+    border: 1px solid rgba(15, 76, 117, 0.1);
+}
+
+.notification-content {
+    display: flex;
+    align-items: start;
+    gap: var(--space-4);
+}
+
+.notification-content i {
+    color: var(--primary);
+    font-size: 1.5rem;
+    margin-top: var(--space-1);
+}
+
+.notification-content h5 {
+    color: var(--primary);
+    margin-bottom: var(--space-2);
+    font-weight: 700;
+}
+
+.notification-content p {
+    color: var(--gray-600);
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .countdown-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-4);
+    }
+    
+    .countdown-number {
+        font-size: 2.5rem;
+    }
+    
+    .feature-card {
+        margin-bottom: var(--space-8);
+    }
+    
+    .dashboard-hero {
+        min-height: 50vh;
+    }
 }
 </style>
 
