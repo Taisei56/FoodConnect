@@ -350,15 +350,15 @@ document.addEventListener('DOMContentLoaded', function() {
         rootMargin: '0px 0px -50px 0px'
     };
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
             if (entry.isIntersecting) {
                 entry.target.classList.add('active');
                 // Stagger animation for list items
                 if (entry.target.classList.contains('reveal')) {
                     const siblings = entry.target.parentElement.querySelectorAll('.reveal');
-                    siblings.forEach((sibling, index) => {
-                        setTimeout(() => {
+                    siblings.forEach(function(sibling, index) {
+                        setTimeout(function() {
                             sibling.classList.add('active');
                         }, index * 150);
                     });
@@ -368,14 +368,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }, observerOptions);
 
     // Observe all elements with reveal classes
-    document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => {
+    document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(function(el) {
         observer.observe(el);
     });
 
     // Add floating animation to hero cards
     const floatingCards = document.querySelectorAll('.floating-card');
-    floatingCards.forEach((card, index) => {
-        card.style.animationDelay = `${index * 0.5}s`;
+    floatingCards.forEach(function(card, index) {
+        card.style.animationDelay = (index * 0.5) + 's';
     });
 
     // Add parallax effect to hero section (subtle)
@@ -386,7 +386,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const parallax = document.querySelector('.hero-section');
         if (parallax) {
             const speed = scrolled * 0.3;
-            parallax.style.transform = `translateY(${speed}px)`;
+            parallax.style.transform = 'translateY(' + speed + 'px)';
         }
         ticking = false;
     }
@@ -402,13 +402,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add dynamic gradient shift based on scroll
     let scrollPosition = 0;
-    window.addEventListener('scroll', () => {
+    window.addEventListener('scroll', function() {
         scrollPosition = window.scrollY / window.innerHeight;
         document.body.style.setProperty('--scroll-position', scrollPosition);
     });
 
     // Enhanced button interactions
-    document.querySelectorAll('.btn').forEach(btn => {
+    document.querySelectorAll('.btn').forEach(function(btn) {
         btn.addEventListener('mouseenter', function(e) {
             if (this.classList.contains('magnetic')) {
                 this.style.transform = 'scale(1.05) translateY(-2px)';
@@ -437,7 +437,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         element.appendChild(sparkle);
         
-        setTimeout(() => {
+        setTimeout(function() {
             sparkle.remove();
         }, 2000);
     }
@@ -445,7 +445,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const heroTitle = document.querySelector('.hero-title');
     if (heroTitle) {
         heroTitle.style.position = 'relative';
-        setInterval(() => {
+        setInterval(function() {
             if (Math.random() < 0.3) {
                 createSparkle(heroTitle);
             }
