@@ -384,16 +384,26 @@ p {
 
 /* Cards */
 .card {
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: var(--radius-xl);
     box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.08),
-        0 1px 0 rgba(255, 255, 255, 0.5) inset;
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        0 1px 0 rgba(255, 255, 255, 0.6) inset;
     transition: all var(--transition-slow);
     overflow: hidden;
     position: relative;
+}
+
+/* Improve text contrast on cards */
+.card h1, .card h2, .card h3, .card h4, .card h5, .card h6 {
+    color: var(--gray-900);
+    text-shadow: none;
+}
+
+.card p, .card span {
+    color: var(--gray-700);
 }
 
 .card:hover {
@@ -420,16 +430,27 @@ p {
     text-align: center;
     padding: var(--space-8);
     height: 100%;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(25px) saturate(200%);
     border-radius: var(--radius-xl);
     box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.06),
-        0 1px 0 rgba(255, 255, 255, 0.6) inset;
+        0 8px 32px rgba(0, 0, 0, 0.08),
+        0 1px 0 rgba(255, 255, 255, 0.7) inset;
     transition: all var(--transition-slow);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     position: relative;
     overflow: hidden;
+}
+
+/* Improve text contrast on feature cards */
+.feature-card h1, .feature-card h2, .feature-card h3, .feature-card h4, .feature-card h5, .feature-card h6 {
+    color: var(--gray-900);
+    font-weight: 700;
+}
+
+.feature-card p {
+    color: var(--gray-700);
+    font-weight: 500;
 }
 
 .feature-card::before {
@@ -609,10 +630,10 @@ p {
 /* MVP Launch Notice */
 .mvp-notice {
     background: 
-        linear-gradient(135deg, rgba(15, 76, 117, 0.95) 0%, rgba(26, 93, 138, 0.95) 100%),
+        linear-gradient(135deg, rgba(15, 76, 117, 0.98) 0%, rgba(26, 93, 138, 0.98) 100%),
         url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-    backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(25px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     color: white;
     padding: var(--space-6) var(--space-8);
     border-radius: var(--radius-xl);
@@ -621,8 +642,22 @@ p {
     position: relative;
     overflow: hidden;
     box-shadow: 
-        0 20px 60px rgba(15, 76, 117, 0.3),
-        0 1px 0 rgba(255, 255, 255, 0.2) inset;
+        0 20px 60px rgba(15, 76, 117, 0.4),
+        0 1px 0 rgba(255, 255, 255, 0.3) inset;
+}
+
+.mvp-notice h3 {
+    color: white;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    font-weight: 700;
+    margin-bottom: var(--space-3);
+}
+
+.mvp-notice p {
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+    font-weight: 500;
+    line-height: 1.6;
 }
 
 .mvp-notice::before {
@@ -698,6 +733,48 @@ p {
     -webkit-text-fill-color: transparent;
     background-clip: text;
     font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+/* Fallback for browsers that don't support background-clip: text */
+@supports not (-webkit-background-clip: text) {
+    .gradient-text {
+        color: var(--primary);
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* Enhanced gradient text with better visibility */
+.gradient-text-hero {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    position: relative;
+    display: inline-block;
+}
+
+/* Fallback for hero gradient text */
+@supports not (-webkit-background-clip: text) {
+    .gradient-text-hero {
+        color: white;
+        text-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
+    }
+}
+
+/* Add subtle glow to make gradient text more visible */
+.gradient-text-hero::before {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    color: white;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+    opacity: 0.3;
 }
 
 /* Container Improvements */
@@ -712,9 +789,42 @@ section {
 
 /* Footer */
 footer {
-    background: var(--gray-900);
-    color: var(--gray-300);
+    background: linear-gradient(135deg, var(--gray-900) 0%, #1a202c 100%);
+    color: var(--gray-200);
     padding: var(--space-16) 0 var(--space-8);
+    position: relative;
+    overflow: hidden;
+}
+
+footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(15, 76, 117, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(251, 146, 60, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+footer h5 {
+    color: white;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    margin-bottom: var(--space-4);
+}
+
+footer p {
+    color: var(--gray-300);
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+footer .container {
+    position: relative;
+    z-index: 1;
 }
 
 /* Enhanced Responsive Design */
@@ -758,11 +868,15 @@ footer {
     .hero-title {
         font-size: 2.5rem;
         text-align: center;
+        text-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
     }
     
     .hero-subtitle {
         font-size: 1.25rem;
         text-align: center;
+        color: rgba(255, 255, 255, 0.95);
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        font-weight: 400;
     }
     
     .card-body,
@@ -986,6 +1100,14 @@ html {
     -webkit-text-fill-color: transparent;
     background-clip: text;
     font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+@supports not (-webkit-background-clip: text) {
+    .gradient-text-orange {
+        color: var(--orange);
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
 }
 
 .gradient-text-gold {
@@ -994,6 +1116,14 @@ html {
     -webkit-text-fill-color: transparent;
     background-clip: text;
     font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+@supports not (-webkit-background-clip: text) {
+    .gradient-text-gold {
+        color: var(--gold);
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
 }
 
 .gradient-text-emerald {
@@ -1002,6 +1132,14 @@ html {
     -webkit-text-fill-color: transparent;
     background-clip: text;
     font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+@supports not (-webkit-background-clip: text) {
+    .gradient-text-emerald {
+        color: var(--emerald);
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
 }
 
 /* Scroll reveal animations */
