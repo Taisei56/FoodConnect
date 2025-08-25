@@ -51,4 +51,15 @@ router.post('/change-password', [
     handleValidationErrors
 ], AuthController.changePassword);
 
+// Email verification routes
+router.get('/verify-email', AuthController.verifyEmail);
+
+router.post('/resend-verification', [
+    body('email')
+        .isEmail()
+        .normalizeEmail()
+        .withMessage('Valid email is required'),
+    handleValidationErrors
+], AuthController.resendVerification);
+
 module.exports = router;

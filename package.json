@@ -8,6 +8,7 @@
     "dev": "nodemon src/app.js",
     "migrate": "node src/database/migrate.js",
     "migrate:seed": "node src/database/migrate.js --seed",
+    "migrate:verification": "node src/database/migrate-verification.js",
     "build": "echo 'Build completed'",
     "test": "echo \"Error: no test specified\" && exit 1",
     "docker:build": "docker build -t foodconnect-malaysia .",
