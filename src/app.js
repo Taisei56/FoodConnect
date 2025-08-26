@@ -63,10 +63,46 @@ app.use((req, res) => {
     });
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`🚀 FoodConnect Malaysia server running on port ${PORT}`);
     console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`📅 Version: MVP Launch Sept 2025 - Updated ${new Date().toISOString()}`);
+    console.log(`📅 Version: MVP Launch Oct 2025 - Updated ${new Date().toISOString()}`);
+    
+    // Test database connection on startup
+    testDatabaseConnection();
 });
+
+server.on('error', (error) => {
+    console.error('❌ Server error:', error);
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+    console.log('🛑 SIGTERM received, shutting down gracefully');
+    server.close(() => {
+        console.log('✅ Server closed');
+        process.exit(0);
+    });
+});
+
+process.on('SIGINT', () => {
+    console.log('🛑 SIGINT received, shutting down gracefully');
+    server.close(() => {
+        console.log('✅ Server closed');
+        process.exit(0);
+    });
+});
+
+async function testDatabaseConnection() {
+    try {
+        const db = require('./config/database');
+        const result = await db.query('SELECT NOW() as current_time');
+        console.log('✅ Database connection successful');
+        console.log(`📡 Database time: ${result.rows[0].current_time}`);
+    } catch (error) {
+        console.log('⚠️  Database not available - running in MVP mode');
+        console.log('💡 Registration will work without permanent storage');
+    }
+}
 
 module.exports = app;
