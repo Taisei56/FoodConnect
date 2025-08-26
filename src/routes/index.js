@@ -7,6 +7,7 @@ const applicationRoutes = require('./applications');
 const commissionRoutes = require('./commissions');
 const debugRoutes = require('./debug');
 const adminRoutes = require('./admin');
+const healthRoutes = require('./health');
 
 const router = express.Router();
 
@@ -18,6 +19,7 @@ router.use('/applications', applicationRoutes);
 router.use('/commissions', commissionRoutes);
 router.use('/debug', debugRoutes);
 router.use('/admin', adminRoutes);
+router.use('/health', healthRoutes);
 
 router.get('/health', (req, res) => {
     res.json({ 
