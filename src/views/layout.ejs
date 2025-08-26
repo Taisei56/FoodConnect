@@ -48,9 +48,9 @@
                     </li>
                     <!-- Quick Logout Button (visible when logged in) -->
                     <li class="nav-item" id="quick-logout" style="display: none;">
-                        <a class="nav-link btn btn-outline-warning me-2" href="#" onclick="logout()" title="Logout" style="padding: 0.375rem 0.75rem; border-radius: 0.375rem;">
+                        <button class="btn btn-warning me-2" onclick="logout()" title="Logout" style="font-weight: 600;">
                             <i class="fas fa-sign-out-alt me-1"></i>Logout
-                        </a>
+                        </button>
                     </li>
                     <li class="nav-item" id="auth-links">
                         <a class="nav-link" href="/login">Login</a>
@@ -122,6 +122,40 @@
         
         function logout() {
             authManager.logout();
+        }
+        
+        // Update UI based on authentication status
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAuthUI();
+        });
+        
+        function updateAuthUI() {
+            const isAuth = authManager.isAuthenticated();
+            const userMenu = document.getElementById('user-menu');
+            const quickLogout = document.getElementById('quick-logout');
+            const authLinks = document.getElementById('auth-links');
+            const registerLink = document.getElementById('register-link');
+            const userName = document.getElementById('user-name');
+            
+            if (isAuth && authManager.user) {
+                // Show user menu and logout
+                if (userMenu) userMenu.style.display = 'block';
+                if (quickLogout) quickLogout.style.display = 'block';
+                if (authLinks) authLinks.style.display = 'none';
+                if (registerLink) registerLink.style.display = 'none';
+                
+                // Update user name
+                if (userName) {
+                    const userType = authManager.user.userType || authManager.user.user_type;
+                    userName.textContent = userType === 'restaurant' ? 'Restaurant' : 'Influencer';
+                }
+            } else {
+                // Show login/register links
+                if (userMenu) userMenu.style.display = 'none';
+                if (quickLogout) quickLogout.style.display = 'none';
+                if (authLinks) authLinks.style.display = 'block';
+                if (registerLink) registerLink.style.display = 'block';
+            }
         }
     </script>
     <script src="/js/main.js"></script>
