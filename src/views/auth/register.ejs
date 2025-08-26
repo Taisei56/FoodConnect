@@ -45,16 +45,22 @@
                             <div class="invalid-feedback">Please enter a valid email address.</div>
                         </div>
                         
-                        <div class="form-floating mb-3">
-                            <input class="form-control" id="password" name="password" type="password" placeholder="Password" required minlength="8">
+                        <div class="form-floating mb-3 position-relative">
+                            <input class="form-control" id="password" name="password" type="password" placeholder="Password" required minlength="6">
                             <label for="password">Password</label>
-                            <div class="invalid-feedback">Password must be at least 8 characters long with uppercase, lowercase, and number.</div>
-                            <div class="form-text">Must contain uppercase, lowercase, and number</div>
+                            <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y me-2" style="background: none; border: none; z-index: 10;" onclick="togglePasswordVisibility('password', this)">
+                                <i class="fas fa-eye text-muted"></i>
+                            </button>
+                            <div class="invalid-feedback">Password must be at least 6 characters long.</div>
+                            <div class="form-text">Minimum 6 characters required</div>
                         </div>
                         
-                        <div class="form-floating mb-3">
+                        <div class="form-floating mb-3 position-relative">
                             <input class="form-control" id="confirmPassword" name="confirmPassword" type="password" placeholder="Confirm Password" required>
                             <label for="confirmPassword">Confirm Password</label>
+                            <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y me-2" style="background: none; border: none; z-index: 10;" onclick="togglePasswordVisibility('confirmPassword', this)">
+                                <i class="fas fa-eye text-muted"></i>
+                            </button>
                             <div class="invalid-feedback">Passwords do not match.</div>
                         </div>
                         
@@ -411,6 +417,21 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Scroll to alert
         alertContainer.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    function togglePasswordVisibility(inputId, button) {
+        const passwordInput = document.getElementById(inputId);
+        const icon = button.querySelector('i');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
     }
 });
 </script>
