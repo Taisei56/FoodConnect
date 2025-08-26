@@ -1,0 +1,366 @@
+<%- include('../layout', {body: `
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="gradient-text-hero">
+                    <i class="fas fa-shield-alt me-2"></i>Admin Dashboard
+                </h1>
+                <span class="badge bg-danger fs-6">Admin Only</span>
+            </div>
+            <p class="text-muted">Manage user registrations and view system data</p>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card dashboard-card h-100">
+                <div class="card-body text-center">
+                    <div class="feature-icon feature-icon-emerald mx-auto mb-3">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 id="total-users" class="gradient-text-emerald">-</h3>
+                    <p class="text-muted mb-0">Total Users</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card dashboard-card h-100">
+                <div class="card-body text-center">
+                    <div class="feature-icon feature-icon-orange mx-auto mb-3">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <h3 id="total-restaurants" class="gradient-text-orange">-</h3>
+                    <p class="text-muted mb-0">Restaurants</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card dashboard-card h-100">
+                <div class="card-body text-center">
+                    <div class="feature-icon feature-icon-gold mx-auto mb-3">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3 id="total-influencers" class="gradient-text-gold">-</h3>
+                    <p class="text-muted mb-0">Influencers</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card dashboard-card h-100">
+                <div class="card-body text-center">
+                    <div class="feature-icon feature-icon-warning mx-auto mb-3">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 id="pending-verifications" class="gradient-text-orange">-</h3>
+                    <p class="text-muted mb-0">Pending Verifications</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card dashboard-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list me-2"></i>User Management
+                    </h5>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary active" data-filter="all">All Users</button>
+                        <button type="button" class="btn btn-outline-success" data-filter="verified">Verified</button>
+                        <button type="button" class="btn btn-outline-warning" data-filter="pending">Pending</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Email</th>
+                                    <th>Type</th>
+                                    <th>Name/Business</th>
+                                    <th>Status</th>
+                                    <th>Verified</th>
+                                    <th>Registered</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table">
+                                <tr>
+                                    <td colspan="8" class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                        <div class="mt-2">Loading user data...</div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- User Details Modal -->
+<div class="modal fade" id="userDetailsModal" tabindex="-1" aria-labelledby="userDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userDetailsModalLabel">
+                    <i class="fas fa-user me-2"></i>User Details
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="user-details-content">
+                <!-- User details will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let allUsers = [];
+let currentFilter = 'all';
+
+// Load admin data on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadAdminStats();
+    loadUsers();
+    
+    // Filter buttons
+    document.querySelectorAll('[data-filter]').forEach(button => {
+        button.addEventListener('click', function() {
+            // Update active button
+            document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Update filter and reload table
+            currentFilter = this.getAttribute('data-filter');
+            displayUsers(allUsers, currentFilter);
+        });
+    });
+});
+
+async function loadAdminStats() {
+    try {
+        const response = await fetch('/api/admin/stats', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+        });
+        
+        if (response.ok) {
+            const stats = await response.json();
+            document.getElementById('total-users').textContent = stats.totalUsers || 0;
+            document.getElementById('total-restaurants').textContent = stats.totalRestaurants || 0;
+            document.getElementById('total-influencers').textContent = stats.totalInfluencers || 0;
+            document.getElementById('pending-verifications').textContent = stats.pendingVerifications || 0;
+        }
+    } catch (error) {
+        console.error('Error loading admin stats:', error);
+    }
+}
+
+async function loadUsers() {
+    try {
+        const response = await fetch('/api/admin/users', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+        });
+        
+        if (response.ok) {
+            const users = await response.json();
+            allUsers = users;
+            displayUsers(users, currentFilter);
+        } else {
+            document.getElementById('users-table').innerHTML = '<tr><td colspan="8" class="text-center text-danger">Error loading users</td></tr>';
+        }
+    } catch (error) {
+        console.error('Error loading users:', error);
+        document.getElementById('users-table').innerHTML = '<tr><td colspan="8" class="text-center text-danger">Error loading users</td></tr>';
+    }
+}
+
+function displayUsers(users, filter) {
+    let filteredUsers = users;
+    
+    if (filter === 'verified') {
+        filteredUsers = users.filter(user => user.email_verified);
+    } else if (filter === 'pending') {
+        filteredUsers = users.filter(user => !user.email_verified);
+    }
+    
+    const tbody = document.getElementById('users-table');
+    
+    if (filteredUsers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">No users found</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = filteredUsers.map(user => {
+        const verifiedBadge = user.email_verified 
+            ? '<span class="badge bg-success"><i class="fas fa-check me-1"></i>Verified</span>'
+            : '<span class="badge bg-warning"><i class="fas fa-clock me-1"></i>Pending</span>';
+            
+        const typeBadge = user.user_type === 'restaurant' 
+            ? '<span class="badge bg-primary"><i class="fas fa-utensils me-1"></i>Restaurant</span>'
+            : '<span class="badge bg-info"><i class="fas fa-star me-1"></i>Influencer</span>';
+            
+        const profileName = user.profile_name || 'Not set';
+        const registeredDate = new Date(user.created_at).toLocaleDateString();
+        
+        return 
+            <tr>
+                <td><span class="badge bg-secondary">#${user.id}</span></td>
+                <td>
+                    <div class="fw-bold">${user.email}</div>
+                    <small class="text-muted">ID: ${user.id}</small>
+                </td>
+                <td>${typeBadge}</td>
+                <td>${profileName}</td>
+                <td>
+                    <span class="badge bg-${user.status === 'active' ? 'success' : 'secondary'}">${user.status}</span>
+                </td>
+                <td>${verifiedBadge}</td>
+                <td>
+                    <small class="text-muted">${registeredDate}</small>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewUserDetails(${user.id})">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </td>
+            </tr>
+        ;
+    }).join('');
+}
+
+async function viewUserDetails(userId) {
+    try {
+        const response = await fetch('/api/admin/users/' + userId, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+        });
+        
+        if (response.ok) {
+            const userDetails = await response.json();
+            displayUserDetails(userDetails);
+            new bootstrap.Modal(document.getElementById('userDetailsModal')).show();
+        } else {
+            alert('Error loading user details');
+        }
+    } catch (error) {
+        console.error('Error loading user details:', error);
+        alert('Error loading user details');
+    }
+}
+
+function displayUserDetails(userDetails) {
+    const { user, profile } = userDetails;
+    
+    let profileSection = '';
+    if (profile) {
+        if (user.user_type === 'restaurant') {
+            profileSection = 
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <strong>Business Name:</strong><br>
+                        <span class="text-muted">${profile.business_name || 'Not provided'}</span>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Location:</strong><br>
+                        <span class="text-muted">${profile.location || 'Not provided'}</span>
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <strong>Cuisine Type:</strong><br>
+                        <span class="text-muted">${profile.cuisine_type || 'Not provided'}</span>
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <strong>Phone:</strong><br>
+                        <span class="text-muted">${profile.phone || 'Not provided'}</span>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <strong>Description:</strong><br>
+                        <span class="text-muted">${profile.description || 'Not provided'}</span>
+                    </div>
+                </div>
+            ;
+        } else {
+            profileSection = 
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <strong>Display Name:</strong><br>
+                        <span class="text-muted">${profile.display_name || 'Not provided'}</span>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Instagram Handle:</strong><br>
+                        <span class="text-muted">${profile.instagram_handle || 'Not provided'}</span>
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <strong>Follower Count:</strong><br>
+                        <span class="text-muted">${profile.follower_count || 0}</span>
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <strong>Location:</strong><br>
+                        <span class="text-muted">${profile.location || 'Not provided'}</span>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <strong>Bio:</strong><br>
+                        <span class="text-muted">${profile.bio || 'Not provided'}</span>
+                    </div>
+                </div>
+            ;
+        }
+    }
+    
+    const verifiedBadge = user.email_verified 
+        ? '<span class="badge bg-success fs-6"><i class="fas fa-check me-1"></i>Email Verified</span>'
+        : '<span class="badge bg-warning fs-6"><i class="fas fa-clock me-1"></i>Pending Verification</span>';
+    
+    document.getElementById('user-details-content').innerHTML = 
+        <div class="row">
+            <div class="col-md-8">
+                <h6 class="text-primary">Basic Information</h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>User ID:</strong><br>
+                        <span class="badge bg-secondary">#${user.id}</span>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Email:</strong><br>
+                        <span class="text-muted">${user.email}</span>
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <strong>User Type:</strong><br>
+                        <span class="badge bg-${user.user_type === 'restaurant' ? 'primary' : 'info'}">
+                            <i class="fas fa-${user.user_type === 'restaurant' ? 'utensils' : 'star'} me-1"></i>
+                            ${user.user_type.charAt(0).toUpperCase() + user.user_type.slice(1)}
+                        </span>
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <strong>Status:</strong><br>
+                        <span class="badge bg-${user.status === 'active' ? 'success' : 'secondary'}">${user.status}</span>
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <strong>Email Status:</strong><br>
+                        ${verifiedBadge}
+                    </div>
+                    <div class="col-md-6 mt-2">
+                        <strong>Registered:</strong><br>
+                        <span class="text-muted">${new Date(user.created_at).toLocaleString()}</span>
+                    </div>
+                </div>
+                
+                ${profile ? '<h6 class="text-primary mt-4">Profile Information</h6>' + profileSection : '<p class="text-muted mt-3">No profile information available</p>'}
+            </div>
+        </div>
+    ;
+}
+</script>
+`}) %>

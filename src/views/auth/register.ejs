@@ -294,14 +294,16 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Add additional fields based on user type
             if (data.user_type === 'restaurant') {
-                data.restaurant_name = formData.get('restaurant_name');
-                data.google_maps = formData.get('google_maps');
+                data.restaurant_name = formData.get('restaurant_name') || '';
+                data.google_maps = formData.get('google_maps') || '';
             } else if (data.user_type === 'influencer') {
-                data.instagram_handle = formData.get('instagram_handle');
-                data.tiktok_handle = formData.get('tiktok_handle');
-                data.facebook_page = formData.get('facebook_page');
-                data.xiaohongshu_handle = formData.get('xiaohongshu_handle');
+                data.instagram_handle = formData.get('instagram_handle') || '';
+                data.tiktok_handle = formData.get('tiktok_handle') || '';
+                data.facebook_page = formData.get('facebook_page') || '';
+                data.xiaohongshu_handle = formData.get('xiaohongshu_handle') || '';
             }
+            
+            console.log('🔄 Sending registration data:', data);
             
             const response = await fetch('/api/auth/register', {
                 method: 'POST',
@@ -311,38 +313,85 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify(data)
             });
             
-            const result = await response.json();
+            console.log('📡 Response status:', response.status);
+            console.log('📡 Response headers:', Object.fromEntries(response.headers.entries()));
+            
+            let result;
+            try {
+                result = await response.json();
+                console.log('📦 Response data:', result);
+            } catch (jsonError) {
+                console.error('❌ Failed to parse JSON response:', jsonError);
+                const responseText = await response.text();
+                console.error('Raw response text:', responseText);
+                throw new Error('Server returned invalid JSON response: ' + responseText);
+            }
             
             if (response.ok) {
                 const launchMessage = \`
-                    <strong>🎉 Registration Successful!</strong><br>
-                    Your \${data.user_type} account has been created and your credentials are safely stored.<br><br>
-                    <strong>📅 MVP Launch: October 2025</strong><br>
-                    Our MVP launches October 2025 with full platform access. You will receive an email notification when we go live and you can begin using all features.<br><br>
-                    Thank you for joining FoodConnect Malaysia!
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <i class="fas fa-check-circle text-success" style="font-size: 3rem;"></i>
+                        </div>
+                        <h4 class="text-success mb-3">🎉 Registration Successful!</h4>
+                        <p><strong>Your \${data.user_type} account has been created!</strong></p>
+                        <div class="alert alert-info">
+                            <i class="fas fa-envelope me-2"></i>
+                            <strong>Check your email</strong> to verify your account and complete the registration.
+                        </div>
+                        <div class="alert alert-warning">
+                            <i class="fas fa-calendar-alt me-2"></i>
+                            <strong>MVP Launch: October 2025</strong><br>
+                            You'll receive full platform access when we launch. Thank you for joining FoodConnect Malaysia!
+                        </div>
+                    </div>
                 \`;
                 showAlert(launchMessage, 'success');
                 
-                // Reset form after longer delay to let users read the message
+                // Reset form after delay
                 setTimeout(() => {
-                    registerForm.reset();
-                    registerForm.classList.remove('was-validated');
-                    registerForm.style.display = 'none';
-                    userTypeCards.forEach(card => card.classList.remove('selected'));
-                    
-                    // Redirect to login page after showing the message
-                    setTimeout(() => {
-                        window.location.href = '/login?registered=true';
-                    }, 3000);
-                }, 5000);
+                    window.location.href = '/login?registered=true';
+                }, 4000);
                 
             } else {
-                showAlert(result.error || 'Registration failed. Please try again.', 'danger');
+                console.error('❌ Registration failed with status:', response.status);
+                console.error('❌ Full error details:', result);
+                
+                let errorMessage = '';
+                
+                if (result.error) {
+                    errorMessage = result.error;
+                } else if (result.message) {
+                    errorMessage = result.message;
+                } else {
+                    errorMessage = 'Unknown error occurred';
+                }
+                
+                // Show detailed error information
+                const detailedError = \`
+                    <div>
+                        <strong>Registration Failed (Status: \${response.status})</strong><br>
+                        <strong>Error:</strong> \${errorMessage}<br>
+                        \${result.details ? '<br><strong>Details:</strong><br><pre style="font-size: 12px; background: #f8f9fa; padding: 10px; border-radius: 4px; text-align: left;">' + JSON.stringify(result.details, null, 2) + '</pre>' : ''}
+                        \${result.stack && result.stack.substring ? '<br><strong>Stack:</strong><br><pre style="font-size: 10px; background: #f8f9fa; padding: 10px; border-radius: 4px; text-align: left; max-height: 200px; overflow-y: auto;">' + result.stack + '</pre>' : ''}
+                        <br><small><strong>Please screenshot this error and share it for debugging.</strong></small>
+                    </div>
+                \`;
+                
+                showAlert(detailedError, 'danger');
             }
             
         } catch (error) {
-            console.error('Registration error:', error);
-            showAlert('Network error. Please check your connection and try again.', 'danger');
+            console.error('Registration network error:', error);
+            showAlert(\`
+                <strong>Network Error:</strong><br>
+                Unable to connect to the registration service. Please:
+                <ul class="mt-2 mb-0">
+                    <li>Check your internet connection</li>
+                    <li>Try refreshing the page</li>
+                    <li>Contact support if the problem persists</li>
+                </ul>
+            \`, 'danger');
         } finally {
             // Reset button state
             btnText.classList.remove('d-none');

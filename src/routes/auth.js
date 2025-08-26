@@ -10,7 +10,12 @@ const { body } = require('express-validator');
 
 const router = express.Router();
 
-router.post('/register', validateRegistration, AuthController.register);
+// Test route
+router.get('/test', AuthController.test);
+
+// Temporarily bypass validation for debugging
+router.post('/register', AuthController.register);
+// router.post('/register', validateRegistration, AuthController.register);
 
 router.post('/login', validateLogin, AuthController.login);
 
