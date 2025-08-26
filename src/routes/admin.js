@@ -1,18 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const adminController = require('../controllers/adminController');
-const authMiddleware = require('../middleware/auth');
+const { authenticateToken } = require('../middleware/auth');
 
-// All admin routes require authentication
-router.use(authMiddleware);
+// Simple admin routes (without complex controller for now)
+router.get('/dashboard', authenticateToken, (req, res) => {
+    res.json({
+        success: true,
+        message: 'Admin dashboard placeholder',
+        user: req.user,
+        timestamp: new Date().toISOString()
+    });
+});
 
-// Admin dashboard
-router.get('/dashboard', adminController.dashboard);
-
-// API routes for admin data
-router.get('/api/stats', adminController.getStats);
-router.get('/api/users', adminController.getUsers);
-router.get('/api/users/:id', adminController.getUserDetails);
-router.get('/api/export/users', adminController.exportUsers);
+router.get('/api/test', (req, res) => {
+    res.json({
+        success: true,
+        message: 'Admin API is working',
+        timestamp: new Date().toISOString()
+    });
+});
 
 module.exports = router;

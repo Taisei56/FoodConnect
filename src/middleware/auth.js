@@ -1,5 +1,5 @@
 const { verifyToken } = require('../config/jwt');
-const { User, Restaurant, Influencer } = require('../models');
+const User = require('../models/User');
 
 const authenticateToken = async (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -54,11 +54,8 @@ const attachProfile = async (req, res, next) => {
             return next();
         }
 
-        if (req.user.user_type === 'restaurant') {
-            req.profile = await Restaurant.findByUserId(req.user.id);
-        } else if (req.user.user_type === 'influencer') {
-            req.profile = await Influencer.findByUserId(req.user.id);
-        }
+        // Profile attachment simplified for now
+        req.profile = null;
 
         next();
     } catch (error) {
