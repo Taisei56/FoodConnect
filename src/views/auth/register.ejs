@@ -159,20 +159,22 @@
     background-color: rgba(25, 135, 84, 0.05);
 }
 
-/* Password toggle button positioning - improved to avoid validation overlap */
+/* Password toggle button positioning - centered in text box */
 .password-toggle-btn {
+    position: absolute;
     top: 50%;
-    right: 0.75rem;
+    right: 1rem;
     transform: translateY(-50%);
     border: none !important;
     background: none !important;
-    padding: 0.375rem !important;
-    z-index: 5; /* Lower than validation feedback */
+    padding: 0.5rem !important;
+    z-index: 10;
     width: 2.5rem;
     height: 2.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 }
 
 .password-toggle-btn:hover {
@@ -180,27 +182,35 @@
     border-radius: 50%;
 }
 
-/* Adjust input padding to make room for both validation and toggle button */
+/* Adjust input padding for eye button only */
 .form-floating input[type="password"] {
-    padding-right: 4.5rem !important; /* More space for both icons */
+    padding-right: 3.5rem !important; /* Space for eye button */
 }
 
-/* Position validation feedback properly */
-.form-floating .form-control:valid {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='m2.3 6.73.75-.75L5.6 3.4 4.85 2.6 3.3 4.2l-.9-.9-.75.75 1.65 1.65Z'/%3e%3c/svg%3e") !important;
-    background-repeat: no-repeat !important;
-    background-position: right 3.5rem center !important; /* Position validation icon to avoid overlap */
-    background-size: 16px 12px !important;
+/* Remove ALL validation styling and green ticks */
+.form-floating .form-control:valid,
+.form-floating .form-control.is-valid {
+    border-color: #ced4da !important;
+    background-image: none !important;
+    box-shadow: none !important;
 }
 
-/* Style validation icons to not overlap with password toggle */
-.form-floating .form-control:valid ~ .password-toggle-btn {
-    right: 2.25rem; /* Move toggle button further left when validation icon is present */
+.form-floating .form-control:invalid,
+.form-floating .form-control.is-invalid {
+    border-color: #ced4da !important;
+    background-image: none !important;
+    box-shadow: none !important;
 }
 
-/* Better visual separation */
-.form-floating .form-control:valid ~ .password-toggle-btn i {
-    color: #6c757d !important;
+/* Remove validation feedback backgrounds */
+.form-control:valid,
+.form-control.is-valid {
+    background-image: none !important;
+}
+
+.form-control:invalid,
+.form-control.is-invalid {
+    background-image: none !important;
 }
 
 /* Loading state improvements */
