@@ -46,9 +46,9 @@
                         </div>
                         
                         <div class="form-floating mb-3 position-relative">
-                            <input class="form-control" id="password" name="password" type="password" placeholder="Password" required minlength="6">
+                            <input class="form-control pe-5" id="password" name="password" type="password" placeholder="Password" required minlength="6">
                             <label for="password">Password</label>
-                            <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y me-2" style="background: none; border: none; z-index: 10;" onclick="togglePasswordVisibility('password', this)">
+                            <button type="button" class="btn btn-outline-secondary position-absolute" style="top: 12px; right: 8px; padding: 8px 12px; border: none; background: none; z-index: 10;" onclick="togglePasswordVisibility('password', this)" title="Toggle password visibility">
                                 <i class="fas fa-eye text-muted"></i>
                             </button>
                             <div class="invalid-feedback">Password must be at least 6 characters long.</div>
@@ -56,9 +56,9 @@
                         </div>
                         
                         <div class="form-floating mb-3 position-relative">
-                            <input class="form-control" id="confirmPassword" name="confirmPassword" type="password" placeholder="Confirm Password" required>
+                            <input class="form-control pe-5" id="confirmPassword" name="confirmPassword" type="password" placeholder="Confirm Password" required>
                             <label for="confirmPassword">Confirm Password</label>
-                            <button type="button" class="btn position-absolute top-50 end-0 translate-middle-y me-2" style="background: none; border: none; z-index: 10;" onclick="togglePasswordVisibility('confirmPassword', this)">
+                            <button type="button" class="btn btn-outline-secondary position-absolute" style="top: 12px; right: 8px; padding: 8px 12px; border: none; background: none; z-index: 10;" onclick="togglePasswordVisibility('confirmPassword', this)" title="Toggle password visibility">
                                 <i class="fas fa-eye text-muted"></i>
                             </button>
                             <div class="invalid-feedback">Passwords do not match.</div>
@@ -253,10 +253,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function validatePassword() {
         const password = passwordInput.value;
-        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$/;
         
-        if (password && !regex.test(password)) {
-            passwordInput.setCustomValidity('Password must contain at least one uppercase letter, one lowercase letter, and one number');
+        if (password && password.length < 6) {
+            passwordInput.setCustomValidity('Password must be at least 6 characters long');
         } else {
             passwordInput.setCustomValidity('');
         }
@@ -302,11 +301,18 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.user_type === 'restaurant') {
                 data.restaurant_name = formData.get('restaurant_name') || '';
                 data.google_maps = formData.get('google_maps') || '';
+                data.location = formData.get('location') || '';
+                data.cuisine_type = formData.get('cuisine_type') || '';
+                data.phone = formData.get('phone') || '';
+                data.description = formData.get('description') || '';
             } else if (data.user_type === 'influencer') {
                 data.instagram_handle = formData.get('instagram_handle') || '';
                 data.tiktok_handle = formData.get('tiktok_handle') || '';
                 data.facebook_page = formData.get('facebook_page') || '';
                 data.xiaohongshu_handle = formData.get('xiaohongshu_handle') || '';
+                data.display_name = formData.get('display_name') || formData.get('instagram_handle') || '';
+                data.follower_count = formData.get('follower_count') || 0;
+                data.bio = formData.get('bio') || '';
             }
             
             console.log('🔄 Sending registration data:', data);
@@ -419,7 +425,8 @@ document.addEventListener('DOMContentLoaded', function() {
         alertContainer.scrollIntoView({ behavior: 'smooth' });
     }
     
-    function togglePasswordVisibility(inputId, button) {
+    // Define togglePasswordVisibility function in global scope
+    window.togglePasswordVisibility = function(inputId, button) {
         const passwordInput = document.getElementById(inputId);
         const icon = button.querySelector('i');
         
@@ -427,10 +434,12 @@ document.addEventListener('DOMContentLoaded', function() {
             passwordInput.type = 'text';
             icon.classList.remove('fa-eye');
             icon.classList.add('fa-eye-slash');
+            button.setAttribute('title', 'Hide password');
         } else {
             passwordInput.type = 'password';
             icon.classList.remove('fa-eye-slash');
             icon.classList.add('fa-eye');
+            button.setAttribute('title', 'Show password');
         }
     }
 });

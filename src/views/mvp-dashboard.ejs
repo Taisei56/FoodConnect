@@ -55,11 +55,11 @@
                     
                     <div class="row g-4">
                         <div class="col-md-6">
-                            <div class="feature-card">
+                            <div class="feature-card restaurant-card">
                                 <div class="feature-icon feature-icon-primary">
                                     <i class="fas fa-store"></i>
                                 </div>
-                                <h4 class="text-white mb-4" style="text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); font-weight: 700;">Restaurant Features</h4>
+                                <h4 class="feature-title restaurant-title">Restaurant Features</h4>
                                 <ul class="feature-list">
                                     <li><i class="fas fa-rocket"></i><span>Launch campaigns with custom requirements</span></li>
                                     <li><i class="fas fa-search"></i><span>Discover talented food influencers</span></li>
@@ -75,11 +75,11 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="feature-card">
+                            <div class="feature-card influencer-card">
                                 <div class="feature-icon feature-icon-success">
                                     <i class="fas fa-camera"></i>
                                 </div>
-                                <h4 class="text-white mb-4" style="text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); font-weight: 700;">Influencer Features</h4>
+                                <h4 class="feature-title influencer-title">Influencer Features</h4>
                                 <ul class="feature-list">
                                     <li><i class="fas fa-compass"></i><span>Browse exciting restaurant partnerships</span></li>
                                     <li><i class="fas fa-handshake"></i><span>Apply to campaigns that match your style</span></li>
@@ -99,55 +99,56 @@
 
                 <!-- Account Info -->
                 <div class="account-section">
+                    <div class="text-center mb-5">
+                        <h2 class="mb-4" style="color: #0F4C75 !important; font-weight: 800 !important; font-size: 2.3rem !important; text-shadow: none !important;">👤 Your Account Details</h2>
+                        <p class="lead" style="color: #4a5568 !important; font-weight: 500 !important; font-size: 1.15rem !important; text-shadow: none !important;">Account information and MVP launch status</p>
+                    </div>
+                    
                     <div class="dashboard-card">
-                        <div class="card-header-modern">
-                            <div class="d-flex align-items-center">
-                                <div class="feature-icon feature-icon-primary me-4" style="width: 60px; height: 60px; font-size: 1.5rem;">
-                                    <i class="fas fa-user-circle"></i>
-                                </div>
-                                <div>
-                                    <h3 class="mb-0" style="color: white; font-weight: 700; text-shadow: 0 3px 15px rgba(0, 0, 0, 0.4);">Your Account</h3>
-                                    <p class="mb-0" style="color: rgba(255, 255, 255, 0.8); text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">Ready for MVP launch</p>
-                                </div>
-                            </div>
-                        </div>
-                        
                         <div class="account-details">
                             <div class="row g-4">
                                 <div class="col-md-6">
-                                    <div class="account-item">
-                                        <div class="account-label">
-                                            <i class="fas fa-envelope text-primary"></i>
-                                            Email Address
+                                    <div class="account-info-card">
+                                        <div class="account-icon">
+                                            <i class="fas fa-envelope"></i>
                                         </div>
-                                        <div class="account-value" id="user-email">Loading...</div>
+                                        <div class="account-content">
+                                            <div class="account-label">Email Address</div>
+                                            <div class="account-value" id="user-email">Loading...</div>
+                                        </div>
                                     </div>
-                                    <div class="account-item">
-                                        <div class="account-label">
-                                            <i class="fas fa-user-tag text-primary"></i>
-                                            Account Type
+                                    <div class="account-info-card">
+                                        <div class="account-icon account-icon-type">
+                                            <i class="fas fa-user-tag"></i>
                                         </div>
-                                        <div class="account-value">
-                                            <span id="user-type" class="account-badge">Loading...</span>
+                                        <div class="account-content">
+                                            <div class="account-label">Account Type</div>
+                                            <div class="account-value">
+                                                <span id="user-type" class="account-badge">Loading...</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="account-item">
-                                        <div class="account-label">
-                                            <i class="fas fa-check-circle text-success"></i>
-                                            Account Status
+                                    <div class="account-info-card">
+                                        <div class="account-icon account-icon-success">
+                                            <i class="fas fa-check-circle"></i>
                                         </div>
-                                        <div class="account-value">
-                                            <span class="status-badge">Active & Ready</span>
+                                        <div class="account-content">
+                                            <div class="account-label">Account Status</div>
+                                            <div class="account-value">
+                                                <span class="status-badge">Active & Ready</span>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="account-item">
-                                        <div class="account-label">
-                                            <i class="fas fa-calendar-plus text-primary"></i>
-                                            Member Since
+                                    <div class="account-info-card">
+                                        <div class="account-icon">
+                                            <i class="fas fa-calendar-plus"></i>
                                         </div>
-                                        <div class="account-value" id="member-since">Loading...</div>
+                                        <div class="account-content">
+                                            <div class="account-label">Member Since</div>
+                                            <div class="account-value" id="member-since">Loading...</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -155,10 +156,12 @@
                         
                         <div class="launch-notification">
                             <div class="notification-content">
-                                <i class="fas fa-bell"></i>
-                                <div>
-                                    <h5>Launch Notification Ready</h5>
-                                    <p>Your account is secured and ready for the MVP launch. You'll receive an email notification when we go live in October 2025!</p>
+                                <div class="notification-icon">
+                                    <i class="fas fa-rocket"></i>
+                                </div>
+                                <div class="notification-text">
+                                    <h5>🚀 Ready for MVP Launch</h5>
+                                    <p>Your account is secured and ready for the MVP launch. You'll receive an email notification when we go live in <strong>October 2025</strong>!</p>
                                 </div>
                             </div>
                         </div>
@@ -333,27 +336,29 @@
 /* Features Section */
 .features-section {
     margin-bottom: var(--space-20);
-    background: rgba(255, 255, 255, 0.95);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
     backdrop-filter: blur(20px);
     border-radius: var(--radius-2xl);
     padding: var(--space-12);
     margin-top: var(--space-10);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: var(--shadow-2xl);
+    border: 1px solid rgba(15, 76, 117, 0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
 .features-section .text-center h2 {
-    color: #1a202c !important;
+    color: #0F4C75 !important;
     font-weight: 800 !important;
     font-size: 2.3rem !important;
     text-shadow: none !important;
+    margin-bottom: var(--space-4) !important;
 }
 
 .features-section .text-center .lead {
-    color: #2d3748 !important;
-    font-weight: 600 !important;
-    font-size: 1.2rem !important;
+    color: #4a5568 !important;
+    font-weight: 500 !important;
+    font-size: 1.15rem !important;
     text-shadow: none !important;
+    margin-bottom: var(--space-8) !important;
 }
 
 .feature-list {
@@ -390,9 +395,64 @@
     flex-shrink: 0;
 }
 
+/* Feature Cards */
+.feature-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%);
+    border-radius: var(--radius-xl);
+    padding: var(--space-8);
+    border: 1px solid rgba(15, 76, 117, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    transition: all var(--transition);
+    height: 100%;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+
+.restaurant-card {
+    border-left: 4px solid #0F4C75;
+}
+
+.influencer-card {
+    border-left: 4px solid #10b981;
+}
+
+.feature-title {
+    color: #1a202c;
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-bottom: var(--space-6);
+    margin-top: var(--space-4);
+}
+
+.restaurant-title {
+    color: #0F4C75;
+}
+
+.influencer-title {
+    color: #10b981;
+}
+
+.feature-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--space-4);
+    padding: var(--space-3);
+    background: rgba(15, 76, 117, 0.03);
+    border-radius: var(--radius);
+    transition: all var(--transition);
+}
+
+.feature-list li:hover {
+    background: rgba(15, 76, 117, 0.08);
+    transform: translateX(5px);
+}
+
 .feature-list li span {
-    font-weight: 600;
-    color: #2c3e50;
+    font-weight: 500;
+    color: #2d3748;
     text-shadow: none;
 }
 
@@ -422,52 +482,91 @@
 /* Account Section */
 .account-section {
     margin-bottom: var(--space-12);
-    background: rgba(255, 255, 255, 0.95);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
     backdrop-filter: blur(20px);
     border-radius: var(--radius-2xl);
-    padding: var(--space-8);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: var(--shadow-2xl);
+    padding: var(--space-12);
+    border: 1px solid rgba(15, 76, 117, 0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
-.card-header-modern {
-    padding: var(--space-8);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+.account-section .text-center h2 {
+    color: #0F4C75 !important;
+    font-weight: 800 !important;
+    font-size: 2.3rem !important;
+    text-shadow: none !important;
+    margin-bottom: var(--space-4) !important;
 }
 
-.card-header-modern h3 {
-    color: #1a202c !important;
-    text-shadow: none;
-    font-weight: 700;
-}
-
-.card-header-modern p {
+.account-section .text-center .lead {
     color: #4a5568 !important;
-    text-shadow: none;
+    font-weight: 500 !important;
+    font-size: 1.15rem !important;
+    text-shadow: none !important;
+    margin-bottom: var(--space-8) !important;
 }
 
 .account-details {
-    padding: var(--space-8);
+    padding: 0;
+    margin-bottom: var(--space-8);
 }
 
-.account-item {
-    margin-bottom: var(--space-6);
+.account-info-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(248, 250, 252, 0.8) 100%);
+    border: 1px solid rgba(15, 76, 117, 0.08);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    margin-bottom: var(--space-4);
+    display: flex;
+    align-items: center;
+    transition: all var(--transition);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.account-info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-color: rgba(15, 76, 117, 0.15);
+}
+
+.account-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, #0F4C75 0%, #1e5a87 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-right: var(--space-4);
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(15, 76, 117, 0.3);
+}
+
+.account-icon-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.account-icon-type {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.account-content {
+    flex: 1;
 }
 
 .account-label {
-    display: flex;
-    align-items: center;
     font-weight: 600;
     color: #4a5568;
-    font-size: 0.9rem;
-    margin-bottom: var(--space-2);
+    font-size: 0.85rem;
+    margin-bottom: var(--space-1);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     text-shadow: none;
-}
-
-.account-label i {
-    margin-right: var(--space-2);
 }
 
 .account-value {
@@ -497,37 +596,76 @@
 }
 
 .launch-notification {
-    background: linear-gradient(135deg, var(--gray-50) 0%, rgba(15, 76, 117, 0.05) 100%);
-    border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 193, 7, 0.05) 100%);
+    border: 2px solid rgba(255, 193, 7, 0.2);
+    border-radius: var(--radius-xl);
     padding: var(--space-8);
-    margin-top: var(--space-8);
-    border: 1px solid rgba(15, 76, 117, 0.1);
+    margin-top: var(--space-6);
+    position: relative;
+    overflow: hidden;
+}
+
+.launch-notification::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+    transition: left 0.8s;
+}
+
+.launch-notification:hover::before {
+    left: 100%;
 }
 
 .notification-content {
     display: flex;
-    align-items: start;
+    align-items: center;
     gap: var(--space-4);
+    position: relative;
+    z-index: 2;
 }
 
-.notification-content i {
-    color: var(--primary);
+.notification-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
+    color: #1a202c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 1.5rem;
-    margin-top: var(--space-1);
+    flex-shrink: 0;
+    box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
+    animation: rocket-pulse 2s infinite;
 }
 
-.notification-content h5 {
+@keyframes rocket-pulse {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.1) rotate(5deg); }
+}
+
+.notification-text {
+    flex: 1;
+}
+
+.notification-text h5 {
     color: #1a202c;
     margin-bottom: var(--space-2);
     font-weight: 700;
+    font-size: 1.3rem;
     text-shadow: none;
 }
 
-.notification-content p {
+.notification-text p {
     color: #2d3748;
     margin: 0;
     line-height: 1.6;
     font-weight: 500;
+    font-size: 1rem;
     text-shadow: none;
 }
 
