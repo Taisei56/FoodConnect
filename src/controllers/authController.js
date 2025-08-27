@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const MVPUser = require('../models/MVPUser');
 const emailService = require('../services/emailService');
 const jwt = require('jsonwebtoken');
 
@@ -53,27 +54,6 @@ class AuthController {
                 });
             }
             
-            // Check if user already exists (with error handling)
-            let existingUser = null;
-            try {
-                console.log('🔍 Checking if user exists...');
-                existingUser = await User.findByEmail(email);
-                console.log('✅ User check completed');
-            } catch (dbError) {
-                console.log('⚠️  Database not available, using MVP mode');
-                // If database is not available, continue with MVP registration
-                console.log('Database error:', dbError.message);
-            }
-            
-            if (existingUser) {
-                console.log('❌ User already exists');
-                return res.status(409).json({ 
-                    success: false,
-                    error: 'Email already registered',
-                    message: 'An account with this email address already exists.'
-                });
-            }
-            
             // Prepare additional data based on user type
             let additionalData = {};
             if (user_type === 'restaurant') {
@@ -95,10 +75,12 @@ class AuthController {
                 };
             }
             
-            // Create user with profile (with MVP fallback)
+            // Try database first, fallback to MVP User
             let result = null;
+            let usingMVPMode = false;
+            
             try {
-                console.log('💾 Creating user in database...');
+                console.log('💾 Trying database user creation...');
                 result = await User.create({
                     email,
                     password,
@@ -107,21 +89,22 @@ class AuthController {
                 });
                 console.log('✅ User created in database');
             } catch (dbError) {
-                console.log('⚠️  Database creation failed, using MVP mode');
+                console.log('⚠️  Database not available, using MVP persistent storage');
                 console.log('Database error:', dbError.message);
+                usingMVPMode = true;
                 
-                // MVP mode - simulate successful registration
-                result = {
-                    user: {
-                        id: Date.now(),
-                        email: email,
+                try {
+                    result = await MVPUser.create({
+                        email,
+                        password,
                         userType: user_type,
-                        emailVerified: false
-                    },
-                    profile: additionalData,
-                    verificationToken: 'mvp-' + Math.random().toString(36).substr(2, 9)
-                };
-                console.log('✅ MVP mode registration created');
+                        additionalData
+                    });
+                    console.log('✅ User created in MVP persistent storage');
+                } catch (mvpError) {
+                    console.error('❌ MVP User creation failed:', mvpError);
+                    throw mvpError;
+                }
             }
             
             // Send verification email (optional in MVP mode)
@@ -153,7 +136,7 @@ class AuthController {
                 success: true,
                 message: emailSent 
                     ? 'Registration successful! Please check your email to verify your account.'
-                    : 'Registration successful! Your account is ready for the MVP launch in October 2025.',
+                    : 'Registration successful! Your account is ready and you can now login. MVP launch in October 2025!',
                 user: {
                     id: result.user.id,
                     email: result.user.email,
@@ -161,7 +144,8 @@ class AuthController {
                     emailVerified: result.user.emailVerified || false
                 },
                 emailSent: emailSent,
-                mvpMode: !emailSent
+                mvpMode: usingMVPMode,
+                persistentStorage: usingMVPMode
             });
         } catch (error) {
             console.error('Registration controller error:', error);
@@ -200,9 +184,38 @@ class AuthController {
 
     static async login(req, res) {
         try {
+            console.log('🔐 Login attempt started');
             const { email, password } = req.body;
             
-            const user = await User.authenticate(email, password);
+            if (!email || !password) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Email and password are required'
+                });
+            }
+            
+            console.log('🔍 Attempting authentication for:', email);
+            
+            let user = null;
+            let usingMVPMode = false;
+            
+            // Try database first, fallback to MVP User
+            try {
+                user = await User.authenticate(email, password);
+                console.log('✅ Database authentication successful');
+            } catch (dbError) {
+                console.log('⚠️  Database authentication failed, trying MVP mode');
+                console.log('Database error:', dbError.message);
+                usingMVPMode = true;
+                
+                try {
+                    user = await MVPUser.authenticate(email, password);
+                    console.log('✅ MVP authentication successful');
+                } catch (mvpError) {
+                    console.log('❌ MVP authentication failed:', mvpError.message);
+                    throw mvpError; // Re-throw to be caught by outer catch
+                }
+            }
             
             // Generate JWT token
             const token = jwt.sign(
@@ -211,9 +224,11 @@ class AuthController {
                     email: user.email,
                     userType: user.userType 
                 },
-                process.env.JWT_SECRET,
+                process.env.JWT_SECRET || 'default-secret-for-mvp',
                 { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
             );
+
+            console.log('🎉 Login successful for user:', user.email);
 
             res.json({
                 success: true,
@@ -225,7 +240,9 @@ class AuthController {
                     userType: user.userType,
                     status: user.status,
                     emailVerified: user.emailVerified
-                }
+                },
+                mvpMode: usingMVPMode,
+                persistentStorage: usingMVPMode
             });
         } catch (error) {
             console.error('Login controller error:', error);
@@ -233,17 +250,25 @@ class AuthController {
             let message = 'Login failed. Please try again.';
             let statusCode = 500;
             
-            if (error.message === 'User not found' || error.message === 'Invalid password') {
-                message = 'Invalid email or password';
+            // Provide specific error messages
+            if (error.message === 'User not found') {
+                message = 'No account found with this email address. Please check your email or register for an account.';
+                statusCode = 401;
+            } else if (error.message === 'Invalid password') {
+                message = 'Incorrect password. Please check your password and try again.';
                 statusCode = 401;
             } else if (error.message === 'Email not verified') {
-                message = 'Please verify your email address before logging in';
+                message = 'Please verify your email address before logging in. Check your email for a verification link.';
                 statusCode = 403;
+            } else if (error.message.includes('Email already registered')) {
+                message = 'Account already exists with this email address.';
+                statusCode = 409;
             }
             
             res.status(statusCode).json({ 
                 success: false,
-                error: message
+                error: message,
+                details: process.env.NODE_ENV === 'development' ? error.message : undefined
             });
         }
     }

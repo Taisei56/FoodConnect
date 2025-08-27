@@ -343,6 +343,7 @@
     margin-top: var(--space-10);
     border: 1px solid rgba(15, 76, 117, 0.1);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    color: #1a202c !important;
 }
 
 .features-section .text-center h2 {
@@ -667,6 +668,82 @@
     font-weight: 500;
     font-size: 1rem;
     text-shadow: none;
+}
+
+/* Global text visibility fixes */
+.text-muted {
+    color: #6c757d !important;
+}
+
+.text-dark, .text-black {
+    color: #212529 !important;
+}
+
+/* Ensure dark text never appears on dark backgrounds */
+.bg-dark *, .bg-black *, [style*="background: black"] *, [style*="background-color: black"] *, [style*="background:#000"] *, [style*="background-color:#000"] *, [class*="bg-dark"] *, [class*="bg-black"] * {
+    color: white !important;
+}
+
+.bg-dark .text-dark, .bg-black .text-dark, [style*="background: black"] .text-dark, [style*="background-color: black"] .text-dark {
+    color: white !important;
+}
+
+/* Ensure good contrast for all text elements */
+body, p, span, div, li, td, th, .card-body, .form-label, .form-control {
+    color: #2d3748 !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #1a202c !important;
+}
+
+/* Override any potential black text on dark backgrounds */
+[style*="color: black"], [style*="color:#000"], [style*="color: #000000"], .text-black {
+    color: #2d3748 !important;
+}
+
+/* Make sure form elements are visible */
+.form-control, .form-select, .form-check-label {
+    color: #2d3748 !important;
+    background-color: white !important;
+}
+
+/* Ensure links are visible */
+a, a:hover, a:focus, a:visited {
+    color: #0F4C75 !important;
+}
+
+/* White text on hero sections */
+.dashboard-hero, .dashboard-hero * {
+    color: white !important;
+}
+
+.dashboard-hero h1, .dashboard-hero h2, .dashboard-hero h3, .dashboard-hero h4, .dashboard-hero h5, .dashboard-hero h6 {
+    color: white !important;
+}
+
+/* Fix text visibility on blue backgrounds */
+.bg-primary *, .bg-info *, [style*="background: blue"] *, [style*="background-color: blue"] *, [style*="background:#0F4C75"] *, [style*="background-color:#0F4C75"] *, .navbar-dark *, [class*="bg-primary"] *, [class*="bg-info"] * {
+    color: white !important;
+}
+
+/* Ensure blue backgrounds don't have dark text */
+.bg-primary .text-dark, .bg-info .text-dark, .navbar-dark .text-dark, [style*="background:#0F4C75"] .text-dark {
+    color: white !important;
+}
+
+/* Links on dark/blue backgrounds should be light */
+.bg-dark a, .bg-primary a, .bg-info a, .navbar-dark a, [style*="background:#0F4C75"] a {
+    color: #fff !important;
+}
+
+.bg-dark a:hover, .bg-primary a:hover, .bg-info a:hover, .navbar-dark a:hover, [style*="background:#0F4C75"] a:hover {
+    color: #e0e0e0 !important;
+}
+
+/* Navbar brand and text */
+.navbar-brand, .navbar-nav .nav-link {
+    color: white !important;
 }
 
 /* Responsive adjustments */

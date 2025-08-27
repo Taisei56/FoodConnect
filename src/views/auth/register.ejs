@@ -46,9 +46,9 @@
                         </div>
                         
                         <div class="form-floating mb-3 position-relative">
-                            <input class="form-control pe-5" id="password" name="password" type="password" placeholder="Password" required minlength="6">
+                            <input class="form-control" id="password" name="password" type="password" placeholder="Password" required minlength="6" style="padding-right: 3.5rem !important;">
                             <label for="password">Password</label>
-                            <button type="button" class="btn btn-outline-secondary position-absolute" style="top: 12px; right: 8px; padding: 8px 12px; border: none; background: none; z-index: 10;" onclick="togglePasswordVisibility('password', this)" title="Toggle password visibility">
+                            <button type="button" class="btn position-absolute password-toggle-btn" onclick="togglePasswordVisibility('password', this)" title="Toggle password visibility">
                                 <i class="fas fa-eye text-muted"></i>
                             </button>
                             <div class="invalid-feedback">Password must be at least 6 characters long.</div>
@@ -56,9 +56,9 @@
                         </div>
                         
                         <div class="form-floating mb-3 position-relative">
-                            <input class="form-control pe-5" id="confirmPassword" name="confirmPassword" type="password" placeholder="Confirm Password" required>
+                            <input class="form-control" id="confirmPassword" name="confirmPassword" type="password" placeholder="Confirm Password" required style="padding-right: 3.5rem !important;">
                             <label for="confirmPassword">Confirm Password</label>
-                            <button type="button" class="btn btn-outline-secondary position-absolute" style="top: 12px; right: 8px; padding: 8px 12px; border: none; background: none; z-index: 10;" onclick="togglePasswordVisibility('confirmPassword', this)" title="Toggle password visibility">
+                            <button type="button" class="btn position-absolute password-toggle-btn" onclick="togglePasswordVisibility('confirmPassword', this)" title="Toggle password visibility">
                                 <i class="fas fa-eye text-muted"></i>
                             </button>
                             <div class="invalid-feedback">Passwords do not match.</div>
@@ -70,7 +70,7 @@
                             <div id="restaurant-fields" style="display: none;">
                                 <div class="form-floating mb-3">
                                     <input class="form-control" id="restaurant_name" name="restaurant_name" type="text" placeholder="Restaurant Name">
-                                    <label for="restaurant_name">Restaurant Name *</label>
+                                    <label for="restaurant_name">Restaurant Name (Optional)</label>
                                     <div class="invalid-feedback">Please enter your restaurant name.</div>
                                 </div>
                                 <div class="form-floating mb-3">
@@ -84,7 +84,7 @@
                             <div id="influencer-fields" style="display: none;">
                                 <div class="form-floating mb-3">
                                     <input class="form-control" id="instagram_handle" name="instagram_handle" type="text" placeholder="@username">
-                                    <label for="instagram_handle">Instagram Handle</label>
+                                    <label for="instagram_handle">Instagram Handle (Optional)</label>
                                     <div class="form-text">Enter your Instagram username (e.g., @foodlover123)</div>
                                 </div>
                                 <div class="form-floating mb-3">
@@ -158,6 +158,141 @@
     border-color: #198754;
     background-color: rgba(25, 135, 84, 0.05);
 }
+
+/* Password toggle button positioning - improved to avoid validation overlap */
+.password-toggle-btn {
+    top: 50%;
+    right: 0.75rem;
+    transform: translateY(-50%);
+    border: none !important;
+    background: none !important;
+    padding: 0.375rem !important;
+    z-index: 5; /* Lower than validation feedback */
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.password-toggle-btn:hover {
+    background-color: rgba(0,0,0,0.05) !important;
+    border-radius: 50%;
+}
+
+/* Adjust input padding to make room for both validation and toggle button */
+.form-floating input[type="password"] {
+    padding-right: 4.5rem !important; /* More space for both icons */
+}
+
+/* Position validation feedback properly */
+.form-floating .form-control:valid {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='m2.3 6.73.75-.75L5.6 3.4 4.85 2.6 3.3 4.2l-.9-.9-.75.75 1.65 1.65Z'/%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 3.5rem center !important; /* Position validation icon to avoid overlap */
+    background-size: 16px 12px !important;
+}
+
+/* Style validation icons to not overlap with password toggle */
+.form-floating .form-control:valid ~ .password-toggle-btn {
+    right: 2.25rem; /* Move toggle button further left when validation icon is present */
+}
+
+/* Better visual separation */
+.form-floating .form-control:valid ~ .password-toggle-btn i {
+    color: #6c757d !important;
+}
+
+/* Loading state improvements */
+.btn-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Text visibility fixes - comprehensive solution */
+body, p, span, div, li, td, th, .card-body, .form-label, .form-control, .form-text, .invalid-feedback, .valid-feedback {
+    color: #2d3748 !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #1a202c !important;
+}
+
+/* Prevent black text on any dark backgrounds */
+.bg-dark *, .bg-black *, [style*="background: black"] *, [style*="background-color: black"] *, [style*="background:#000"] *, [style*="background-color:#000"] *, [class*="bg-dark"] *, [class*="bg-black"] * {
+    color: white !important;
+}
+
+/* Fix text visibility on blue backgrounds */
+.bg-primary *, .bg-info *, [style*="background: blue"] *, [style*="background-color: blue"] *, [style*="background:#0F4C75"] *, [style*="background-color:#0F4C75"] *, .navbar-dark *, [class*="bg-primary"] *, [class*="bg-info"] * {
+    color: white !important;
+}
+
+/* Override any potential problematic text colors */
+[style*="color: black"], [style*="color:#000"], [style*="color: #000000"], .text-black {
+    color: #2d3748 !important;
+}
+
+/* Ensure blue backgrounds don't have dark text */
+.bg-primary .text-dark, .bg-info .text-dark, .navbar-dark .text-dark, [style*="background:#0F4C75"] .text-dark {
+    color: white !important;
+}
+
+/* Form elements visibility */
+.form-control, .form-select, .form-check-label, .btn {
+    color: #2d3748 !important;
+}
+
+.form-control {
+    background-color: white !important;
+    border-color: #ced4da !important;
+}
+
+.form-control:focus {
+    background-color: white !important;
+    color: #2d3748 !important;
+}
+
+/* Links visibility - different colors for different backgrounds */
+a, a:hover, a:focus, a:visited {
+    color: #0F4C75 !important;
+}
+
+/* Links on dark/blue backgrounds should be light */
+.bg-dark a, .bg-primary a, .bg-info a, .navbar-dark a, [style*="background:#0F4C75"] a {
+    color: #fff !important;
+}
+
+.bg-dark a:hover, .bg-primary a:hover, .bg-info a:hover, .navbar-dark a:hover, [style*="background:#0F4C75"] a:hover {
+    color: #e0e0e0 !important;
+}
+
+/* Fix validation feedback positioning */
+.form-floating .invalid-feedback {
+    margin-top: 0.25rem;
+}
+
+/* Loading button text should be visible */
+.btn .btn-loading, .btn .btn-text {
+    color: inherit !important;
+}
+
+/* Card headers on any background */
+.card-header, .card-header * {
+    color: #1a202c !important;
+}
+
+/* Navbar brand and text */
+.navbar-brand, .navbar-nav .nav-link {
+    color: white !important;
+}
 </style>
 
 <script>
@@ -216,13 +351,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (type === 'restaurant') {
             restaurantFields.style.display = 'block';
             influencerFields.style.display = 'none';
-            // Make restaurant name required
-            document.getElementById('restaurant_name').required = true;
+            // Restaurant name is optional for MVP
+            // document.getElementById('restaurant_name').required = true;
         } else if (type === 'influencer') {
             influencerFields.style.display = 'block';
             restaurantFields.style.display = 'none';
-            // Make Instagram handle required for influencers
-            document.getElementById('instagram_handle').required = true;
+            // Instagram handle is optional for MVP
+            // document.getElementById('instagram_handle').required = true;
         }
         
         console.log('Form display before:', registerForm.style.display); // Debug log
@@ -242,9 +377,9 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('restaurant-fields').style.display = 'none';
         document.getElementById('influencer-fields').style.display = 'none';
         
-        // Remove required attributes
-        document.getElementById('restaurant_name').required = false;
-        document.getElementById('instagram_handle').required = false;
+        // Remove required attributes (already optional for MVP)
+        // document.getElementById('restaurant_name').required = false;
+        // document.getElementById('instagram_handle').required = false;
     });
     
     // Password validation
