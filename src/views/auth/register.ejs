@@ -216,82 +216,94 @@
     height: 1rem;
 }
 
-/* Text visibility fixes - comprehensive solution */
-body, p, span, div, li, td, th, .card-body, .form-label, .form-control, .form-text, .invalid-feedback, .valid-feedback {
-    color: #2d3748 !important;
+/* Text visibility fixes - BALANCED solution */
+/* Default dark text on light backgrounds */
+body {
+    color: #212529 !important;
+    background-color: #ffffff !important;
+}
+
+p, span, div, li, td, th, .card-body, .form-label, .form-text, .invalid-feedback, .valid-feedback {
+    color: #212529 !important;
 }
 
 h1, h2, h3, h4, h5, h6 {
-    color: #1a202c !important;
+    color: #212529 !important;
 }
 
-/* Prevent black text on any dark backgrounds */
-.bg-dark *, .bg-black *, [style*="background: black"] *, [style*="background-color: black"] *, [style*="background:#000"] *, [style*="background-color:#000"] *, [class*="bg-dark"] *, [class*="bg-black"] * {
-    color: white !important;
-}
-
-/* Fix text visibility on blue backgrounds */
-.bg-primary *, .bg-info *, [style*="background: blue"] *, [style*="background-color: blue"] *, [style*="background:#0F4C75"] *, [style*="background-color:#0F4C75"] *, .navbar-dark *, [class*="bg-primary"] *, [class*="bg-info"] * {
-    color: white !important;
-}
-
-/* Override any potential problematic text colors */
-[style*="color: black"], [style*="color:#000"], [style*="color: #000000"], .text-black {
-    color: #2d3748 !important;
-}
-
-/* Ensure blue backgrounds don't have dark text */
-.bg-primary .text-dark, .bg-info .text-dark, .navbar-dark .text-dark, [style*="background:#0F4C75"] .text-dark {
-    color: white !important;
-}
-
-/* Form elements visibility */
-.form-control, .form-select, .form-check-label, .btn {
-    color: #2d3748 !important;
-}
-
-.form-control {
-    background-color: white !important;
+/* Form elements - dark text on white background */
+.form-control, .form-select, .form-check-label {
+    color: #212529 !important;
+    background-color: #ffffff !important;
     border-color: #ced4da !important;
 }
 
 .form-control:focus {
-    background-color: white !important;
-    color: #2d3748 !important;
+    background-color: #ffffff !important;
+    color: #212529 !important;
 }
 
-/* Links visibility - different colors for different backgrounds */
-a, a:hover, a:focus, a:visited {
+/* ONLY navbar should have white text (blue background) */
+.navbar-dark {
+    background-color: #0F4C75 !important;
+}
+
+.navbar-dark .navbar-brand,
+.navbar-dark .navbar-nav .nav-link,
+.navbar-dark .navbar-toggler-icon {
+    color: white !important;
+}
+
+/* Dark backgrounds only */
+.bg-dark, .bg-dark * {
+    color: white !important;
+}
+
+/* Links - blue on light backgrounds, white on dark backgrounds */
+a {
     color: #0F4C75 !important;
 }
 
-/* Links on dark/blue backgrounds should be light */
-.bg-dark a, .bg-primary a, .bg-info a, .navbar-dark a, [style*="background:#0F4C75"] a {
-    color: #fff !important;
+a:hover, a:focus {
+    color: #083c5c !important;
 }
 
-.bg-dark a:hover, .bg-primary a:hover, .bg-info a:hover, .navbar-dark a:hover, [style*="background:#0F4C75"] a:hover {
+.navbar-dark a {
+    color: white !important;
+}
+
+.navbar-dark a:hover {
     color: #e0e0e0 !important;
+}
+
+.bg-dark a {
+    color: white !important;
+}
+
+/* Cards and content areas */
+.card, .card-body, .card-header {
+    background-color: white !important;
+    color: #212529 !important;
+}
+
+.card-header h1, .card-header h2, .card-header h3, .card-header h4, .card-header h5, .card-header h6 {
+    color: #212529 !important;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #0F4C75 !important;
+    color: white !important;
+}
+
+.btn-secondary, .btn-outline-secondary {
+    color: #212529 !important;
 }
 
 /* Fix validation feedback positioning */
 .form-floating .invalid-feedback {
     margin-top: 0.25rem;
-}
-
-/* Loading button text should be visible */
-.btn .btn-loading, .btn .btn-text {
-    color: inherit !important;
-}
-
-/* Card headers on any background */
-.card-header, .card-header * {
-    color: #1a202c !important;
-}
-
-/* Navbar brand and text */
-.navbar-brand, .navbar-nav .nav-link {
-    color: white !important;
+    color: #dc3545 !important;
 }
 </style>
 
