@@ -9,8 +9,8 @@ class User {
         try {
             await client.query('BEGIN');
             
-            // Hash password
-            const passwordHash = await bcrypt.hash(password, 12);
+            // Hash password (8 rounds for MVP - faster while still secure)
+            const passwordHash = await bcrypt.hash(password, 8);
             
             // Generate verification token
             const verificationToken = crypto.randomUUID();

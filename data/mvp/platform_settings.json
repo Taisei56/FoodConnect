@@ -1,0 +1,42 @@
+[
+  {
+    "key": "platform_fee_percentage",
+    "value": "15.0",
+    "description": "Platform fee percentage (15%)"
+  },
+  {
+    "key": "min_campaign_budget",
+    "value": "100.0",
+    "description": "Minimum campaign budget in RM"
+  },
+  {
+    "key": "max_campaign_duration_days",
+    "value": "60",
+    "description": "Maximum campaign duration in days"
+  },
+  {
+    "key": "auto_approve_restaurants",
+    "value": "false",
+    "description": "Auto-approve restaurant registrations"
+  },
+  {
+    "key": "auto_approve_influencers",
+    "value": "false",
+    "description": "Auto-approve influencer registrations"
+  },
+  {
+    "key": "touch_n_go_business_account",
+    "value": "",
+    "description": "Touch n Go business account for payments"
+  },
+  {
+    "key": "admin_email",
+    "value": "admin@foodconnect.my",
+    "description": "Admin email for notifications"
+  },
+  {
+    "key": "site_maintenance_mode",
+    "value": "false",
+    "description": "Site maintenance mode toggle"
+  }
+]

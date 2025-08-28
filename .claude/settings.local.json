@@ -26,7 +26,9 @@
       "WebFetch(domain:raw.githubusercontent.com)",
       "WebFetch(domain:web-production-fc8f3.up.railway.app)",
       "Bash(cp:*)",
-      "WebFetch(domain:web-production-902b.up.railway.app)"
+      "WebFetch(domain:web-production-902b.up.railway.app)",
+      "Bash(time curl:*)",
+      "Bash(git log:*)"
     ],
     "deny": []
   }

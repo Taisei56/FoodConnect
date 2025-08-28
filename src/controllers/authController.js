@@ -1,5 +1,8 @@
 const User = require('../models/User');
 const MVPUser = require('../models/MVPUser');
+const UserMVP = require('../models/UserMVP');
+const Restaurant = require('../models/Restaurant');
+const Influencer = require('../models/Influencer');
 const emailService = require('../services/emailService');
 const jwt = require('jsonwebtoken');
 
@@ -75,37 +78,47 @@ class AuthController {
                 };
             }
             
-            // Try database first, fallback to MVP User
-            let result = null;
-            let usingMVPMode = false;
+            // Create user with our new MVP system
+            console.log('💾 Creating user with MVP system...');
+            const userMVP = new UserMVP();
             
-            try {
-                console.log('💾 Trying database user creation...');
-                result = await User.create({
-                    email,
-                    password,
-                    userType: user_type,
-                    additionalData
+            const result = await userMVP.create({
+                email,
+                password,
+                userType: user_type,
+                additionalData
+            });
+            
+            // Create profile based on user type
+            if (user_type === 'restaurant') {
+                const restaurantModel = new Restaurant();
+                await restaurantModel.create({
+                    user_id: result.user.id,
+                    business_name: restaurant_name || '',
+                    description: description || '',
+                    phone: phone || '',
+                    address: location || '',
+                    city: location || '',
+                    state: 'Kuala Lumpur', // Default, can be updated later
+                    google_maps_link: google_maps || '',
+                    dietary_categories: [] // Will be filled during profile completion
                 });
-                console.log('✅ User created in database');
-            } catch (dbError) {
-                console.log('⚠️  Database not available, using MVP persistent storage');
-                console.log('Database error:', dbError.message);
-                usingMVPMode = true;
-                
-                try {
-                    result = await MVPUser.create({
-                        email,
-                        password,
-                        userType: user_type,
-                        additionalData
-                    });
-                    console.log('✅ User created in MVP persistent storage');
-                } catch (mvpError) {
-                    console.error('❌ MVP User creation failed:', mvpError);
-                    throw mvpError;
-                }
+            } else if (user_type === 'influencer') {
+                const influencerModel = new Influencer();
+                await influencerModel.create({
+                    user_id: result.user.id,
+                    display_name: display_name || instagram_handle || '',
+                    phone: phone || '',
+                    bio: bio || '',
+                    location: location || '',
+                    city: location || '',
+                    state: 'Kuala Lumpur', // Default, can be updated later
+                    instagram_username: instagram_handle || '',
+                    instagram_followers: parseInt(follower_count) || 0
+                });
             }
+            
+            console.log('✅ User and profile created successfully');
             
             // Send verification email (optional in MVP mode)
             let emailSent = false;
@@ -136,16 +149,16 @@ class AuthController {
                 success: true,
                 message: emailSent 
                     ? 'Registration successful! Please check your email to verify your account.'
-                    : 'Registration successful! Your account is ready and you can now login. MVP launch in October 2025!',
+                    : 'Registration successful! Your account is ready and awaiting admin approval. MVP launch in October 2025!',
                 user: {
                     id: result.user.id,
                     email: result.user.email,
-                    userType: result.user.userType,
-                    emailVerified: result.user.emailVerified || false
+                    user_type: result.user.user_type,
+                    status: result.user.status,
+                    email_verified: result.user.email_verified || false
                 },
                 emailSent: emailSent,
-                mvpMode: usingMVPMode,
-                persistentStorage: usingMVPMode
+                mvpMode: true
             });
         } catch (error) {
             console.error('Registration controller error:', error);
@@ -196,37 +209,13 @@ class AuthController {
             
             console.log('🔍 Attempting authentication for:', email);
             
-            let user = null;
-            let usingMVPMode = false;
-            
-            // Try database first, fallback to MVP User
-            try {
-                user = await User.authenticate(email, password);
-                console.log('✅ Database authentication successful');
-            } catch (dbError) {
-                console.log('⚠️  Database authentication failed, trying MVP mode');
-                console.log('Database error:', dbError.message);
-                usingMVPMode = true;
-                
-                try {
-                    user = await MVPUser.authenticate(email, password);
-                    console.log('✅ MVP authentication successful');
-                } catch (mvpError) {
-                    console.log('❌ MVP authentication failed:', mvpError.message);
-                    throw mvpError; // Re-throw to be caught by outer catch
-                }
-            }
+            // Authenticate with MVP system
+            const userMVP = new UserMVP();
+            const user = await userMVP.authenticate(email, password);
+            console.log('✅ MVP authentication successful');
             
             // Generate JWT token
-            const token = jwt.sign(
-                { 
-                    id: user.id, 
-                    email: user.email,
-                    userType: user.userType 
-                },
-                process.env.JWT_SECRET || 'default-secret-for-mvp',
-                { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
-            );
+            const token = userMVP.generateJWT(user);
 
             console.log('🎉 Login successful for user:', user.email);
 
@@ -237,12 +226,11 @@ class AuthController {
                 user: {
                     id: user.id,
                     email: user.email,
-                    userType: user.userType,
+                    user_type: user.user_type,
                     status: user.status,
-                    emailVerified: user.emailVerified
+                    email_verified: user.email_verified
                 },
-                mvpMode: usingMVPMode,
-                persistentStorage: usingMVPMode
+                mvpMode: true
             });
         } catch (error) {
             console.error('Login controller error:', error);
