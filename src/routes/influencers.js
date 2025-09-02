@@ -53,4 +53,14 @@ router.get('/:id', [
     optionalAuth
 ], InfluencerController.getInfluencerById);
 
+// Additional routes for enhanced functionality
+router.post('/follower-update', [
+    authenticateToken,
+    requireRole('influencer')
+], InfluencerController.requestFollowerUpdate);
+
+router.get('/stats/platform', optionalAuth, InfluencerController.getInfluencerStats);
+
+router.get('/search/tier', optionalAuth, InfluencerController.getInfluencersByTier);
+
 module.exports = router;

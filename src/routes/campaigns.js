@@ -33,11 +33,17 @@ router.put('/:id', [
     validateCampaign
 ], CampaignController.updateCampaign);
 
-router.post('/:id/close', [
+router.post('/:id/publish', [
     authenticateToken,
     requireRole('restaurant'),
     validateId
-], CampaignController.closeCampaign);
+], CampaignController.publishCampaign);
+
+router.post('/:id/start', [
+    authenticateToken,
+    requireRole('restaurant'),
+    validateId
+], CampaignController.startCampaign);
 
 router.post('/:id/complete', [
     authenticateToken,
@@ -50,5 +56,15 @@ router.delete('/:id', [
     requireRole('restaurant'),
     validateId
 ], CampaignController.deleteCampaign);
+
+// Additional routes for new functionality
+router.get('/stats', [
+    authenticateToken
+], CampaignController.getCampaignStats);
+
+router.get('/available', [
+    authenticateToken,
+    requireRole('influencer')
+], CampaignController.getAvailableCampaignsForInfluencer);
 
 module.exports = router;

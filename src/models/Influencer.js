@@ -447,6 +447,75 @@ class Influencer {
             throw new Error(`Failed to get platform stats: ${error.message}`);
         }
     }
+
+    // Get platform statistics
+    async getPlatformStats() {
+        try {
+            const influencers = await this.findAll({ status: 'approved' });
+            
+            const stats = {
+                total_influencers: influencers.length,
+                by_tier: {},
+                by_platform: {
+                    instagram: 0,
+                    tiktok: 0,
+                    xhs: 0,
+                    youtube: 0
+                },
+                total_followers: {
+                    instagram: 0,
+                    tiktok: 0,
+                    xhs: 0,
+                    youtube: 0
+                }
+            };
+            
+            // Initialize tier counts
+            const tiers = Influencer.getTiers();
+            tiers.forEach(tier => {
+                stats.by_tier[tier] = 0;
+            });
+            
+            influencers.forEach(influencer => {
+                // Count by tier
+                if (influencer.tier) {
+                    stats.by_tier[influencer.tier]++;
+                }
+                
+                // Count by platform and followers
+                if (influencer.instagram_followers > 0) {
+                    stats.by_platform.instagram++;
+                    stats.total_followers.instagram += influencer.instagram_followers;
+                }
+                if (influencer.tiktok_followers > 0) {
+                    stats.by_platform.tiktok++;
+                    stats.total_followers.tiktok += influencer.tiktok_followers;
+                }
+                if (influencer.xhs_followers > 0) {
+                    stats.by_platform.xhs++;
+                    stats.total_followers.xhs += influencer.xhs_followers;
+                }
+                if (influencer.youtube_followers > 0) {
+                    stats.by_platform.youtube++;
+                    stats.total_followers.youtube += influencer.youtube_followers;
+                }
+            });
+            
+            return stats;
+        } catch (error) {
+            throw new Error(`Failed to get platform stats: ${error.message}`);
+        }
+    }
+
+    // Find influencers by tiers
+    async findByTiers(tiers, filters = {}) {
+        try {
+            const allInfluencers = await this.findAll(filters);
+            return allInfluencers.filter(influencer => tiers.includes(influencer.tier));
+        } catch (error) {
+            throw new Error(`Failed to find influencers by tiers: ${error.message}`);
+        }
+    }
 }
 
 module.exports = Influencer;

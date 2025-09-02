@@ -37,4 +37,9 @@ router.get('/:id', [
     optionalAuth
 ], RestaurantController.getRestaurantById);
 
+// Additional routes for enhanced functionality
+router.get('/search/location', optionalAuth, RestaurantController.getRestaurantsByLocation);
+router.get('/search/dietary', optionalAuth, RestaurantController.getRestaurantsByDietary);
+router.get('/stats/location', optionalAuth, RestaurantController.getLocationStats);
+
 module.exports = router;

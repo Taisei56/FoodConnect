@@ -1,5 +1,5 @@
-const { verifyToken } = require('../config/jwt');
-const User = require('../models/User');
+const jwt = require('jsonwebtoken');
+const UserMVP = require('../models/UserMVP');
 
 const authenticateToken = async (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -10,14 +10,15 @@ const authenticateToken = async (req, res, next) => {
     }
 
     try {
-        const decoded = verifyToken(token);
-        const user = await User.findById(decoded.userId);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+        const userMVP = new UserMVP();
+        const user = await userMVP.findById(decoded.id);
         
         if (!user) {
             return res.status(401).json({ error: 'Invalid token' });
         }
 
-        if (user.status !== 'approved') {
+        if (user.status !== 'approved' && user.user_type !== 'admin') {
             return res.status(403).json({ 
                 error: 'Account not approved', 
                 status: user.status 
@@ -73,10 +74,11 @@ const optionalAuth = async (req, res, next) => {
     }
 
     try {
-        const decoded = verifyToken(token);
-        const user = await User.findById(decoded.userId);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+        const userMVP = new UserMVP();
+        const user = await userMVP.findById(decoded.id);
         
-        if (user && user.status === 'approved') {
+        if (user && (user.status === 'approved' || user.user_type === 'admin')) {
             req.user = user;
         }
     } catch (error) {
