@@ -507,6 +507,62 @@ class UserMVP {
             'active': 'Active'
         };
     }
+
+    // Get admin count
+    async getAdminCount() {
+        try {
+            const users = await this.findAll({ user_type: 'admin' });
+            return users.length;
+        } catch (error) {
+            console.error('Error getting admin count:', error);
+            return 0;
+        }
+    }
+
+    // Check if user has admin privileges
+    async isAdmin(userId) {
+        try {
+            const user = await this.findById(userId);
+            return user && user.user_type === 'admin' && user.status === 'active';
+        } catch (error) {
+            console.error('Error checking admin status:', error);
+            return false;
+        }
+    }
+
+    // Update user profile information
+    async updateProfile(userId, profileData) {
+        try {
+            const user = await this.findById(userId);
+            if (!user) {
+                throw new Error('User not found');
+            }
+
+            // Use PostgreSQL if available
+            try {
+                const db = require('../config/database');
+                const result = await db.query(
+                    'UPDATE users SET updated_at = CURRENT_TIMESTAMP WHERE id = $1 RETURNING *',
+                    [userId]
+                );
+                return result.rows[0];
+            } catch (dbError) {
+                // Fallback to JSON storage
+                const users = JSON.parse(fs.readFileSync(this.dataFile, 'utf8'));
+                const index = users.findIndex(u => u.id === parseInt(userId));
+                
+                if (index === -1) {
+                    throw new Error('User not found');
+                }
+                
+                users[index].updated_at = new Date().toISOString();
+                fs.writeFileSync(this.dataFile, JSON.stringify(users, null, 2));
+                return users[index];
+            }
+        } catch (error) {
+            throw new Error(`Failed to update user profile: ${error.message}`);
+        }
+    }
 }
 
 module.exports = UserMVP;

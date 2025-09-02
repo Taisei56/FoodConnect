@@ -5,6 +5,7 @@ const Restaurant = require('../models/Restaurant');
 const Influencer = require('../models/Influencer');
 const emailService = require('../services/emailService');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 class AuthController {
     // Test endpoint to check if auth controller is working
@@ -49,12 +50,23 @@ class AuthController {
                 });
             }
             
-            if (!['restaurant', 'influencer'].includes(user_type)) {
+            if (!['restaurant', 'influencer', 'admin'].includes(user_type)) {
                 console.log('❌ Invalid user type:', user_type);
                 return res.status(400).json({
                     success: false,
-                    error: 'Invalid user type. Must be either "restaurant" or "influencer".'
+                    error: 'Invalid user type. Must be "restaurant", "influencer", or "admin".'
                 });
+            }
+
+            // Admin registration requires special validation
+            if (user_type === 'admin') {
+                const existingAdmins = await this.getAdminCount();
+                if (existingAdmins >= 5) { // Limit admin accounts
+                    return res.status(403).json({
+                        success: false,
+                        error: 'Maximum admin accounts reached. Contact system administrator.'
+                    });
+                }
             }
             
             // Prepare additional data based on user type
@@ -75,6 +87,12 @@ class AuthController {
                     followerCount: parseInt(follower_count) || 0,
                     location: location,
                     bio: bio || ''
+                };
+            } else if (user_type === 'admin') {
+                additionalData = {
+                    displayName: display_name || 'Admin',
+                    role: 'admin',
+                    permissions: ['manage_users', 'manage_campaigns', 'manage_payments']
                 };
             }
             
@@ -116,6 +134,9 @@ class AuthController {
                     instagram_username: instagram_handle || '',
                     instagram_followers: parseInt(follower_count) || 0
                 });
+            } else if (user_type === 'admin') {
+                // Admin users don't need profile creation - they have special privileges
+                console.log('✅ Admin user created - no profile needed');
             }
             
             console.log('✅ User and profile created successfully');
@@ -126,7 +147,9 @@ class AuthController {
                 console.log('📧 Attempting to send verification email...');
                 const name = user_type === 'restaurant' 
                     ? (restaurant_name || 'Restaurant Owner') 
-                    : (display_name || instagram_handle || 'Influencer');
+                    : user_type === 'influencer'
+                    ? (display_name || instagram_handle || 'Influencer')
+                    : 'Platform Administrator';
                 await emailService.sendVerificationEmail(
                     email,
                     name || 'User',
@@ -442,6 +465,17 @@ class AuthController {
                 success: false,
                 error: 'Logout failed' 
             });
+        }
+    }
+
+    // Helper method to count admin users
+    static async getAdminCount() {
+        try {
+            const userMVP = new UserMVP();
+            return await userMVP.getAdminCount();
+        } catch (error) {
+            console.log('❌ Error counting admins:', error.message);
+            return 0;
         }
     }
 }
