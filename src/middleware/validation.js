@@ -29,8 +29,8 @@ const validateRegistration = [
         // Removed strict password complexity for MVP
     
     body('user_type')
-        .isIn(['restaurant', 'influencer'])
-        .withMessage('User type must be either restaurant or influencer'),
+        .isIn(['restaurant', 'influencer', 'admin'])
+        .withMessage('User type must be restaurant, influencer, or admin'),
     
     handleValidationErrors
 ];
@@ -50,20 +50,28 @@ const validateLogin = [
 
 const validateRestaurantProfile = [
     body('business_name')
+        .optional()
         .trim()
         .isLength({ min: 2, max: 255 })
         .withMessage('Business name must be between 2 and 255 characters'),
     
-    body('location')
+    body('address')
+        .optional()
         .trim()
-        .isLength({ min: 2, max: 255 })
-        .withMessage('Location must be between 2 and 255 characters'),
-    
-    body('cuisine_type')
+        .isLength({ max: 500 })
+        .withMessage('Address must be less than 500 characters'),
+        
+    body('city')
         .optional()
         .trim()
         .isLength({ max: 100 })
-        .withMessage('Cuisine type must be less than 100 characters'),
+        .withMessage('City must be less than 100 characters'),
+        
+    body('state')
+        .optional()
+        .trim()
+        .isLength({ max: 100 })
+        .withMessage('State must be less than 100 characters'),
     
     body('phone')
         .optional()
@@ -75,75 +83,121 @@ const validateRestaurantProfile = [
         .trim()
         .isLength({ max: 1000 })
         .withMessage('Description must be less than 1000 characters'),
+        
+    body('google_maps_link')
+        .optional()
+        .trim()
+        .isURL()
+        .withMessage('Google Maps link must be a valid URL'),
+        
+    body('website')
+        .optional()
+        .trim()
+        .isURL()
+        .withMessage('Website must be a valid URL'),
     
     handleValidationErrors
 ];
 
 const validateInfluencerProfile = [
     body('display_name')
+        .optional()
         .trim()
         .isLength({ min: 2, max: 255 })
         .withMessage('Display name must be between 2 and 255 characters'),
     
     body('location')
+        .optional()
         .trim()
-        .isLength({ min: 2, max: 255 })
-        .withMessage('Location must be between 2 and 255 characters'),
+        .isLength({ max: 255 })
+        .withMessage('Location must be less than 255 characters'),
+        
+    body('city')
+        .optional()
+        .trim()
+        .isLength({ max: 100 })
+        .withMessage('City must be less than 100 characters'),
+        
+    body('state')
+        .optional()
+        .trim()
+        .isLength({ max: 100 })
+        .withMessage('State must be less than 100 characters'),
     
-    body('instagram_handle')
+    body('instagram_username')
         .optional()
         .trim()
         .matches(/^@?[\w\.]+$/)
-        .withMessage('Invalid Instagram handle format'),
-    
-    body('follower_count')
+        .withMessage('Invalid Instagram username format'),
+        
+    body('instagram_followers')
         .optional()
         .isInt({ min: 0 })
-        .withMessage('Follower count must be a positive number'),
+        .withMessage('Instagram followers must be a positive number'),
+        
+    body('tiktok_followers')
+        .optional()
+        .isInt({ min: 0 })
+        .withMessage('TikTok followers must be a positive number'),
+        
+    body('xhs_followers')
+        .optional()
+        .isInt({ min: 0 })
+        .withMessage('XHS followers must be a positive number'),
+        
+    body('youtube_followers')
+        .optional()
+        .isInt({ min: 0 })
+        .withMessage('YouTube followers must be a positive number'),
     
     body('bio')
         .optional()
         .trim()
         .isLength({ max: 500 })
         .withMessage('Bio must be less than 500 characters'),
+        
+    body('phone')
+        .optional()
+        .matches(/^[\+]?[\d\s\-\(\)]+$/)
+        .withMessage('Invalid phone number format'),
     
     handleValidationErrors
 ];
 
 const validateCampaign = [
     body('title')
+        .optional()
         .trim()
         .isLength({ min: 5, max: 255 })
         .withMessage('Title must be between 5 and 255 characters'),
     
     body('description')
+        .optional()
         .trim()
-        .isLength({ min: 20, max: 2000 })
-        .withMessage('Description must be between 20 and 2000 characters'),
+        .isLength({ max: 2000 })
+        .withMessage('Description must be less than 2000 characters'),
+        
+    body('brief')
+        .optional()
+        .trim()
+        .isLength({ max: 2000 })
+        .withMessage('Brief must be less than 2000 characters'),
     
-    body('budget_per_influencer')
-        .isFloat({ min: 50 })
-        .withMessage('Budget per influencer must be at least RM 50'),
-    
-    body('meal_value')
+    body('total_budget')
         .optional()
         .isFloat({ min: 0 })
-        .withMessage('Meal value must be a positive number'),
+        .withMessage('Total budget must be a positive number'),
     
     body('max_influencers')
         .optional()
-        .isInt({ min: 1, max: 50 })
-        .withMessage('Max influencers must be between 1 and 50'),
-    
-    body('requirements')
-        .trim()
-        .isLength({ min: 10, max: 1000 })
-        .withMessage('Requirements must be between 10 and 1000 characters'),
+        .isInt({ min: 1, max: 100 })
+        .withMessage('Max influencers must be between 1 and 100'),
     
     body('location')
+        .optional()
         .trim()
-        .isLength({ min: 2, max: 255 })
-        .withMessage('Location must be between 2 and 255 characters'),
+        .isLength({ max: 255 })
+        .withMessage('Location must be less than 255 characters'),
     
     body('deadline')
         .optional()
