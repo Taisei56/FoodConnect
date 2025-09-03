@@ -1,0 +1,16 @@
+<svg width="280" height="60" viewBox="0 0 280 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Logo Circle Background -->
+  <circle cx="30" cy="30" r="28" fill="#000000"/>
+  
+  <!-- Camera/Monitor Icon -->
+  <rect x="15" y="20" width="20" height="15" rx="2" fill="#ffffff"/>
+  <rect x="12" y="22" width="5" height="3" rx="1" fill="#ffffff"/>
+  <circle cx="25" cy="27" r="4" fill="#000000"/>
+  <circle cx="25" cy="27" r="2" fill="#ffffff"/>
+  
+  <!-- Hand holding device -->
+  <path d="M10 35 Q15 40 25 38 Q30 37 35 40 L35 45 Q30 42 25 43 Q15 45 10 40 Z" fill="#ffffff"/>
+  
+  <!-- Text - Made bigger -->
+  <text x="65" y="38" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#ffffff">FoodConnect</text>
+</svg>
