@@ -38,7 +38,18 @@ app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-app.use(express.static(path.join(__dirname, 'public')));
+// Static files with proper MIME types
+app.use(express.static(path.join(__dirname, 'public'), {
+    setHeaders: (res, path) => {
+        if (path.endsWith('.js')) {
+            res.setHeader('Content-Type', 'application/javascript');
+        } else if (path.endsWith('.css')) {
+            res.setHeader('Content-Type', 'text/css');
+        } else if (path.endsWith('.json')) {
+            res.setHeader('Content-Type', 'application/json');
+        }
+    }
+}));
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
