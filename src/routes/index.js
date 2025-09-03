@@ -25,18 +25,37 @@ router.get('/health', (req, res) => {
     res.json({ 
         status: 'healthy', 
         timestamp: new Date().toISOString(),
-        service: 'FoodConnect Malaysia API'
+        service: 'FoodConnect Malaysia API',
+        version: 'MVP v3.0'
+    });
+});
+
+// Simple test endpoint
+router.get('/test', (req, res) => {
+    res.json({ 
+        message: 'API is working', 
+        timestamp: new Date().toISOString(),
+        routes_loaded: [
+            '/auth',
+            '/restaurants', 
+            '/influencers',
+            '/campaigns',
+            '/applications',
+            '/commissions',
+            '/admin',
+            '/health'
+        ]
     });
 });
 
 router.get('/debug', async (req, res) => {
-    const { query } = require('../config/database');
     try {
-        const result = await query('SELECT * FROM users WHERE email = $1', ['restaurant@demo.com']);
+        // Safe debug endpoint without database dependency
         res.json({ 
-            message: 'Debug info',
-            user: result.rows[0],
-            timestamp: new Date().toISOString()
+            message: 'Debug endpoint working',
+            timestamp: new Date().toISOString(),
+            environment: process.env.NODE_ENV || 'development',
+            version: 'MVP v3.0 - Complete'
         });
     } catch (error) {
         res.status(500).json({ error: error.message });
