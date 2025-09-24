@@ -54,9 +54,49 @@ app.use(express.static(path.join(__dirname, 'public'), {
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-const apiRoutes = require('./routes');
+// Import session and flash middleware
+const session = require('express-session');
+const flash = require('connect-flash');
+
+// Session configuration
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
+}));
+
+app.use(flash());
+
+// Global variables for templates
+app.use((req, res, next) => {
+    res.locals.user = req.session.user || null;
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
+    res.locals.info = req.flash('info');
+    next();
+});
+
+// Import route files
+const authRoutes = require('./routes/authMVP');
+const campaignRoutes = require('./routes/campaignsMVP');
+const dashboardRoutes = require('./routes/dashboardMVP');
+const adminRoutes = require('./routes/adminMVP');
+const contentRoutes = require('./routes/contentMVP');
+const paymentRoutes = require('./routes/paymentsMVP');
+const apiRoutes = require('./routes/apiMVP');
 const pageRoutes = require('./routes/pages');
 
+// Route middleware
+app.use('/auth', authRoutes);
+app.use('/campaigns', campaignRoutes);
+app.use('/dashboard', dashboardRoutes);
+app.use('/admin', adminRoutes);
+app.use('/content', contentRoutes);
+app.use('/payments', paymentRoutes);
 app.use('/api', apiRoutes);
 app.use('/', pageRoutes);
 

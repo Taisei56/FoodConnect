@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Content - FoodConnect Malaysia</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+            min-height: 100vh;
+        }
+        .content-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        .campaign-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #fab1a0;
+            box-shadow: 0 0 0 0.2rem rgba(250, 177, 160, 0.25);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+            border: none;
+            color: #2d3436;
+            font-weight: bold;
+            border-radius: 10px;
+            padding: 12px 30px;
+        }
+        .platform-card {
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .platform-card:hover {
+            border-color: #fab1a0;
+            background: rgba(250, 177, 160, 0.05);
+        }
+        .platform-card.selected {
+            border-color: #fab1a0;
+            background: rgba(250, 177, 160, 0.1);
+        }
+        .url-preview {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            border-left: 4px solid #28a745;
+        }
+        .guidelines-card {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            border-radius: 15px;
+            padding: 20px;
+        }
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            position: relative;
+            color: #6c757d;
+            font-weight: bold;
+        }
+        .step.active {
+            background: #fab1a0;
+            color: white;
+        }
+        .step.completed {
+            background: #28a745;
+            color: white;
+        }
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            width: 20px;
+            height: 2px;
+            background: #e9ecef;
+            transform: translateY(-50%);
+        }
+        .step:last-child::after {
+            display: none;
+        }
+        .step.completed::after {
+            background: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="fas fa-utensils me-2"></i>FoodConnect Malaysia
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/dashboard">
+                    <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="content-card p-5">
+                    <!-- Campaign Information -->
+                    <div class="campaign-info">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h4 class="fw-bold mb-2">
+                                    <i class="fas fa-bullhorn me-2"></i>
+                                    <%= application.campaign_title %>
+                                </h4>
+                                <p class="mb-2">
+                                    <i class="fas fa-utensils me-2"></i>
+                                    <%= application.restaurant_name %>
+                                </p>
+                                <p class="mb-0 opacity-75">
+                                    <i class="fas fa-money-bill me-2"></i>
+                                    Budget: RM <%= application.campaign_budget %>
+                                </p>
+                            </div>
+                            <span class="badge bg-light text-dark px-3 py-2 rounded-pill">
+                                <i class="fas fa-calendar me-1"></i>
+                                Due: <%= new Date(application.campaign_end_date).toLocaleDateString() %>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Content Guidelines -->
+                    <div class="guidelines-card mb-4">
+                        <h6 class="fw-bold mb-3">
+                            <i class="fas fa-clipboard-list me-2"></i>
+                            Content Guidelines
+                        </h6>
+                        <% if (application.campaign_requirements) { %>
+                            <p class="mb-2"><%= application.campaign_requirements %></p>
+                        <% } %>
+                        <ul class="mb-0">
+                            <li>Content must be original and authentic</li>
+                            <li>Tag the restaurant's social media accounts</li>
+                            <li>Use relevant hashtags and location tags</li>
+                            <li>Ensure good lighting and quality footage</li>
+                            <li>Be honest in your review while highlighting positives</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step Indicator -->
+                    <div class="step-indicator">
+                        <div class="step completed">1</div>
+                        <div class="step active">2</div>
+                        <div class="step">3</div>
+                    </div>
+
+                    <div class="text-center mb-4">
+                        <h3 class="fw-bold">Submit Your Content</h3>
+                        <p class="text-muted">Upload your content for restaurant approval</p>
+                    </div>
+
+                    <form id="contentForm" action="/content/submit" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="application_id" value="<%= application.id %>">
+
+                        <!-- Video URL -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-video me-2"></i>Content URL *
+                            </label>
+                            <input type="url" class="form-control" name="video_url" id="videoUrl" required
+                                   placeholder="https://www.instagram.com/p/... or https://vm.tiktok.com/...">
+                            <small class="text-muted">
+                                Paste the direct link to your posted content (Instagram post, TikTok video, YouTube video, etc.)
+                            </small>
+
+                            <!-- URL Preview -->
+                            <div id="urlPreview" class="url-preview mt-3" style="display: none;">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <span>Valid URL detected: </span>
+                                    <span id="urlPlatform" class="fw-bold ms-1"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Target Platforms -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-share-alt me-2"></i>Platforms Posted *
+                            </label>
+                            <p class="text-muted small">Select all platforms where you've posted this content</p>
+
+                            <div class="row">
+                                <% if (application.campaign_platforms && application.campaign_platforms.includes('instagram')) { %>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="platform-card p-3 text-center h-100" data-platform="instagram">
+                                            <i class="fab fa-instagram fa-2x text-danger mb-2"></i>
+                                            <h6>Instagram</h6>
+                                            <input type="checkbox" name="platforms" value="instagram" class="d-none">
+                                        </div>
+                                    </div>
+                                <% } %>
+                                <% if (application.campaign_platforms && application.campaign_platforms.includes('tiktok')) { %>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="platform-card p-3 text-center h-100" data-platform="tiktok">
+                                            <i class="fab fa-tiktok fa-2x text-dark mb-2"></i>
+                                            <h6>TikTok</h6>
+                                            <input type="checkbox" name="platforms" value="tiktok" class="d-none">
+                                        </div>
+                                    </div>
+                                <% } %>
+                                <% if (application.campaign_platforms && application.campaign_platforms.includes('xhs')) { %>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="platform-card p-3 text-center h-100" data-platform="xhs">
+                                            <i class="fas fa-book fa-2x text-warning mb-2"></i>
+                                            <h6>XHS</h6>
+                                            <input type="checkbox" name="platforms" value="xhs" class="d-none">
+                                        </div>
+                                    </div>
+                                <% } %>
+                                <% if (application.campaign_platforms && application.campaign_platforms.includes('youtube')) { %>
+                                    <div class="col-md-3 mb-3">
+                                        <div class="platform-card p-3 text-center h-100" data-platform="youtube">
+                                            <i class="fab fa-youtube fa-2x text-danger mb-2"></i>
+                                            <h6>YouTube</h6>
+                                            <input type="checkbox" name="platforms" value="youtube" class="d-none">
+                                        </div>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <!-- Content Description -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-edit me-2"></i>Content Description
+                            </label>
+                            <textarea class="form-control" name="description" rows="4"
+                                      placeholder="Describe your content: what dishes you featured, your experience, key highlights, etc."></textarea>
+                            <small class="text-muted">Help the restaurant understand what you showcased</small>
+                        </div>
+
+                        <!-- Content Highlights -->
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Featured Dishes</label>
+                                <input type="text" class="form-control" name="featured_dishes"
+                                       placeholder="e.g., Nasi Lemak, Rendang, Teh Tarik">
+                                <small class="text-muted">Comma-separated list of dishes you featured</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Content Type</label>
+                                <select class="form-select" name="content_type">
+                                    <option value="review">Food Review</option>
+                                    <option value="tour">Restaurant Tour</option>
+                                    <option value="unboxing">Food Unboxing</option>
+                                    <option value="cooking">Cooking/Recipe</option>
+                                    <option value="lifestyle">Lifestyle Content</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Additional Files -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-paperclip me-2"></i>Additional Files (Optional)
+                            </label>
+                            <input type="file" class="form-control" name="additional_files" multiple
+                                   accept="image/*,video/*,.pdf">
+                            <small class="text-muted">
+                                Upload screenshots, behind-the-scenes photos, or analytics reports (Max 10MB each)
+                            </small>
+                        </div>
+
+                        <!-- Performance Metrics (Optional) -->
+                        <div class="mb-4">
+                            <h6 class="fw-bold mb-3">
+                                <i class="fas fa-chart-line me-2"></i>Performance Metrics (Optional)
+                            </h6>
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Views</label>
+                                    <input type="number" class="form-control" name="views" min="0">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Likes</label>
+                                    <input type="number" class="form-control" name="likes" min="0">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Comments</label>
+                                    <input type="number" class="form-control" name="comments" min="0">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label class="form-label">Shares</label>
+                                    <input type="number" class="form-control" name="shares" min="0">
+                                </div>
+                            </div>
+                            <small class="text-muted">These metrics help restaurants understand the content performance</small>
+                        </div>
+
+                        <!-- Submission Notes -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-sticky-note me-2"></i>Notes to Restaurant
+                            </label>
+                            <textarea class="form-control" name="notes" rows="3"
+                                      placeholder="Any additional information or context you'd like to share with the restaurant..."></textarea>
+                        </div>
+
+                        <!-- Terms Confirmation -->
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="confirm_original" id="confirmOriginal" required>
+                                <label class="form-check-label" for="confirmOriginal">
+                                    I confirm that this content is original and created by me for this campaign
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="confirm_guidelines" id="confirmGuidelines" required>
+                                <label class="form-check-label" for="confirmGuidelines">
+                                    I have followed all campaign guidelines and requirements
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="d-flex gap-3 justify-content-end">
+                            <a href="/dashboard" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                            </a>
+                            <button type="button" class="btn btn-outline-primary" onclick="saveDraft()">
+                                <i class="fas fa-save me-2"></i>Save Draft
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-2"></i>Submit for Review
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Platform selection
+        document.querySelectorAll('.platform-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const checkbox = this.querySelector('input[type="checkbox"]');
+                checkbox.checked = !checkbox.checked;
+                this.classList.toggle('selected', checkbox.checked);
+            });
+        });
+
+        // URL validation and preview
+        document.getElementById('videoUrl').addEventListener('input', function() {
+            const url = this.value;
+            const preview = document.getElementById('urlPreview');
+            const platformSpan = document.getElementById('urlPlatform');
+
+            if (url) {
+                let platform = '';
+                if (url.includes('instagram.com')) {
+                    platform = 'Instagram';
+                } else if (url.includes('tiktok.com')) {
+                    platform = 'TikTok';
+                } else if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                    platform = 'YouTube';
+                } else if (url.includes('xiaohongshu.com') || url.includes('xhs.com')) {
+                    platform = 'XHS';
+                }
+
+                if (platform) {
+                    platformSpan.textContent = platform;
+                    preview.style.display = 'block';
+
+                    // Auto-select corresponding platform
+                    const platformCheckbox = document.querySelector(`input[name="platforms"][value="${platform.toLowerCase()}"]`);
+                    if (platformCheckbox) {
+                        platformCheckbox.checked = true;
+                        platformCheckbox.closest('.platform-card').classList.add('selected');
+                    }
+                } else {
+                    preview.style.display = 'none';
+                }
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+
+        // Form validation
+        document.getElementById('contentForm').addEventListener('submit', function(e) {
+            const selectedPlatforms = document.querySelectorAll('input[name="platforms"]:checked');
+            const videoUrl = document.getElementById('videoUrl').value;
+
+            if (selectedPlatforms.length === 0) {
+                e.preventDefault();
+                alert('Please select at least one platform where you posted the content');
+                return;
+            }
+
+            if (!videoUrl) {
+                e.preventDefault();
+                alert('Please provide the content URL');
+                return;
+            }
+
+            // Validate URL format
+            const urlPattern = /^https?:\/\/.+/;
+            if (!urlPattern.test(videoUrl)) {
+                e.preventDefault();
+                alert('Please provide a valid URL starting with http:// or https://');
+                return;
+            }
+        });
+
+        function saveDraft() {
+            const formData = new FormData(document.getElementById('contentForm'));
+            formData.append('status', 'draft');
+
+            fetch('/content/save-draft', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Draft saved successfully!');
+                } else {
+                    alert('Error saving draft: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('Error saving draft');
+            });
+        }
+
+        // File size validation
+        document.querySelector('input[name="additional_files"]').addEventListener('change', function() {
+            const files = this.files;
+            const maxSize = 10 * 1024 * 1024; // 10MB
+
+            for (let file of files) {
+                if (file.size > maxSize) {
+                    alert(`File "${file.name}" is too large. Maximum size is 10MB.`);
+                    this.value = '';
+                    return;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

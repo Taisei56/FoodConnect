@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Campaign - FoodConnect Malaysia</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+        }
+        .platform-card {
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .platform-card:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+        .platform-card.selected {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+        .tier-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .tier-nano { background: #e3f2fd; color: #1976d2; }
+        .tier-micro { background: #f3e5f5; color: #7b1fa2; }
+        .tier-mid { background: #fff3e0; color: #f57c00; }
+        .tier-macro { background: #e8f5e8; color: #388e3c; }
+        .tier-mega { background: #fce4ec; color: #c2185b; }
+        .tier-badge.selected {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .budget-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            border-left: 4px solid #28a745;
+        }
+        .preview-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 2px dashed #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="fas fa-utensils me-2"></i>FoodConnect Malaysia
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/dashboard">
+                    <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="form-card p-5">
+                    <div class="text-center mb-5">
+                        <h2 class="fw-bold">Create New Campaign</h2>
+                        <p class="text-muted">Connect with talented influencers to promote your restaurant</p>
+                    </div>
+
+                    <form id="campaignForm" action="/campaigns/create" method="POST">
+                        <!-- Basic Information -->
+                        <div class="section-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-info-circle me-2"></i>Basic Information
+                            </h5>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-8 mb-3">
+                                <label class="form-label fw-bold">Campaign Title *</label>
+                                <input type="text" class="form-control" name="title" required
+                                       placeholder="e.g., Authentic Nasi Lemak Food Review">
+                                <small class="text-muted">Make it catchy and descriptive</small>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">Budget (RM) *</label>
+                                <input type="number" class="form-control" name="budget" min="100" required
+                                       placeholder="500" id="budgetInput">
+                                <small class="text-muted">Minimum RM 100</small>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Campaign Description *</label>
+                            <textarea class="form-control" name="description" rows="4" required
+                                      placeholder="Describe what you want influencers to showcase about your restaurant..."></textarea>
+                            <small class="text-muted">Be specific about what content you're looking for</small>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Campaign Start Date *</label>
+                                <input type="date" class="form-control" name="start_date" required id="startDate">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Campaign End Date *</label>
+                                <input type="date" class="form-control" name="end_date" required id="endDate">
+                            </div>
+                        </div>
+
+                        <!-- Target Platforms -->
+                        <div class="section-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-share-alt me-2"></i>Target Platforms
+                            </h5>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-3 mb-3">
+                                <div class="platform-card p-4 text-center h-100" data-platform="instagram">
+                                    <i class="fab fa-instagram fa-3x text-danger mb-3"></i>
+                                    <h6>Instagram</h6>
+                                    <p class="text-muted small">Reels & Posts</p>
+                                    <input type="checkbox" name="platforms" value="instagram" class="d-none">
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="platform-card p-4 text-center h-100" data-platform="tiktok">
+                                    <i class="fab fa-tiktok fa-3x text-dark mb-3"></i>
+                                    <h6>TikTok</h6>
+                                    <p class="text-muted small">Short Videos</p>
+                                    <input type="checkbox" name="platforms" value="tiktok" class="d-none">
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="platform-card p-4 text-center h-100" data-platform="xhs">
+                                    <i class="fas fa-book fa-3x text-warning mb-3"></i>
+                                    <h6>XHS</h6>
+                                    <p class="text-muted small">Xiaohongshu</p>
+                                    <input type="checkbox" name="platforms" value="xhs" class="d-none">
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="platform-card p-4 text-center h-100" data-platform="youtube">
+                                    <i class="fab fa-youtube fa-3x text-danger mb-3"></i>
+                                    <h6>YouTube</h6>
+                                    <p class="text-muted small">Videos & Shorts</p>
+                                    <input type="checkbox" name="platforms" value="youtube" class="d-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Influencer Targeting -->
+                        <div class="section-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-users me-2"></i>Influencer Targeting
+                            </h5>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Target Influencer Tiers</label>
+                            <p class="text-muted small">Select the influencer tiers you want to work with</p>
+                            <div class="d-flex flex-wrap">
+                                <span class="tier-badge tier-nano" data-tier="nano">
+                                    Nano (1K-10K followers)
+                                </span>
+                                <span class="tier-badge tier-micro" data-tier="micro">
+                                    Micro (10K-100K followers)
+                                </span>
+                                <span class="tier-badge tier-mid" data-tier="mid">
+                                    Mid (100K-1M followers)
+                                </span>
+                                <span class="tier-badge tier-macro" data-tier="macro">
+                                    Macro (1M+ followers)
+                                </span>
+                                <span class="tier-badge tier-mega" data-tier="mega">
+                                    Mega (10M+ followers)
+                                </span>
+                            </div>
+                            <input type="hidden" name="influencer_tiers" id="selectedTiers">
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Preferred Content Categories</label>
+                                <select class="form-select" name="content_categories" multiple>
+                                    <option value="Food Reviews">Food Reviews</option>
+                                    <option value="Restaurant Tours">Restaurant Tours</option>
+                                    <option value="Cooking">Cooking</option>
+                                    <option value="Lifestyle">Lifestyle</option>
+                                    <option value="Travel">Travel</option>
+                                    <option value="Entertainment">Entertainment</option>
+                                </select>
+                                <small class="text-muted">Hold Ctrl/Cmd to select multiple</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Target Location</label>
+                                <select class="form-select" name="target_states" multiple>
+                                    <option value="Kuala Lumpur">Kuala Lumpur</option>
+                                    <option value="Selangor">Selangor</option>
+                                    <option value="Johor">Johor</option>
+                                    <option value="Penang">Penang</option>
+                                    <option value="Perak">Perak</option>
+                                    <option value="Kedah">Kedah</option>
+                                    <option value="Kelantan">Kelantan</option>
+                                    <option value="Terengganu">Terengganu</option>
+                                    <option value="Pahang">Pahang</option>
+                                    <option value="Melaka">Melaka</option>
+                                    <option value="Negeri Sembilan">Negeri Sembilan</option>
+                                    <option value="Sabah">Sabah</option>
+                                    <option value="Sarawak">Sarawak</option>
+                                    <option value="Perlis">Perlis</option>
+                                    <option value="Putrajaya">Putrajaya</option>
+                                    <option value="Labuan">Labuan</option>
+                                </select>
+                                <small class="text-muted">Leave empty for all locations</small>
+                            </div>
+                        </div>
+
+                        <!-- Campaign Requirements -->
+                        <div class="section-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-clipboard-list me-2"></i>Campaign Requirements
+                            </h5>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Content Requirements</label>
+                            <textarea class="form-control" name="requirements" rows="3"
+                                      placeholder="Specific requirements for the content (e.g., must mention specific dishes, show restaurant ambiance, etc.)"></textarea>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Minimum Content Deliverables</label>
+                                <input type="number" class="form-control" name="min_deliverables" min="1" value="1"
+                                       placeholder="e.g., 2 posts, 1 story">
+                                <small class="text-muted">Number of content pieces required</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Content Approval Timeline</label>
+                                <select class="form-select" name="approval_timeline">
+                                    <option value="24 hours">24 hours</option>
+                                    <option value="48 hours" selected>48 hours</option>
+                                    <option value="72 hours">72 hours</option>
+                                    <option value="1 week">1 week</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Budget Breakdown -->
+                        <div class="budget-info mb-4">
+                            <h6><i class="fas fa-calculator me-2"></i>Budget Breakdown</h6>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <strong>Campaign Budget:</strong>
+                                    <div class="text-primary fs-5" id="displayBudget">RM 0</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>Platform Fee (15%):</strong>
+                                    <div class="text-warning fs-5" id="platformFee">RM 0</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>Total Cost:</strong>
+                                    <div class="text-success fs-5" id="totalCost">RM 0</div>
+                                </div>
+                            </div>
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Platform fee covers payment processing, content review, and platform maintenance
+                            </small>
+                        </div>
+
+                        <!-- Campaign Preview -->
+                        <div class="section-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-eye me-2"></i>Campaign Preview
+                            </h5>
+                        </div>
+
+                        <div class="preview-card p-4 mb-4">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h6 class="fw-bold" id="previewTitle">Campaign Title</h6>
+                                    <p class="text-muted" id="previewDescription">Campaign description will appear here...</p>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-map-marker-alt text-muted me-2"></i>
+                                        <span class="text-muted" id="previewLocation">Location</span>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-calendar text-muted me-2"></i>
+                                        <span class="text-muted" id="previewDates">Campaign dates</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <div class="bg-primary text-white px-3 py-2 rounded mb-2">
+                                        <strong id="previewBudget">RM 0</strong>
+                                    </div>
+                                    <div id="previewPlatforms">
+                                        <!-- Platforms will be shown here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Terms & Conditions -->
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="accept_terms" id="acceptTerms" required>
+                                <label class="form-check-label" for="acceptTerms">
+                                    I agree to the <a href="/terms" target="_blank">Terms of Service</a> and
+                                    <a href="/campaign-guidelines" target="_blank">Campaign Guidelines</a>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="d-flex gap-3 justify-content-end">
+                            <a href="/dashboard" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            <button type="button" class="btn btn-outline-primary" onclick="saveDraft()">
+                                <i class="fas fa-save me-2"></i>Save Draft
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-rocket me-2"></i>Launch Campaign
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Set minimum dates
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('startDate').min = today;
+        document.getElementById('endDate').min = today;
+
+        // Update end date minimum when start date changes
+        document.getElementById('startDate').addEventListener('change', function() {
+            document.getElementById('endDate').min = this.value;
+            updatePreview();
+        });
+
+        // Platform selection
+        document.querySelectorAll('.platform-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const checkbox = this.querySelector('input[type="checkbox"]');
+                checkbox.checked = !checkbox.checked;
+                this.classList.toggle('selected', checkbox.checked);
+                updatePreview();
+            });
+        });
+
+        // Tier selection
+        const selectedTiers = new Set();
+        document.querySelectorAll('.tier-badge').forEach(badge => {
+            badge.addEventListener('click', function() {
+                const tier = this.dataset.tier;
+                if (selectedTiers.has(tier)) {
+                    selectedTiers.delete(tier);
+                    this.classList.remove('selected');
+                } else {
+                    selectedTiers.add(tier);
+                    this.classList.add('selected');
+                }
+                document.getElementById('selectedTiers').value = Array.from(selectedTiers).join(',');
+            });
+        });
+
+        // Budget calculation
+        document.getElementById('budgetInput').addEventListener('input', function() {
+            const budget = parseFloat(this.value) || 0;
+            const platformFee = budget * 0.15;
+            const total = budget + platformFee;
+
+            document.getElementById('displayBudget').textContent = `RM ${budget.toLocaleString()}`;
+            document.getElementById('platformFee').textContent = `RM ${platformFee.toLocaleString()}`;
+            document.getElementById('totalCost').textContent = `RM ${total.toLocaleString()}`;
+            updatePreview();
+        });
+
+        // Live preview updates
+        function updatePreview() {
+            const title = document.querySelector('input[name="title"]').value || 'Campaign Title';
+            const description = document.querySelector('textarea[name="description"]').value || 'Campaign description will appear here...';
+            const budget = document.querySelector('input[name="budget"]').value || '0';
+            const startDate = document.querySelector('input[name="start_date"]').value;
+            const endDate = document.querySelector('input[name="end_date"]').value;
+
+            document.getElementById('previewTitle').textContent = title;
+            document.getElementById('previewDescription').textContent = description;
+            document.getElementById('previewBudget').textContent = `RM ${parseFloat(budget).toLocaleString()}`;
+
+            if (startDate && endDate) {
+                const start = new Date(startDate).toLocaleDateString();
+                const end = new Date(endDate).toLocaleDateString();
+                document.getElementById('previewDates').textContent = `${start} - ${end}`;
+            }
+
+            // Update platform icons
+            const selectedPlatforms = document.querySelectorAll('input[name="platforms"]:checked');
+            const platformsContainer = document.getElementById('previewPlatforms');
+            platformsContainer.innerHTML = '';
+
+            selectedPlatforms.forEach(platform => {
+                const platformValue = platform.value;
+                let icon = '';
+                if (platformValue === 'instagram') icon = '<i class="fab fa-instagram text-danger"></i>';
+                else if (platformValue === 'tiktok') icon = '<i class="fab fa-tiktok text-dark"></i>';
+                else if (platformValue === 'xhs') icon = '<i class="fas fa-book text-warning"></i>';
+                else if (platformValue === 'youtube') icon = '<i class="fab fa-youtube text-danger"></i>';
+
+                platformsContainer.innerHTML += `<span class="me-2">${icon}</span>`;
+            });
+        }
+
+        // Real-time preview updates
+        document.querySelector('input[name="title"]').addEventListener('input', updatePreview);
+        document.querySelector('textarea[name="description"]').addEventListener('input', updatePreview);
+        document.querySelector('input[name="end_date"]').addEventListener('change', updatePreview);
+
+        // Form submission
+        document.getElementById('campaignForm').addEventListener('submit', function(e) {
+            const selectedPlatforms = document.querySelectorAll('input[name="platforms"]:checked');
+            if (selectedPlatforms.length === 0) {
+                e.preventDefault();
+                alert('Please select at least one platform');
+                return;
+            }
+
+            if (selectedTiers.size === 0) {
+                e.preventDefault();
+                alert('Please select at least one influencer tier');
+                return;
+            }
+        });
+
+        function saveDraft() {
+            const formData = new FormData(document.getElementById('campaignForm'));
+            formData.append('status', 'draft');
+
+            fetch('/campaigns/save-draft', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Draft saved successfully!');
+                } else {
+                    alert('Error saving draft');
+                }
+            });
+        }
+
+        // Initialize preview
+        updatePreview();
+    </script>
+</body>
+</html>

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - FoodConnect Malaysia</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            margin: 2px 0;
+            transition: all 0.3s ease;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .main-content {
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid;
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-card.users { border-left-color: #74b9ff; }
+        .stat-card.campaigns { border-left-color: #fd79a8; }
+        .stat-card.revenue { border-left-color: #00b894; }
+        .stat-card.pending { border-left-color: #fdcb6e; }
+
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        .activity-item {
+            background: white;
+            border-radius: 10px;
+            border-left: 3px solid #ddd;
+            transition: all 0.3s ease;
+        }
+        .activity-item:hover {
+            border-left-color: #74b9ff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .pending-approval {
+            background: #fff3cd;
+            border: 1px solid #ffecb5;
+            border-radius: 10px;
+        }
+        .metric-trend {
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .metric-trend.up { color: #00b894; }
+        .metric-trend.down { color: #e17055; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 px-0">
+                <div class="sidebar p-3">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-shield-alt fa-3x mb-2"></i>
+                        <h5>Admin Panel</h5>
+                        <small class="opacity-75">FoodConnect Malaysia</small>
+                    </div>
+
+                    <nav class="nav flex-column">
+                        <a class="nav-link active" href="#dashboard" data-section="dashboard">
+                            <i class="fas fa-chart-line me-2"></i>Dashboard
+                        </a>
+                        <a class="nav-link" href="#users" data-section="users">
+                            <i class="fas fa-users me-2"></i>User Management
+                            <% if (pendingApprovals && pendingApprovals.users > 0) { %>
+                                <span class="badge bg-warning ms-auto"><%= pendingApprovals.users %></span>
+                            <% } %>
+                        </a>
+                        <a class="nav-link" href="#campaigns" data-section="campaigns">
+                            <i class="fas fa-bullhorn me-2"></i>Campaign Oversight
+                        </a>
+                        <a class="nav-link" href="#content" data-section="content">
+                            <i class="fas fa-photo-video me-2"></i>Content Moderation
+                            <% if (pendingApprovals && pendingApprovals.content > 0) { %>
+                                <span class="badge bg-info ms-auto"><%= pendingApprovals.content %></span>
+                            <% } %>
+                        </a>
+                        <a class="nav-link" href="#payments" data-section="payments">
+                            <i class="fas fa-credit-card me-2"></i>Payment Management
+                            <% if (pendingApprovals && pendingApprovals.payments > 0) { %>
+                                <span class="badge bg-success ms-auto"><%= pendingApprovals.payments %></span>
+                            <% } %>
+                        </a>
+                        <a class="nav-link" href="#followers" data-section="followers">
+                            <i class="fas fa-users-cog me-2"></i>Follower Updates
+                            <% if (pendingApprovals && pendingApprovals.follower_updates > 0) { %>
+                                <span class="badge bg-primary ms-auto"><%= pendingApprovals.follower_updates %></span>
+                            <% } %>
+                        </a>
+                        <a class="nav-link" href="#reports" data-section="reports">
+                            <i class="fas fa-chart-bar me-2"></i>Reports & Analytics
+                        </a>
+                        <a class="nav-link" href="#settings" data-section="settings">
+                            <i class="fas fa-cogs me-2"></i>Platform Settings
+                        </a>
+                    </nav>
+
+                    <div class="mt-auto pt-4">
+                        <a href="/auth/logout" class="nav-link text-light">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10">
+                <div class="main-content p-4">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h2>Admin Dashboard</h2>
+                            <p class="text-muted">Platform overview and management tools</p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#platformStatsModal">
+                                <i class="fas fa-download me-2"></i>Export Data
+                            </button>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#systemHealthModal">
+                                <i class="fas fa-heartbeat me-2"></i>System Health
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Section -->
+                    <div id="dashboardSection">
+                        <!-- Alert Section -->
+                        <% if (systemAlerts && systemAlerts.length > 0) { %>
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <% systemAlerts.forEach(alert => { %>
+                                        <div class="alert alert-<%= alert.type %> alert-dismissible fade show">
+                                            <i class="fas fa-<%= alert.icon %> me-2"></i>
+                                            <strong><%= alert.title %>:</strong> <%= alert.message %>
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                        </div>
+                                    <% }) %>
+                                </div>
+                            </div>
+                        <% } %>
+
+                        <!-- Main Stats -->
+                        <div class="row mb-4">
+                            <div class="col-xl-3 col-md-6 mb-3">
+                                <div class="stat-card users p-4">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <h3 class="text-primary mb-0"><%= stats.total_users %></h3>
+                                            <p class="text-muted mb-0">Total Users</p>
+                                            <small class="metric-trend up">
+                                                <i class="fas fa-arrow-up"></i> +<%= stats.users_growth || 0 %>% this month
+                                            </small>
+                                        </div>
+                                        <i class="fas fa-users fa-2x text-primary opacity-50"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6 mb-3">
+                                <div class="stat-card campaigns p-4">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <h3 class="text-pink mb-0"><%= stats.total_campaigns %></h3>
+                                            <p class="text-muted mb-0">Active Campaigns</p>
+                                            <small class="metric-trend up">
+                                                <i class="fas fa-arrow-up"></i> +<%= stats.campaigns_growth || 0 %>% this month
+                                            </small>
+                                        </div>
+                                        <i class="fas fa-bullhorn fa-2x" style="color: #fd79a8; opacity: 0.5;"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6 mb-3">
+                                <div class="stat-card revenue p-4">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <h3 class="text-success mb-0">RM <%= stats.total_revenue || 0 %></h3>
+                                            <p class="text-muted mb-0">Platform Revenue</p>
+                                            <small class="metric-trend up">
+                                                <i class="fas fa-arrow-up"></i> +<%= stats.revenue_growth || 0 %>% this month
+                                            </small>
+                                        </div>
+                                        <i class="fas fa-money-bill-wave fa-2x text-success opacity-50"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6 mb-3">
+                                <div class="stat-card pending p-4">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <h3 class="text-warning mb-0"><%= stats.pending_approvals %></h3>
+                                            <p class="text-muted mb-0">Pending Approvals</p>
+                                            <small class="text-muted">
+                                                <i class="fas fa-clock"></i> Requires attention
+                                            </small>
+                                        </div>
+                                        <i class="fas fa-clock fa-2x text-warning opacity-50"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Charts Row -->
+                        <div class="row mb-4">
+                            <div class="col-lg-8 mb-4">
+                                <div class="chart-container p-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+                                        <h5 class="mb-0">Platform Growth</h5>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-primary active" data-period="7d">7 Days</button>
+                                            <button class="btn btn-outline-primary" data-period="30d">30 Days</button>
+                                            <button class="btn btn-outline-primary" data-period="90d">90 Days</button>
+                                        </div>
+                                    </div>
+                                    <canvas id="growthChart" width="400" height="200"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 mb-4">
+                                <div class="chart-container p-4">
+                                    <h5 class="mb-4">User Distribution</h5>
+                                    <canvas id="userDistributionChart" width="200" height="200"></canvas>
+                                    <div class="mt-3">
+                                        <div class="d-flex justify-content-between">
+                                            <span class="small">Restaurants</span>
+                                            <span class="small fw-bold"><%= stats.restaurants_count || 0 %></span>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <span class="small">Influencers</span>
+                                            <span class="small fw-bold"><%= stats.influencers_count || 0 %></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pending Approvals & Recent Activity -->
+                        <div class="row">
+                            <div class="col-lg-6 mb-4">
+                                <div class="chart-container p-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+                                        <h5 class="mb-0">Pending Approvals</h5>
+                                        <span class="badge bg-warning"><%= stats.pending_approvals %> Total</span>
+                                    </div>
+
+                                    <% if (pendingItems && pendingItems.length > 0) { %>
+                                        <% pendingItems.forEach(item => { %>
+                                            <div class="pending-approval p-3 mb-3">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <h6 class="mb-1"><%= item.title %></h6>
+                                                        <p class="text-muted small mb-2"><%= item.description %></p>
+                                                        <small class="text-muted">
+                                                            <i class="fas fa-clock me-1"></i>
+                                                            <%= item.time_ago %>
+                                                        </small>
+                                                    </div>
+                                                    <div>
+                                                        <span class="badge bg-<%= item.priority === 'high' ? 'danger' : item.priority === 'medium' ? 'warning' : 'info' %>">
+                                                            <%= item.type %>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-2">
+                                                    <button class="btn btn-success btn-sm me-2" onclick="approveItem('<%= item.id %>', '<%= item.type %>')">
+                                                        <i class="fas fa-check"></i> Approve
+                                                    </button>
+                                                    <button class="btn btn-outline-danger btn-sm" onclick="rejectItem('<%= item.id %>', '<%= item.type %>')">
+                                                        <i class="fas fa-times"></i> Reject
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <div class="text-center py-4">
+                                            <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                                            <h6>All caught up!</h6>
+                                            <p class="text-muted">No pending approvals at the moment.</p>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 mb-4">
+                                <div class="chart-container p-4">
+                                    <h5 class="mb-4">Recent Platform Activity</h5>
+                                    <div class="activity-feed" style="max-height: 400px; overflow-y: auto;">
+                                        <% if (recentActivity && recentActivity.length > 0) { %>
+                                            <% recentActivity.forEach(activity => { %>
+                                                <div class="activity-item p-3 mb-3">
+                                                    <div class="d-flex align-items-start">
+                                                        <div class="flex-shrink-0">
+                                                            <i class="fas fa-<%= activity.icon %> text-<%= activity.color %> me-3"></i>
+                                                        </div>
+                                                        <div class="flex-grow-1">
+                                                            <p class="mb-1"><%= activity.message %></p>
+                                                            <small class="text-muted">
+                                                                <i class="fas fa-clock me-1"></i>
+                                                                <%= activity.time_ago %>
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <% }) %>
+                                        <% } else { %>
+                                            <div class="text-center py-4">
+                                                <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                                                <p class="text-muted">No recent activity</p>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Other sections will be loaded via AJAX -->
+                    <div id="dynamicContent" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Health Modal -->
+    <div class="modal fade" id="systemHealthModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">System Health Check</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">Database Status</h6>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-circle text-success me-2"></i>
+                                        <span>Connected</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">Email Service</h6>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-circle text-success me-2"></i>
+                                        <span>Operational</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script>
+        // Navigation
+        document.querySelectorAll('.nav-link[data-section]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const section = this.dataset.section;
+
+                // Update active nav
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+
+                if (section === 'dashboard') {
+                    document.getElementById('dashboardSection').style.display = 'block';
+                    document.getElementById('dynamicContent').style.display = 'none';
+                } else {
+                    document.getElementById('dashboardSection').style.display = 'none';
+                    document.getElementById('dynamicContent').style.display = 'block';
+                    loadSection(section);
+                }
+            });
+        });
+
+        function loadSection(section) {
+            // Show loading
+            document.getElementById('dynamicContent').innerHTML = '<div class="text-center py-5"><i class="fas fa-spinner fa-spin fa-2x"></i></div>';
+
+            // Load section content via AJAX
+            fetch(`/admin/${section}`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('dynamicContent').innerHTML = html;
+                })
+                .catch(error => {
+                    document.getElementById('dynamicContent').innerHTML = '<div class="alert alert-danger">Error loading content</div>';
+                });
+        }
+
+        // Initialize Charts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Growth Chart
+            const growthCtx = document.getElementById('growthChart').getContext('2d');
+            new Chart(growthCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'],
+                    datasets: [{
+                        label: 'New Users',
+                        data: [12, 19, 3, 5, 2, 3, 7],
+                        borderColor: '#74b9ff',
+                        backgroundColor: 'rgba(116, 185, 255, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'New Campaigns',
+                        data: [2, 3, 1, 4, 2, 1, 3],
+                        borderColor: '#fd79a8',
+                        backgroundColor: 'rgba(253, 121, 168, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // User Distribution Chart
+            const userCtx = document.getElementById('userDistributionChart').getContext('2d');
+            new Chart(userCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Restaurants', 'Influencers'],
+                    datasets: [{
+                        data: [<%= stats.restaurants_count || 0 %>, <%= stats.influencers_count || 0 %>],
+                        backgroundColor: ['#fd79a8', '#fdcb6e'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        });
+
+        // Approval functions
+        function approveItem(id, type) {
+            if (confirm('Are you sure you want to approve this item?')) {
+                fetch(`/admin/approve/${type}/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                });
+            }
+        }
+
+        function rejectItem(id, type) {
+            const reason = prompt('Please provide a reason for rejection:');
+            if (reason) {
+                fetch(`/admin/reject/${type}/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ reason })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>

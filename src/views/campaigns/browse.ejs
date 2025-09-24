@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Campaigns - FoodConnect Malaysia</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .campaign-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+        .campaign-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        .campaign-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .tier-badge {
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        .tier-nano { background: #e3f2fd; color: #1976d2; }
+        .tier-micro { background: #f3e5f5; color: #7b1fa2; }
+        .tier-mid { background: #fff3e0; color: #f57c00; }
+        .tier-macro { background: #e8f5e8; color: #388e3c; }
+        .tier-mega { background: #fce4ec; color: #c2185b; }
+
+        .platform-icon {
+            width: 24px;
+            height: 24px;
+            margin: 2px;
+        }
+        .filter-sidebar {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        .search-bar {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        .btn-apply {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+            border: none;
+            color: #2d3436;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="fas fa-utensils me-2"></i>FoodConnect Malaysia
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/dashboard">
+                    <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold">Discover Campaigns</h2>
+                <p class="text-muted">Find exciting collaboration opportunities with restaurants</p>
+            </div>
+            <div class="search-bar p-3">
+                <form method="GET" class="d-flex">
+                    <input class="form-control me-2" type="search" name="search"
+                           placeholder="Search campaigns..." value="<%= query.search || '' %>">
+                    <button class="btn btn-outline-primary" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Filters Sidebar -->
+            <div class="col-lg-3 mb-4">
+                <div class="filter-sidebar p-4">
+                    <h5 class="mb-4">
+                        <i class="fas fa-filter me-2"></i>Filters
+                    </h5>
+
+                    <form method="GET" id="filterForm">
+                        <input type="hidden" name="search" value="<%= query.search || '' %>">
+
+                        <!-- Location Filter -->
+                        <div class="mb-4">
+                            <h6 class="fw-bold mb-3">Location</h6>
+                            <select class="form-select" name="state">
+                                <option value="">All States</option>
+                                <option value="Kuala Lumpur" <%= query.state === 'Kuala Lumpur' ? 'selected' : '' %>>Kuala Lumpur</option>
+                                <option value="Selangor" <%= query.state === 'Selangor' ? 'selected' : '' %>>Selangor</option>
+                                <option value="Johor" <%= query.state === 'Johor' ? 'selected' : '' %>>Johor</option>
+                                <option value="Penang" <%= query.state === 'Penang' ? 'selected' : '' %>>Penang</option>
+                                <option value="Perak" <%= query.state === 'Perak' ? 'selected' : '' %>>Perak</option>
+                                <option value="Kedah" <%= query.state === 'Kedah' ? 'selected' : '' %>>Kedah</option>
+                                <option value="Kelantan" <%= query.state === 'Kelantan' ? 'selected' : '' %>>Kelantan</option>
+                                <option value="Terengganu" <%= query.state === 'Terengganu' ? 'selected' : '' %>>Terengganu</option>
+                                <option value="Pahang" <%= query.state === 'Pahang' ? 'selected' : '' %>>Pahang</option>
+                                <option value="Melaka" <%= query.state === 'Melaka' ? 'selected' : '' %>>Melaka</option>
+                                <option value="Negeri Sembilan" <%= query.state === 'Negeri Sembilan' ? 'selected' : '' %>>Negeri Sembilan</option>
+                                <option value="Sabah" <%= query.state === 'Sabah' ? 'selected' : '' %>>Sabah</option>
+                                <option value="Sarawak" <%= query.state === 'Sarawak' ? 'selected' : '' %>>Sarawak</option>
+                                <option value="Perlis" <%= query.state === 'Perlis' ? 'selected' : '' %>>Perlis</option>
+                                <option value="Putrajaya" <%= query.state === 'Putrajaya' ? 'selected' : '' %>>Putrajaya</option>
+                                <option value="Labuan" <%= query.state === 'Labuan' ? 'selected' : '' %>>Labuan</option>
+                            </select>
+                        </div>
+
+                        <!-- Budget Range -->
+                        <div class="mb-4">
+                            <h6 class="fw-bold mb-3">Budget Range (RM)</h6>
+                            <div class="row">
+                                <div class="col-6">
+                                    <input type="number" class="form-control" name="min_budget"
+                                           placeholder="Min" value="<%= query.min_budget || '' %>">
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" class="form-control" name="max_budget"
+                                           placeholder="Max" value="<%= query.max_budget || '' %>">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Influencer Tier -->
+                        <div class="mb-4">
+                            <h6 class="fw-bold mb-3">Influencer Tier</h6>
+                            <% ['nano', 'micro', 'mid', 'macro', 'mega'].forEach(tier => { %>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="tiers" value="<%= tier %>"
+                                           id="tier<%= tier %>" <%= query.tiers?.includes(tier) ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="tier<%= tier %>">
+                                        <span class="tier-badge tier-<%= tier %>"><%= tier.charAt(0).toUpperCase() + tier.slice(1) %></span>
+                                    </label>
+                                </div>
+                            <% }) %>
+                        </div>
+
+                        <!-- Platforms -->
+                        <div class="mb-4">
+                            <h6 class="fw-bold mb-3">Platforms</h6>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="platforms" value="instagram"
+                                       id="instagram" <%= query.platforms?.includes('instagram') ? 'checked' : '' %>>
+                                <label class="form-check-label" for="instagram">
+                                    <i class="fab fa-instagram text-danger me-2"></i>Instagram
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="platforms" value="tiktok"
+                                       id="tiktok" <%= query.platforms?.includes('tiktok') ? 'checked' : '' %>>
+                                <label class="form-check-label" for="tiktok">
+                                    <i class="fab fa-tiktok text-dark me-2"></i>TikTok
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="platforms" value="xhs"
+                                       id="xhs" <%= query.platforms?.includes('xhs') ? 'checked' : '' %>>
+                                <label class="form-check-label" for="xhs">
+                                    <i class="fas fa-book text-warning me-2"></i>XHS
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="platforms" value="youtube"
+                                       id="youtube" <%= query.platforms?.includes('youtube') ? 'checked' : '' %>>
+                                <label class="form-check-label" for="youtube">
+                                    <i class="fab fa-youtube text-danger me-2"></i>YouTube
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Cuisine Types -->
+                        <div class="mb-4">
+                            <h6 class="fw-bold mb-3">Cuisine Type</h6>
+                            <select class="form-select" name="cuisine">
+                                <option value="">All Cuisines</option>
+                                <option value="Malay" <%= query.cuisine === 'Malay' ? 'selected' : '' %>>Malay</option>
+                                <option value="Chinese" <%= query.cuisine === 'Chinese' ? 'selected' : '' %>>Chinese</option>
+                                <option value="Indian" <%= query.cuisine === 'Indian' ? 'selected' : '' %>>Indian</option>
+                                <option value="Western" <%= query.cuisine === 'Western' ? 'selected' : '' %>>Western</option>
+                                <option value="Japanese" <%= query.cuisine === 'Japanese' ? 'selected' : '' %>>Japanese</option>
+                                <option value="Korean" <%= query.cuisine === 'Korean' ? 'selected' : '' %>>Korean</option>
+                                <option value="Thai" <%= query.cuisine === 'Thai' ? 'selected' : '' %>>Thai</option>
+                                <option value="Italian" <%= query.cuisine === 'Italian' ? 'selected' : '' %>>Italian</option>
+                                <option value="Halal" <%= query.cuisine === 'Halal' ? 'selected' : '' %>>Halal</option>
+                                <option value="Vegetarian" <%= query.cuisine === 'Vegetarian' ? 'selected' : '' %>>Vegetarian</option>
+                                <option value="Vegan" <%= query.cuisine === 'Vegan' ? 'selected' : '' %>>Vegan</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-apply w-100">
+                            <i class="fas fa-filter me-2"></i>Apply Filters
+                        </button>
+
+                        <a href="/campaigns/browse" class="btn btn-outline-secondary w-100 mt-2">
+                            <i class="fas fa-times me-2"></i>Clear All
+                        </a>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Campaign Grid -->
+            <div class="col-lg-9">
+                <!-- Results Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h5><%= campaigns.length %> campaigns found</h5>
+                        <% if (query.search) { %>
+                            <small class="text-muted">Results for "<%= query.search %>"</small>
+                        <% } %>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <select class="form-select" style="width: auto;" onchange="updateSort(this.value)">
+                            <option value="newest" <%= query.sort === 'newest' ? 'selected' : '' %>>Newest First</option>
+                            <option value="budget_high" <%= query.sort === 'budget_high' ? 'selected' : '' %>>Highest Budget</option>
+                            <option value="budget_low" <%= query.sort === 'budget_low' ? 'selected' : '' %>>Lowest Budget</option>
+                            <option value="ending_soon" <%= query.sort === 'ending_soon' ? 'selected' : '' %>>Ending Soon</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Campaigns Grid -->
+                <div class="row">
+                    <% if (campaigns && campaigns.length > 0) { %>
+                        <% campaigns.forEach(campaign => { %>
+                            <div class="col-md-6 col-xl-4 mb-4">
+                                <div class="campaign-card h-100">
+                                    <div class="p-4">
+                                        <!-- Header -->
+                                        <div class="d-flex justify-content-between align-items-start mb-3">
+                                            <div class="flex-grow-1">
+                                                <h6 class="fw-bold mb-1"><%= campaign.title %></h6>
+                                                <p class="text-muted small mb-0">
+                                                    <i class="fas fa-utensils me-1"></i>
+                                                    <%= campaign.restaurant_name %>
+                                                </p>
+                                            </div>
+                                            <span class="campaign-badge">RM <%= campaign.budget %></span>
+                                        </div>
+
+                                        <!-- Description -->
+                                        <p class="text-muted small mb-3" style="height: 60px; overflow: hidden;">
+                                            <%= campaign.description %>
+                                        </p>
+
+                                        <!-- Location & Cuisine -->
+                                        <div class="mb-3">
+                                            <div class="d-flex align-items-center mb-1">
+                                                <i class="fas fa-map-marker-alt text-muted me-2"></i>
+                                                <small class="text-muted"><%= campaign.restaurant_city %>, <%= campaign.restaurant_state %></small>
+                                            </div>
+                                            <% if (campaign.cuisine_types && campaign.cuisine_types.length > 0) { %>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-utensils text-muted me-2"></i>
+                                                    <small class="text-muted">
+                                                        <%= campaign.cuisine_types.slice(0, 2).join(', ') %>
+                                                        <% if (campaign.cuisine_types.length > 2) { %>
+                                                            +<%= campaign.cuisine_types.length - 2 %> more
+                                                        <% } %>
+                                                    </small>
+                                                </div>
+                                            <% } %>
+                                        </div>
+
+                                        <!-- Platforms -->
+                                        <div class="mb-3">
+                                            <small class="text-muted d-block mb-1">Target Platforms:</small>
+                                            <div class="d-flex align-items-center">
+                                                <% if (campaign.platforms) { %>
+                                                    <% campaign.platforms.forEach(platform => { %>
+                                                        <% if (platform === 'instagram') { %>
+                                                            <i class="fab fa-instagram text-danger platform-icon"></i>
+                                                        <% } else if (platform === 'tiktok') { %>
+                                                            <i class="fab fa-tiktok text-dark platform-icon"></i>
+                                                        <% } else if (platform === 'xhs') { %>
+                                                            <i class="fas fa-book text-warning platform-icon"></i>
+                                                        <% } else if (platform === 'youtube') { %>
+                                                            <i class="fab fa-youtube text-danger platform-icon"></i>
+                                                        <% } %>
+                                                    <% }) %>
+                                                <% } %>
+                                            </div>
+                                        </div>
+
+                                        <!-- Tier Requirements -->
+                                        <% if (campaign.influencer_tiers && campaign.influencer_tiers.length > 0) { %>
+                                            <div class="mb-3">
+                                                <small class="text-muted d-block mb-1">Looking for:</small>
+                                                <div>
+                                                    <% campaign.influencer_tiers.forEach(tier => { %>
+                                                        <span class="tier-badge tier-<%= tier %> me-1">
+                                                            <%= tier.charAt(0).toUpperCase() + tier.slice(1) %>
+                                                        </span>
+                                                    <% }) %>
+                                                </div>
+                                            </div>
+                                        <% } %>
+
+                                        <!-- Timeline -->
+                                        <div class="mb-3">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-calendar me-1"></i>
+                                                    Ends: <%= new Date(campaign.end_date).toLocaleDateString() %>
+                                                </small>
+                                                <%
+                                                const daysLeft = Math.ceil((new Date(campaign.end_date) - new Date()) / (1000 * 60 * 60 * 24));
+                                                %>
+                                                <% if (daysLeft > 0) { %>
+                                                    <span class="badge bg-<%= daysLeft <= 3 ? 'danger' : daysLeft <= 7 ? 'warning' : 'success' %>">
+                                                        <%= daysLeft %> days left
+                                                    </span>
+                                                <% } else { %>
+                                                    <span class="badge bg-secondary">Expired</span>
+                                                <% } %>
+                                            </div>
+                                        </div>
+
+                                        <!-- Action Button -->
+                                        <div class="mt-auto">
+                                            <% if (daysLeft > 0 && campaign.status === 'active') { %>
+                                                <% if (campaign.user_applied) { %>
+                                                    <button class="btn btn-outline-success w-100" disabled>
+                                                        <i class="fas fa-check me-2"></i>Applied
+                                                    </button>
+                                                <% } else { %>
+                                                    <button class="btn btn-primary w-100" onclick="applyToCampaign(<%= campaign.id %>)">
+                                                        <i class="fas fa-paper-plane me-2"></i>Apply Now
+                                                    </button>
+                                                <% } %>
+                                            <% } else { %>
+                                                <button class="btn btn-secondary w-100" disabled>
+                                                    <i class="fas fa-times me-2"></i>Closed
+                                                </button>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <div class="col-12">
+                            <div class="text-center py-5">
+                                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                                <h4>No campaigns found</h4>
+                                <p class="text-muted">Try adjusting your filters or search terms</p>
+                                <a href="/campaigns/browse" class="btn btn-primary">
+                                    <i class="fas fa-refresh me-2"></i>Reset Filters
+                                </a>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- Pagination -->
+                <% if (pagination && pagination.totalPages > 1) { %>
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            <% if (pagination.currentPage > 1) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= pagination.currentPage - 1 %>&<%= new URLSearchParams(query).toString() %>">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            <% } %>
+
+                            <% for (let i = 1; i <= pagination.totalPages; i++) { %>
+                                <li class="page-item <%= i === pagination.currentPage ? 'active' : '' %>">
+                                    <a class="page-link" href="?page=<%= i %>&<%= new URLSearchParams(query).toString() %>">
+                                        <%= i %>
+                                    </a>
+                                </li>
+                            <% } %>
+
+                            <% if (pagination.currentPage < pagination.totalPages) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= pagination.currentPage + 1 %>&<%= new URLSearchParams(query).toString() %>">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            <% } %>
+                        </ul>
+                    </nav>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Modal -->
+    <div class="modal fade" id="applicationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Apply to Campaign</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="applicationForm">
+                    <div class="modal-body">
+                        <input type="hidden" id="campaignId">
+
+                        <div class="mb-3">
+                            <label class="form-label">Why are you interested in this campaign?</label>
+                            <textarea class="form-control" name="message" rows="4"
+                                      placeholder="Tell the restaurant why you'd be perfect for this campaign..." required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Proposed Content Platforms</label>
+                            <div id="platformOptions">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Estimated Delivery Timeline</label>
+                            <select class="form-select" name="timeline" required>
+                                <option value="">Select timeline</option>
+                                <option value="1-3 days">1-3 days</option>
+                                <option value="3-7 days">3-7 days</option>
+                                <option value="1-2 weeks">1-2 weeks</option>
+                                <option value="2-4 weeks">2-4 weeks</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Submit Application</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function updateSort(sortValue) {
+            const url = new URL(window.location);
+            url.searchParams.set('sort', sortValue);
+            window.location.href = url.toString();
+        }
+
+        function applyToCampaign(campaignId) {
+            document.getElementById('campaignId').value = campaignId;
+
+            // Get campaign platforms and populate modal
+            fetch(`/api/campaigns/${campaignId}`)
+                .then(response => response.json())
+                .then(campaign => {
+                    const platformOptions = document.getElementById('platformOptions');
+                    platformOptions.innerHTML = '';
+
+                    if (campaign.platforms) {
+                        campaign.platforms.forEach(platform => {
+                            const platformName = platform.charAt(0).toUpperCase() + platform.slice(1);
+                            platformOptions.innerHTML += `
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="platforms" value="${platform}" id="platform_${platform}">
+                                    <label class="form-check-label" for="platform_${platform}">
+                                        ${platformName}
+                                    </label>
+                                </div>
+                            `;
+                        });
+                    }
+                });
+
+            new bootstrap.Modal(document.getElementById('applicationModal')).show();
+        }
+
+        document.getElementById('applicationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const campaignId = document.getElementById('campaignId').value;
+
+            // Get selected platforms
+            const platforms = Array.from(document.querySelectorAll('input[name="platforms"]:checked'))
+                .map(input => input.value);
+
+            const applicationData = {
+                campaign_id: campaignId,
+                message: formData.get('message'),
+                timeline: formData.get('timeline'),
+                platforms: platforms
+            };
+
+            fetch('/api/applications/apply', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(applicationData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Application submitted successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('Error submitting application');
+            });
+        });
+
+        // Auto-submit form when filters change
+        document.querySelectorAll('#filterForm input, #filterForm select').forEach(element => {
+            element.addEventListener('change', function() {
+                document.getElementById('filterForm').submit();
+            });
+        });
+    </script>
+</body>
+</html>
