@@ -69,37 +69,118 @@
                             <!-- Restaurant Fields -->
                             <div id="restaurant-fields" style="display: none;">
                                 <div class="form-floating mb-3">
-                                    <input class="form-control" id="restaurant_name" name="restaurant_name" type="text" placeholder="Restaurant Name">
-                                    <label for="restaurant_name">Restaurant Name (Optional)</label>
-                                    <div class="invalid-feedback">Please enter your restaurant name.</div>
+                                    <input class="form-control" id="business_name" name="business_name" type="text" placeholder="Business Name" required>
+                                    <label for="business_name">Business Name <span class="text-danger">*</span></label>
+                                    <div class="invalid-feedback">Please enter your business name.</div>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input class="form-control" id="google_maps" name="google_maps" type="url" placeholder="Google Maps Link (Optional)">
-                                    <label for="google_maps">Google Maps Link (Optional)</label>
+                                    <textarea class="form-control" id="address" name="address" placeholder="Business Address" required style="height: 100px;"></textarea>
+                                    <label for="address">Business Address <span class="text-danger">*</span></label>
+                                    <div class="invalid-feedback">Please enter your business address.</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            <input class="form-control" id="city" name="city" type="text" placeholder="City" required>
+                                            <label for="city">City <span class="text-danger">*</span></label>
+                                            <div class="invalid-feedback">Please enter your city.</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            <select class="form-select" id="state" name="state" required>
+                                                <option value="">Select State</option>
+                                                <option value="Johor">Johor</option>
+                                                <option value="Kedah">Kedah</option>
+                                                <option value="Kelantan">Kelantan</option>
+                                                <option value="Kuala Lumpur">Kuala Lumpur</option>
+                                                <option value="Labuan">Labuan</option>
+                                                <option value="Melaka">Melaka</option>
+                                                <option value="Negeri Sembilan">Negeri Sembilan</option>
+                                                <option value="Pahang">Pahang</option>
+                                                <option value="Perak">Perak</option>
+                                                <option value="Perlis">Perlis</option>
+                                                <option value="Pulau Pinang">Pulau Pinang</option>
+                                                <option value="Putrajaya">Putrajaya</option>
+                                                <option value="Sabah">Sabah</option>
+                                                <option value="Sarawak">Sarawak</option>
+                                                <option value="Selangor">Selangor</option>
+                                                <option value="Terengganu">Terengganu</option>
+                                            </select>
+                                            <label for="state">State <span class="text-danger">*</span></label>
+                                            <div class="invalid-feedback">Please select your state.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="google_maps_link" name="google_maps_link" type="url" placeholder="Google Maps Link" required>
+                                    <label for="google_maps_link">Google Maps Link <span class="text-danger">*</span></label>
                                     <div class="form-text">Share your Google Maps or Google My Business link</div>
+                                    <div class="invalid-feedback">Please provide your Google Maps link.</div>
                                 </div>
                             </div>
                             
                             <!-- Influencer Fields -->
                             <div id="influencer-fields" style="display: none;">
                                 <div class="form-floating mb-3">
-                                    <input class="form-control" id="instagram_handle" name="instagram_handle" type="text" placeholder="@username">
-                                    <label for="instagram_handle">Instagram Handle (Optional)</label>
+                                    <input class="form-control" id="display_name" name="display_name" type="text" placeholder="Display Name" required>
+                                    <label for="display_name">Display Name <span class="text-danger">*</span></label>
+                                    <div class="form-text">Your public name or brand name</div>
+                                    <div class="invalid-feedback">Please enter your display name.</div>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="location" name="location" type="text" placeholder="Location" required>
+                                    <label for="location">Location <span class="text-danger">*</span></label>
+                                    <div class="form-text">e.g., Kuala Lumpur, Malaysia</div>
+                                    <div class="invalid-feedback">Please enter your location.</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            <input class="form-control" id="city" name="city" type="text" placeholder="City" required>
+                                            <label for="city">City <span class="text-danger">*</span></label>
+                                            <div class="invalid-feedback">Please enter your city.</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            <select class="form-select" id="state" name="state" required>
+                                                <option value="">Select State</option>
+                                                <option value="Johor">Johor</option>
+                                                <option value="Kedah">Kedah</option>
+                                                <option value="Kelantan">Kelantan</option>
+                                                <option value="Kuala Lumpur">Kuala Lumpur</option>
+                                                <option value="Labuan">Labuan</option>
+                                                <option value="Melaka">Melaka</option>
+                                                <option value="Negeri Sembilan">Negeri Sembilan</option>
+                                                <option value="Pahang">Pahang</option>
+                                                <option value="Perak">Perak</option>
+                                                <option value="Perlis">Perlis</option>
+                                                <option value="Pulau Pinang">Pulau Pinang</option>
+                                                <option value="Putrajaya">Putrajaya</option>
+                                                <option value="Sabah">Sabah</option>
+                                                <option value="Sarawak">Sarawak</option>
+                                                <option value="Selangor">Selangor</option>
+                                                <option value="Terengganu">Terengganu</option>
+                                            </select>
+                                            <label for="state">State <span class="text-danger">*</span></label>
+                                            <div class="invalid-feedback">Please select your state.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="instagram_username" name="instagram_username" type="text" placeholder="@username">
+                                    <label for="instagram_username">Instagram Username (Optional)</label>
                                     <div class="form-text">Enter your Instagram username (e.g., @foodlover123)</div>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input class="form-control" id="tiktok_handle" name="tiktok_handle" type="text" placeholder="@username">
-                                    <label for="tiktok_handle">TikTok Handle (Optional)</label>
+                                    <input class="form-control" id="tiktok_username" name="tiktok_username" type="text" placeholder="@username">
+                                    <label for="tiktok_username">TikTok Username (Optional)</label>
                                     <div class="form-text">Enter your TikTok username</div>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input class="form-control" id="facebook_page" name="facebook_page" type="url" placeholder="Facebook Page URL">
-                                    <label for="facebook_page">Facebook Page (Optional)</label>
-                                    <div class="form-text">Link to your Facebook page or profile</div>
-                                </div>
-                                <div class="form-floating mb-3">
-                                    <input class="form-control" id="xiaohongshu_handle" name="xiaohongshu_handle" type="text" placeholder="Little Red Book ID">
-                                    <label for="xiaohongshu_handle">小红书 (Little Red Book) ID (Optional)</label>
+                                    <input class="form-control" id="xhs_username" name="xhs_username" type="text" placeholder="Little Red Book ID">
+                                    <label for="xhs_username">小红书 (Little Red Book) Username (Optional)</label>
                                     <div class="form-text">Your Xiaohongshu/Little Red Book username</div>
                                 </div>
                             </div>
