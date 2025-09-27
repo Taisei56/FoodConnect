@@ -9,7 +9,23 @@ const adminControllerMVP = require('../controllers/adminControllerMVP');
 const ApplicationMVP = require('../models/ApplicationMVP');
 const { body } = require('express-validator');
 
-// Authentication middleware for API routes
+// Unauthenticated API routes (must come before auth middleware)
+router.post('/auth/register',
+    authControllerMVP.getRegistrationValidation(),
+    authControllerMVP.register
+);
+
+router.post('/auth/login', authControllerMVP.login);
+
+router.get('/auth/verify-email/:token', authControllerMVP.verifyEmail);
+
+router.post('/auth/forgot-password', authControllerMVP.requestPasswordReset);
+
+router.post('/auth/reset-password/:token', authControllerMVP.resetPassword);
+
+router.get('/auth/registration-data', authControllerMVP.getRegistrationData);
+
+// Authentication middleware for API routes (applies to routes below)
 router.use(authControllerMVP.requireAuth);
 
 // Campaign API routes
