@@ -162,8 +162,8 @@
                                     <input type="text" class="form-control" name="business_name" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Business Address</label>
-                                    <textarea class="form-control" name="address" rows="3"></textarea>
+                                    <label class="form-label">Business Address <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" name="address" rows="3" required></textarea>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Google Maps Link <span class="text-danger">*</span></label>
@@ -172,8 +172,8 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label">State</label>
-                                        <select class="form-select" name="state">
+                                        <label class="form-label">State <span class="text-danger">*</span></label>
+                                        <select class="form-select" name="state" required>
                                             <option value="">Select State</option>
                                             <option value="Johor">Johor</option>
                                             <option value="Kedah">Kedah</option>
@@ -194,8 +194,8 @@
                                         </select>
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label class="form-label">City</label>
-                                        <input type="text" class="form-control" name="city">
+                                        <label class="form-label">City <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="city" required>
                                     </div>
                                 </div>
                                 <div class="mb-3">
@@ -224,12 +224,44 @@
                             <div id="influencerProfile" class="d-none">
                                 <h4 class="mb-4 text-center">Influencer Details</h4>
                                 <div class="mb-3">
-                                    <label class="form-label">Display Name</label>
-                                    <input type="text" class="form-control" name="display_name">
+                                    <label class="form-label">Display Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="display_name" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Bio</label>
                                     <textarea class="form-control" name="bio" rows="3" placeholder="Tell us about yourself and your content..."></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Location <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="location" placeholder="e.g., Kuala Lumpur, Malaysia" required>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">City <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" name="city" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">State <span class="text-danger">*</span></label>
+                                        <select class="form-select" name="state" required>
+                                            <option value="">Select State</option>
+                                            <option value="Johor">Johor</option>
+                                            <option value="Kedah">Kedah</option>
+                                            <option value="Kelantan">Kelantan</option>
+                                            <option value="Kuala Lumpur">Kuala Lumpur</option>
+                                            <option value="Labuan">Labuan</option>
+                                            <option value="Melaka">Melaka</option>
+                                            <option value="Negeri Sembilan">Negeri Sembilan</option>
+                                            <option value="Pahang">Pahang</option>
+                                            <option value="Perak">Perak</option>
+                                            <option value="Perlis">Perlis</option>
+                                            <option value="Pulau Pinang">Pulau Pinang</option>
+                                            <option value="Putrajaya">Putrajaya</option>
+                                            <option value="Sabah">Sabah</option>
+                                            <option value="Sarawak">Sarawak</option>
+                                            <option value="Selangor">Selangor</option>
+                                            <option value="Terengganu">Terengganu</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
