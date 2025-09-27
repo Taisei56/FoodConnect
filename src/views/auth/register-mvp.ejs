@@ -96,7 +96,7 @@
                         <div class="step" id="step3">3</div>
                     </div>
 
-                    <form id="registrationForm" action="/auth/register-mvp" method="POST" enctype="multipart/form-data">
+                    <form id="registrationForm" action="/auth/register" method="POST" enctype="multipart/form-data">
                         <!-- Step 1: User Type Selection -->
                         <div class="step-content" id="stepContent1">
                             <h4 class="mb-4 text-center">Choose Your Account Type</h4>
@@ -158,12 +158,17 @@
                             <div id="restaurantProfile" class="d-none">
                                 <h4 class="mb-4 text-center">Restaurant Details</h4>
                                 <div class="mb-3">
-                                    <label class="form-label">Business Name</label>
-                                    <input type="text" class="form-control" name="business_name">
+                                    <label class="form-label">Business Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" name="business_name" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Business Address</label>
-                                    <textarea class="form-control" name="business_address" rows="3"></textarea>
+                                    <textarea class="form-control" name="address" rows="3"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Google Maps Link <span class="text-danger">*</span></label>
+                                    <input type="url" class="form-control" name="google_maps_link" placeholder="https://maps.google.com/..." required>
+                                    <div class="form-text">Please provide a Google Maps link to your restaurant location</div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
@@ -395,6 +400,21 @@
                 }
 
                 return true;
+            } else if (currentStep === 3) {
+                const userType = document.getElementById('userType').value;
+                if (userType === 'restaurant') {
+                    const businessName = document.querySelector('[name="business_name"]').value;
+                    const googleMapsLink = document.querySelector('[name="google_maps_link"]').value;
+
+                    if (!businessName) {
+                        alert('Please fill in the business name');
+                        return false;
+                    }
+                    if (!googleMapsLink) {
+                        alert('Please provide a Google Maps link for your restaurant');
+                        return false;
+                    }
+                }
             }
             return true;
         }
