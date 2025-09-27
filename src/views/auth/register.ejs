@@ -537,20 +537,25 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Add additional fields based on user type
             if (data.user_type === 'restaurant') {
-                data.restaurant_name = formData.get('restaurant_name') || '';
-                data.google_maps = formData.get('google_maps') || '';
-                data.location = formData.get('location') || '';
-                data.cuisine_type = formData.get('cuisine_type') || '';
+                data.business_name = formData.get('business_name') || '';
+                data.address = formData.get('address') || '';
+                data.city = formData.get('city') || '';
+                data.state = formData.get('state') || '';
+                data.google_maps_link = formData.get('google_maps_link') || '';
                 data.phone = formData.get('phone') || '';
                 data.description = formData.get('description') || '';
+                data.website = formData.get('website') || '';
+                data.dietary_categories = formData.get('dietary_categories') || [];
             } else if (data.user_type === 'influencer') {
-                data.instagram_handle = formData.get('instagram_handle') || '';
-                data.tiktok_handle = formData.get('tiktok_handle') || '';
-                data.facebook_page = formData.get('facebook_page') || '';
-                data.xiaohongshu_handle = formData.get('xiaohongshu_handle') || '';
-                data.display_name = formData.get('display_name') || formData.get('instagram_handle') || '';
-                data.follower_count = formData.get('follower_count') || 0;
+                data.display_name = formData.get('display_name') || '';
+                data.location = formData.get('location') || '';
+                data.city = formData.get('city') || '';
+                data.state = formData.get('state') || '';
+                data.instagram_username = formData.get('instagram_username') || '';
+                data.tiktok_username = formData.get('tiktok_username') || '';
+                data.xhs_username = formData.get('xhs_username') || '';
                 data.bio = formData.get('bio') || '';
+                data.phone = formData.get('phone') || '';
             }
             
             console.log('🔄 Sending registration data:', data);
