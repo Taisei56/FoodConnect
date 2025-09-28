@@ -719,7 +719,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.togglePasswordVisibility = function(inputId, button) {
         const passwordInput = document.getElementById(inputId);
         const icon = button.querySelector('i');
-        
+
         if (passwordInput.type === 'password') {
             passwordInput.type = 'text';
             icon.classList.remove('fa-eye');
@@ -732,6 +732,59 @@ document.addEventListener('DOMContentLoaded', function() {
             button.setAttribute('title', 'Show password');
         }
     }
+
+    // Function to toggle required fields based on user type
+    function toggleUserTypeFields() {
+        const userType = document.querySelector('input[name="user_type"]:checked')?.value;
+
+        if (userType === 'restaurant') {
+            // Enable required validation for restaurant fields
+            setRequired('business_name', true);
+            setRequired('address', true);
+            setRequired('restaurant_city', true);
+            setRequired('restaurant_state', true);
+            setRequired('google_maps_link', true);
+
+            // Disable required validation for influencer fields
+            setRequired('display_name', false);
+            setRequired('location', false);
+            setRequired('influencer_city', false);
+            setRequired('influencer_state', false);
+        } else if (userType === 'influencer') {
+            // Enable required validation for influencer fields
+            setRequired('display_name', true);
+            setRequired('location', true);
+            setRequired('influencer_city', true);
+            setRequired('influencer_state', true);
+
+            // Disable required validation for restaurant fields
+            setRequired('business_name', false);
+            setRequired('address', false);
+            setRequired('restaurant_city', false);
+            setRequired('restaurant_state', false);
+            setRequired('google_maps_link', false);
+        }
+    }
+
+    function setRequired(fieldId, required) {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.required = required;
+            if (required) {
+                field.setAttribute('required', '');
+            } else {
+                field.removeAttribute('required');
+            }
+        }
+    }
+
+    // Add event listeners to user type radio buttons
+    document.querySelectorAll('input[name="user_type"]').forEach(radio => {
+        radio.addEventListener('change', toggleUserTypeFields);
+    });
+
+    // Run validation toggle on page load
+    toggleUserTypeFields();
 });
 </script>
 `}) %>
