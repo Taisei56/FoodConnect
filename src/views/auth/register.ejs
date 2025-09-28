@@ -418,8 +418,8 @@ document.addEventListener('DOMContentLoaded', function() {
         btnLoading: !!btnLoading
     });
     
-    // Check if user is already logged in
-    if (authManager.isAuthenticated()) {
+    // Check if user is already logged in (if authManager is available)
+    if (typeof authManager !== 'undefined' && authManager.isAuthenticated()) {
         window.location.href = '/dashboard';
         return;
     }
