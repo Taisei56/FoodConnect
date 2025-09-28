@@ -462,13 +462,36 @@ document.addEventListener('DOMContentLoaded', function() {
         if (type === 'restaurant') {
             restaurantFields.style.display = 'block';
             influencerFields.style.display = 'none';
-            // Restaurant name is optional for MVP
-            // document.getElementById('restaurant_name').required = true;
+
+            // Enable required validation for restaurant fields
+            document.getElementById('business_name').required = true;
+            document.getElementById('address').required = true;
+            document.getElementById('restaurant_city').required = true;
+            document.getElementById('restaurant_state').required = true;
+            document.getElementById('google_maps_link').required = true;
+
+            // Disable required validation for influencer fields
+            document.getElementById('display_name').required = false;
+            document.getElementById('location').required = false;
+            document.getElementById('influencer_city').required = false;
+            document.getElementById('influencer_state').required = false;
+
         } else if (type === 'influencer') {
             influencerFields.style.display = 'block';
             restaurantFields.style.display = 'none';
-            // Instagram handle is optional for MVP
-            // document.getElementById('instagram_handle').required = true;
+
+            // Enable required validation for influencer fields
+            document.getElementById('display_name').required = true;
+            document.getElementById('location').required = true;
+            document.getElementById('influencer_city').required = true;
+            document.getElementById('influencer_state').required = true;
+
+            // Disable required validation for restaurant fields
+            document.getElementById('business_name').required = false;
+            document.getElementById('address').required = false;
+            document.getElementById('restaurant_city').required = false;
+            document.getElementById('restaurant_state').required = false;
+            document.getElementById('google_maps_link').required = false;
         }
         
         console.log('Form display before:', registerForm.style.display); // Debug log
@@ -487,10 +510,17 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('additional-fields').style.display = 'none';
         document.getElementById('restaurant-fields').style.display = 'none';
         document.getElementById('influencer-fields').style.display = 'none';
-        
-        // Remove required attributes (already optional for MVP)
-        // document.getElementById('restaurant_name').required = false;
-        // document.getElementById('instagram_handle').required = false;
+
+        // Remove required attributes from all conditional fields
+        document.getElementById('business_name').required = false;
+        document.getElementById('address').required = false;
+        document.getElementById('restaurant_city').required = false;
+        document.getElementById('restaurant_state').required = false;
+        document.getElementById('google_maps_link').required = false;
+        document.getElementById('display_name').required = false;
+        document.getElementById('location').required = false;
+        document.getElementById('influencer_city').required = false;
+        document.getElementById('influencer_state').required = false;
     });
     
     // Password validation
