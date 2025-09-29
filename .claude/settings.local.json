@@ -28,7 +28,17 @@
       "Bash(cp:*)",
       "WebFetch(domain:web-production-902b.up.railway.app)",
       "Bash(time curl:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(PORT=3001 npm start)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill.exe:*)",
+      "Bash(PORT=3001 node src/app.js)",
+      "Bash(PORT=3002 node src/app.js)",
+      "Bash(echo $DATABASE_URL)",
+      "Bash(echo $NODE_ENV)",
+      "Bash(railway login:*)",
+      "Bash(npm run migrate:mvp:*)"
     ],
     "deny": []
   }

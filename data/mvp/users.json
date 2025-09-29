@@ -8,5 +8,35 @@
     "email_verified": true,
     "created_at": "2025-08-28T10:43:08.600Z",
     "updated_at": "2025-08-28T10:43:08.602Z"
+  },
+  {
+    "id": 2,
+    "email": "testuser@example.com",
+    "password_hash": "$2b$08$BtPxtndaMeftiVHcZiQM9ePyyDcGDjtaVYj23lGpltNxkZUHbKf5u",
+    "user_type": "restaurant",
+    "status": "pending",
+    "email_verified": false,
+    "email_verification_token": "08d734ac-f9c6-4d79-b47b-46de0b06db92",
+    "email_verification_expires": "2025-09-30T17:25:55.850Z",
+    "password_reset_token": null,
+    "password_reset_expires": null,
+    "last_login": null,
+    "created_at": "2025-09-29T17:25:55.850Z",
+    "updated_at": "2025-09-29T17:25:55.850Z"
+  },
+  {
+    "id": 3,
+    "email": "influencer@example.com",
+    "password_hash": "$2b$08$UCkn/Jlj93y5cwMbY940EeXRs61uP9uQR1d7WaH89ccB9zrFnDL/i",
+    "user_type": "influencer",
+    "status": "pending",
+    "email_verified": false,
+    "email_verification_token": "ca9dc165-14dd-425c-8786-1f8eb13a24a8",
+    "email_verification_expires": "2025-09-30T17:29:02.403Z",
+    "password_reset_token": null,
+    "password_reset_expires": null,
+    "last_login": null,
+    "created_at": "2025-09-29T17:29:02.403Z",
+    "updated_at": "2025-09-29T17:29:02.403Z"
   }
 ]

@@ -35,6 +35,10 @@ class AuthControllerMVP {
                 .if(body('user_type').equals('restaurant'))
                 .isIn(RestaurantMVP.getMalaysianStates())
                 .withMessage('Please select a valid Malaysian state'),
+            body('google_maps_link')
+                .if(body('user_type').equals('restaurant'))
+                .notEmpty()
+                .withMessage('Google Maps link is required for restaurants'),
             // Influencer validation
             body('display_name')
                 .if(body('user_type').equals('influencer'))

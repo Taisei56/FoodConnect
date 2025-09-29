@@ -1,1 +1,21 @@
-[]
+[
+  {
+    "id": 1,
+    "user_id": 2,
+    "business_name": "Test Restaurant",
+    "description": null,
+    "phone": null,
+    "address": "123 Test Street",
+    "google_maps_link": "https://maps.google.com/test",
+    "dietary_categories": [],
+    "city": "Kuala Lumpur",
+    "state": "Kuala Lumpur",
+    "website": null,
+    "profile_image": null,
+    "admin_notes": null,
+    "approved_by": null,
+    "approved_at": null,
+    "created_at": "2025-09-29T17:25:55.861Z",
+    "updated_at": "2025-09-29T17:25:55.861Z"
+  }
+]
