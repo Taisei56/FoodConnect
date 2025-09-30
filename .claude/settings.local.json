@@ -38,7 +38,8 @@
       "Bash(echo $DATABASE_URL)",
       "Bash(echo $NODE_ENV)",
       "Bash(railway login:*)",
-      "Bash(npm run migrate:mvp:*)"
+      "Bash(npm run migrate:mvp:*)",
+      "Bash(PORT=3002 npm start)"
     ],
     "deny": []
   }
